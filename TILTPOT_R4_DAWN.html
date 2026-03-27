@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TiltPot R4 — Dawn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #0D0D0D;
+  --bg-base: #121212;
+  --bg-card: #1A1918;
+  --bg-elevated: #232220;
+  --text-primary: #FAF5F0;
+  --text-secondary: #B8AFA6;
+  --text-tertiary: #7A7470;
+  --accent: #F07167;
+  --accent-soft: #F4978E;
+  --accent-dim: rgba(240, 113, 103, 0.12);
+  --accent-glow: rgba(240, 113, 103, 0.06);
+  --warm-tint: rgba(240, 200, 160, 0.03);
+  --border: rgba(255,255,255,0.06);
+  --border-warm: rgba(240, 113, 103, 0.12);
+  --shadow: 0 2px 8px rgba(0,0,0,0.2), 0 8px 32px rgba(0,0,0,0.15);
+  --shadow-warm: 0 4px 24px rgba(240, 113, 103, 0.08);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font: 'DM Sans', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --gradient-dawn: linear-gradient(180deg, #0D0D0D 0%, #1A1410 40%, #1E1614 70%, #201812 100%);
+}
+
+.light-mode {
+  --bg-deep: #FBF8F5;
+  --bg-base: #FFFDFB;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #F7F3EF;
+  --text-primary: #1A1614;
+  --text-secondary: #6B6360;
+  --text-tertiary: #A09894;
+  --accent: #E05A50;
+  --accent-soft: #F07167;
+  --accent-dim: rgba(224, 90, 80, 0.08);
+  --accent-glow: rgba(224, 90, 80, 0.04);
+  --warm-tint: rgba(240, 200, 160, 0.08);
+  --border: rgba(0,0,0,0.06);
+  --border-warm: rgba(224, 90, 80, 0.12);
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-warm: 0 4px 24px rgba(224, 90, 80, 0.06);
+  --gradient-dawn: linear-gradient(180deg, #FFFDFB 0%, #FFF8F2 40%, #FFF5ED 70%, #FFF2E8 100%);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--gradient-dawn);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: 0.1s; }
+.d2 { transition-delay: 0.2s; }
+.d3 { transition-delay: 0.3s; }
+
+.container { max-width: 1140px; margin: 0 auto; padding: 0 32px; }
+
+/* Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 100;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  transition: all 0.3s;
+  box-shadow: var(--shadow);
+}
+.theme-toggle:hover { border-color: var(--accent); box-shadow: var(--shadow-warm); }
+
+/* Hero */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 32px;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(240,113,103,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.logo-mark {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 44px;
+  box-shadow: 0 0 48px rgba(240, 113, 103, 0.2);
+}
+.logo-letter {
+  font-weight: 700;
+  font-size: 30px;
+  color: #fff;
+  transform: rotate(-8deg);
+}
+
+.hero h1 {
+  font-size: clamp(48px, 8vw, 84px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+.hero h1 span { color: var(--accent); }
+
+.hero-sub {
+  font-size: clamp(16px, 2vw, 19px);
+  color: var(--text-secondary);
+  max-width: 460px;
+  line-height: 1.65;
+  letter-spacing: -0.005em;
+}
+
+.badge {
+  margin-top: 48px;
+  padding: 8px 20px;
+  border-radius: 100px;
+  border: 1px solid var(--border-warm);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Sections */
+section { padding: 100px 0; }
+.sec-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.sec-title {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  margin-bottom: 14px;
+}
+.sec-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  max-width: 500px;
+  line-height: 1.7;
+}
+
+/* Palette */
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.swatch {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: 1px solid var(--border);
+}
+.swatch:hover { transform: scale(1.05); box-shadow: var(--shadow); }
+.swatch-info {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.55));
+}
+.sw-name { font-size: 12px; font-weight: 600; color: #fff; }
+.sw-hex { font-size: 11px; font-family: var(--mono); color: rgba(255,255,255,0.7); }
+
+/* Typography */
+.type-list { margin-top: 48px; }
+.type-row {
+  display: flex;
+  align-items: baseline;
+  gap: 36px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+}
+.type-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--mono);
+  min-width: 100px;
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.t-display { font-size: 48px; font-weight: 700; letter-spacing: -0.035em; line-height: 1; }
+.t-heading { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+.t-body { font-size: 16px; color: var(--text-secondary); line-height: 1.7; max-width: 480px; }
+.t-caption { font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.015em; }
+.t-mono { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--accent); }
+
+/* Phones */
+.phones-section { padding: 100px 0; }
+.phones-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: 60px;
+}
+.phone-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.phone-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+.phone {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 9/19.5;
+  background: var(--bg-base);
+  border-radius: 40px;
+  border: 3px solid var(--bg-elevated);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 0 0 1px var(--border);
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.phone-screen::-webkit-scrollbar { display: none; }
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 24px 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.notch {
+  width: 120px;
+  height: 32px;
+  background: #000;
+  border-radius: 20px;
+  margin: 0 auto 8px;
+}
+
+.s-header {
+  padding: 8px 20px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.s-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.s-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Cards with warm undertone */
+.warm-card {
+  margin: 0 12px 10px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.warm-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-warm), transparent);
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.av { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.06); }
+.av-1 { background: linear-gradient(135deg, #6366F1, #8B5CF6); }
+.av-2 { background: linear-gradient(135deg, #F97316, #FB923C); }
+.av-3 { background: linear-gradient(135deg, #10B981, #34D399); }
+.av-4 { background: linear-gradient(135deg, #EC4899, #F472B6); }
+.av-5 { background: linear-gradient(135deg, var(--accent), var(--accent-soft)); }
+.light-mode .av { border-color: rgba(0,0,0,0.04); }
+
+.user-name { font-size: 13px; font-weight: 600; }
+.user-time { font-size: 11px; color: var(--text-tertiary); }
+
+.action-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+.action-text strong { color: var(--text-primary); }
+.action-text .hl { color: var(--accent); font-weight: 600; }
+
+.mini-market {
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.mini-q {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+.mini-meta {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+}
+
+.prob-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.light-mode .prob-bar { background: rgba(0,0,0,0.06); }
+.prob-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+}
+
+.rxn {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Market detail */
+.m-hero { padding: 16px 20px; }
+.m-question {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.m-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-bottom: 16px;
+}
+.live-indicator {
+  color: var(--accent);
+  font-weight: 600;
+}
+.live-indicator::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 5px;
+  animation: glow 2s ease infinite;
+}
+@keyframes glow {
+  0%,100% { opacity: 1; box-shadow: 0 0 4px var(--accent); }
+  50% { opacity: 0.4; box-shadow: none; }
+}
+
+.big-num {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.big-pct {
+  font-family: var(--mono);
+  font-size: 48px;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-shadow: 0 0 32px rgba(240, 113, 103, 0.15);
+}
+.big-label { font-size: 14px; color: var(--text-tertiary); }
+
+.m-bar {
+  height: 4px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.m-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+  box-shadow: 0 0 8px rgba(240, 113, 103, 0.15);
+}
+
+.bet-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0 20px 16px;
+}
+.b-btn {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.b-btn.yes { background: var(--accent-dim); color: var(--accent); border-color: var(--border-warm); }
+.b-btn.no { background: var(--bg-elevated); color: var(--text-secondary); }
+
+.bettor-list { padding: 0 20px 12px; }
+.bl-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  margin-bottom: 12px;
+}
+.bl-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.bl-row:last-child { border-bottom: none; }
+.bl-av { width: 24px; height: 24px; border-radius: 50%; }
+.bl-name { flex: 1; font-size: 13px; font-weight: 500; }
+.bl-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.bl-badge.yes { background: var(--accent-dim); color: var(--accent); }
+.bl-badge.no { background: rgba(120,120,120,0.1); color: var(--text-tertiary); }
+.bl-amt { font-family: var(--mono); font-size: 13px; color: var(--text-secondary); }
+
+.chat-list { padding: 0 20px 20px; }
+.chat-row {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+}
+.chat-av { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }
+.chat-text { font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+.chat-text strong { color: var(--text-primary); }
+
+/* Win */
+.win-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 40px 20px;
+  text-align: center;
+  background: radial-gradient(ellipse at center, rgba(240,113,103,0.06) 0%, transparent 60%);
+}
+.win-emoji {
+  font-size: 52px;
+  margin-bottom: 16px;
+  animation: bob 3s ease-in-out infinite;
+}
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+.win-headline {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.win-sub {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin-bottom: 28px;
+}
+.win-amount {
+  font-family: var(--mono);
+  font-size: 52px;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 6px;
+  text-shadow: 0 0 40px rgba(240, 113, 103, 0.2);
+}
+.win-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 28px;
+}
+.win-ref {
+  font-size: 14px;
+  color: var(--text-secondary);
+  max-width: 240px;
+  line-height: 1.5;
+  margin-bottom: 28px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.win-crew {
+  display: flex;
+  margin-bottom: 12px;
+}
+.wc-av {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-base);
+  margin-left: -6px;
+}
+.wc-av:first-child { margin-left: 0; }
+.win-crew-text {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-bottom: 24px;
+}
+.win-btn {
+  padding: 13px 30px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(240, 113, 103, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.win-btn:hover { transform: scale(1.03); box-shadow: 0 6px 28px rgba(240, 113, 103, 0.35); }
+
+/* Nav */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg-base);
+  position: sticky;
+  bottom: 0;
+}
+.nav-i {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+.nav-i.active { color: var(--accent); }
+.nav-ic { font-size: 16px; }
+
+/* Logo */
+.logo-section { padding: 100px 0; text-align: center; }
+.logo-concept {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 48px;
+}
+.logo-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 32px rgba(240, 113, 103, 0.15);
+}
+.logo-icon span {
+  font-weight: 700;
+  font-size: 24px;
+  color: #fff;
+  transform: rotate(-8deg);
+  display: block;
+}
+.logo-wm {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.logo-wm span { color: var(--accent); }
+
+footer {
+  text-align: center;
+  padding: 60px 32px;
+  border-top: 1px solid var(--border);
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .phones-grid { grid-template-columns: 1fr; gap: 48px; }
+  .palette-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .type-row { flex-direction: column; gap: 8px; }
+  .container { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.body.classList.toggle('light-mode'); this.textContent = document.body.classList.contains('light-mode') ? '🌙' : '☀️'">☀️</button>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="reveal"><div class="logo-mark"><span class="logo-letter">T</span></div></div>
+  <h1 class="reveal d1">Tilt<span>Pot</span></h1>
+  <p class="hero-sub reveal d2">Golden hour for your group chat. Bet tokens on anything with the people who know you best.</p>
+  <div class="badge reveal d3">R4 Concept — Dawn</div>
+</section>
+
+<!-- PALETTE -->
+<section class="container">
+  <div class="reveal">
+    <span class="sec-label">Color</span>
+    <h2 class="sec-title">Dawn Palette</h2>
+    <p class="sec-desc">A gradient from deep night to warm horizon. Coral accents that feel like the first light of day.</p>
+  </div>
+  <div class="palette-grid reveal d1">
+    <div class="swatch" style="background: #0D0D0D;"><div class="swatch-info"><span class="sw-name">Night</span><br><span class="sw-hex">#0D0D0D</span></div></div>
+    <div class="swatch" style="background: #1A1918;"><div class="swatch-info"><span class="sw-name">Dusk</span><br><span class="sw-hex">#1A1918</span></div></div>
+    <div class="swatch" style="background: #F07167;"><div class="swatch-info"><span class="sw-name">Coral</span><br><span class="sw-hex">#F07167</span></div></div>
+    <div class="swatch" style="background: #F4978E;"><div class="swatch-info"><span class="sw-name">Peach</span><br><span class="sw-hex">#F4978E</span></div></div>
+    <div class="swatch" style="background: #FAF5F0;"><div class="swatch-info"><span class="sw-name">Cream</span><br><span class="sw-hex">#FAF5F0</span></div></div>
+  </div>
+</section>
+
+<!-- TYPOGRAPHY -->
+<section class="container">
+  <div class="reveal">
+    <span class="sec-label">Type</span>
+    <h2 class="sec-title">DM Sans System</h2>
+    <p class="sec-desc">Generous line height and letter spacing. Every word has room to breathe, like warm air.</p>
+  </div>
+  <div class="type-list">
+    <div class="type-row reveal">
+      <span class="type-label">Display</span>
+      <span class="t-display">Who's calling it?</span>
+    </div>
+    <div class="type-row reveal d1">
+      <span class="type-label">Heading</span>
+      <span class="t-heading">Your crew, your markets</span>
+    </div>
+    <div class="type-row reveal d2">
+      <span class="type-label">Body</span>
+      <span class="t-body">Create prediction markets with friends. Put tokens on anything. The warmth of friendship meets the thrill of being right.</span>
+    </div>
+    <div class="type-row reveal d2">
+      <span class="type-label">Caption</span>
+      <span class="t-caption">3 friends bet · 420 tokens in pot · Closes in 2h</span>
+    </div>
+    <div class="type-row reveal d3">
+      <span class="type-label">Mono</span>
+      <span class="t-mono">1,250 TILT</span>
+    </div>
+  </div>
+</section>
+
+<!-- PHONES -->
+<section class="phones-section container">
+  <div class="reveal">
+    <span class="sec-label">Screens</span>
+    <h2 class="sec-title">Warm and alive</h2>
+    <p class="sec-desc">The app feels like golden hour. Warm undertones in every card, coral light in every interaction.</p>
+  </div>
+  <div class="phones-grid">
+    <!-- FEED -->
+    <div class="phone-wrap reveal">
+      <span class="phone-title">Feed</span>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+          <div class="notch"></div>
+          <div class="s-header">
+            <span class="s-title">Feed</span>
+            <div class="s-avatar">M</div>
+          </div>
+
+          <div class="warm-card">
+            <div class="user-row">
+              <div class="av av-1"></div>
+              <div><div class="user-name">Jake</div><div class="user-time">2 min ago</div></div>
+            </div>
+            <div class="action-text"><strong>Jake</strong> bet <span class="hl">250 TILT</span> on YES</div>
+            <div class="mini-market">
+              <div class="mini-q">Will Marcus actually show up on time Friday?</div>
+              <div class="mini-meta">23% · 6 bettors</div>
+              <div class="prob-bar"><div class="prob-fill" style="width:23%"></div></div>
+            </div>
+            <div class="rxn"><span>🔥 4</span><span>💬 3</span><span>😂 7</span></div>
+          </div>
+
+          <div class="warm-card">
+            <div class="user-row">
+              <div class="av av-2"></div>
+              <div><div class="user-name">Priya</div><div class="user-time">18 min ago</div></div>
+            </div>
+            <div class="action-text"><strong>Priya</strong> created a new market</div>
+            <div class="mini-market">
+              <div class="mini-q">Does Dylan ask for the aux cord at the cabin trip?</div>
+              <div class="mini-meta">87% · 4 bettors</div>
+              <div class="prob-bar"><div class="prob-fill" style="width:87%"></div></div>
+            </div>
+            <div class="rxn"><span>🔥 11</span><span>💬 6</span></div>
+          </div>
+
+          <div class="warm-card">
+            <div class="user-row">
+              <div class="av av-3"></div>
+              <div><div class="user-name">Sof</div><div class="user-time">1h ago</div></div>
+            </div>
+            <div class="action-text"><strong>Sof</strong>: "Marcus you are COOKED lmaooo 💀"</div>
+            <div class="rxn"><span>😂 14</span><span>💬 2</span></div>
+          </div>
+
+          <div class="warm-card">
+            <div class="user-row">
+              <div class="av av-4"></div>
+              <div><div class="user-name">Dylan</div><div class="user-time">3h ago</div></div>
+            </div>
+            <div class="action-text"><strong>Dylan</strong> bet <span class="hl">500 TILT</span> on NO — "Sleep on me fr"</div>
+            <div class="mini-market">
+              <div class="mini-q">Will Dylan finish the marathon under 4 hours?</div>
+              <div class="prob-bar"><div class="prob-fill" style="width:34%"></div></div>
+            </div>
+            <div class="rxn"><span>🔥 8</span><span>💬 12</span><span>💀 5</span></div>
+          </div>
+
+          <div class="bottom-nav">
+            <div class="nav-i active"><span class="nav-ic">⚡</span>Feed</div>
+            <div class="nav-i"><span class="nav-ic">◇</span>Markets</div>
+            <div class="nav-i"><span class="nav-ic">+</span>Create</div>
+            <div class="nav-i"><span class="nav-ic">◎</span>Crew</div>
+            <div class="nav-i"><span class="nav-ic">○</span>You</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKET DETAIL -->
+    <div class="phone-wrap reveal d1">
+      <span class="phone-title">Market Detail</span>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+          <div class="notch"></div>
+          <div class="s-header">
+            <span style="font-size:14px; color:var(--accent); font-weight:500;">← Back</span>
+            <span style="font-size:12px; color:var(--text-tertiary);">The Squad</span>
+          </div>
+
+          <div class="m-hero">
+            <div class="m-question">Will Marcus actually show up on time Friday?</div>
+            <div class="m-meta">
+              <span class="live-indicator">LIVE</span>
+              <span>Closes Fri 7pm</span>
+              <span>6 bettors</span>
+            </div>
+            <div class="big-num">
+              <span class="big-pct">23%</span>
+              <span class="big-label">chance YES</span>
+            </div>
+            <div class="m-bar"><div class="m-bar-fill" style="width:23%"></div></div>
+          </div>
+
+          <div class="bet-btns">
+            <div class="b-btn yes">Bet YES ↑</div>
+            <div class="b-btn no">Bet NO ↓</div>
+          </div>
+
+          <div class="bettor-list">
+            <div class="bl-title">Who's in</div>
+            <div class="bl-row"><div class="bl-av av-1"></div><span class="bl-name">Jake</span><span class="bl-badge yes">YES</span><span class="bl-amt">250</span></div>
+            <div class="bl-row"><div class="bl-av av-2"></div><span class="bl-name">Priya</span><span class="bl-badge no">NO</span><span class="bl-amt">400</span></div>
+            <div class="bl-row"><div class="bl-av av-3"></div><span class="bl-name">Sof</span><span class="bl-badge no">NO</span><span class="bl-amt">300</span></div>
+            <div class="bl-row"><div class="bl-av av-5"></div><span class="bl-name">Dylan</span><span class="bl-badge yes">YES</span><span class="bl-amt">150</span></div>
+          </div>
+
+          <div class="chat-list">
+            <div class="bl-title">Trash Talk</div>
+            <div class="chat-row"><div class="chat-av av-3"></div><div class="chat-text"><strong>Sof</strong> Marcus has been late to everything since 2019</div></div>
+            <div class="chat-row"><div class="chat-av av-1"></div><div class="chat-text"><strong>Jake</strong> He set 3 alarms. Redemption arc incoming 😤</div></div>
+            <div class="chat-row"><div class="chat-av av-4"></div><div class="chat-text"><strong>Dylan</strong> bro is NOT showing up on time 💀</div></div>
+          </div>
+
+          <div class="bottom-nav">
+            <div class="nav-i"><span class="nav-ic">⚡</span>Feed</div>
+            <div class="nav-i active"><span class="nav-ic">◇</span>Markets</div>
+            <div class="nav-i"><span class="nav-ic">+</span>Create</div>
+            <div class="nav-i"><span class="nav-ic">◎</span>Crew</div>
+            <div class="nav-i"><span class="nav-ic">○</span>You</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIN -->
+    <div class="phone-wrap reveal d2">
+      <span class="phone-title">Victory</span>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+          <div class="notch"></div>
+          <div class="win-screen">
+            <div class="win-emoji">🌅</div>
+            <div class="win-headline">You called it.</div>
+            <div class="win-sub">Market resolved — NO wins</div>
+            <div class="win-amount">+750</div>
+            <div class="win-label">TILT tokens won</div>
+            <div class="win-ref">"Will Marcus actually show up on time Friday?"<br><span style="font-size:12px; color:var(--text-tertiary);">He did not. Shocking absolutely no one.</span></div>
+            <div class="win-crew">
+              <div class="wc-av av-2"></div>
+              <div class="wc-av av-3"></div>
+              <div class="wc-av av-4"></div>
+            </div>
+            <div class="win-crew-text">You won with Priya, Sof & Dylan</div>
+            <button class="win-btn">Share the W</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGO -->
+<section class="logo-section container">
+  <div class="reveal">
+    <span class="sec-label">Brand</span>
+    <h2 class="sec-title">Logo Concept</h2>
+  </div>
+  <div class="logo-concept reveal d1">
+    <div class="logo-icon"><span>T</span></div>
+    <span class="logo-wm">tilt<span>pot</span></span>
+  </div>
+</section>
+
+<footer>TiltPot R4 — Dawn Concept</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

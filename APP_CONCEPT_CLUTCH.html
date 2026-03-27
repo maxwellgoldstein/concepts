@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clutch — App Concept</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b12;
+  --surface: #0f1420;
+  --surface2: #161d2e;
+  --text: #e8ecf4;
+  --text2: #6b7899;
+  --blue: #3b82f6;
+  --blue-glow: rgba(59,130,246,.3);
+  --neon: #22d3ee;
+  --neon-glow: rgba(34,211,238,.3);
+  --green: #10b981;
+  --green-glow: rgba(16,185,129,.25);
+  --red: #ef4444;
+  --gradient: linear-gradient(135deg, #3b82f6, #22d3ee);
+  --gradient2: linear-gradient(135deg, #10b981, #22d3ee);
+  --card-radius: 20px;
+}
+html.light {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface2: #e8edf4;
+  --text: #111827;
+  --text2: #6b7280;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  transition: background .4s, color .4s;
+}
+h1, h2, h3, h4 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; }
+
+.theme-toggle {
+  position: fixed; top: 20px; right: 20px; z-index: 100;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--surface2); border: 1px solid rgba(59,130,246,.2);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; transition: all .3s;
+}
+.theme-toggle:hover { transform: scale(1.1); border-color: var(--blue); }
+
+section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+
+/* Scanline effect */
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(59,130,246,.02) 2px, rgba(59,130,246,.02) 4px);
+  pointer-events: none;
+}
+
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  position: relative;
+}
+.hero::before {
+  content: ''; position: absolute; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(59,130,246,.12), rgba(34,211,238,.05), transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+}
+.logo-mark {
+  width: 100px; height: 100px; border-radius: 24px;
+  background: var(--gradient); display: flex; align-items: center; justify-content: center;
+  font-size: 48px; margin-bottom: 32px;
+  box-shadow: 0 0 60px var(--blue-glow), 0 0 120px rgba(34,211,238,.1);
+  animation: pulse-glow 2s ease-in-out infinite;
+  position: relative; z-index: 1;
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 40px var(--blue-glow); }
+  50% { box-shadow: 0 0 80px var(--blue-glow), 0 0 120px rgba(34,211,238,.15); }
+}
+.hero h1 {
+  font-size: clamp(3.5rem, 9vw, 7rem); font-weight: 700;
+  background: var(--gradient); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; line-height: 1;
+  letter-spacing: -2px; position: relative; z-index: 1;
+}
+.tagline {
+  font-size: clamp(1rem, 2.5vw, 1.3rem); color: var(--text2);
+  margin-top: 16px; max-width: 480px; line-height: 1.5;
+  text-transform: none; font-family: 'Inter'; position: relative; z-index: 1;
+}
+.hero-cta {
+  margin-top: 36px; padding: 16px 44px; border-radius: 8px;
+  background: var(--gradient); color: #fff; font-weight: 700;
+  font-size: 1rem; border: none; cursor: pointer;
+  font-family: 'Rajdhani'; text-transform: uppercase; letter-spacing: 2px;
+  transition: all .3s; position: relative; z-index: 1;
+}
+.hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px var(--blue-glow);
+}
+
+.ps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 48px; }
+.ps-card {
+  background: var(--surface); border-radius: var(--card-radius);
+  padding: 40px; border: 1px solid rgba(59,130,246,.1);
+  transition: transform .3s;
+}
+.ps-card:hover { transform: translateY(-4px); }
+.ps-card .label {
+  font-size: .75rem; text-transform: uppercase; letter-spacing: 3px;
+  color: var(--neon); font-weight: 700; margin-bottom: 16px;
+  font-family: 'Rajdhani';
+}
+.ps-card p { font-size: 1.1rem; line-height: 1.6; color: var(--text2); text-transform: none; }
+
+.mockups-section { text-align: center; }
+.mockups-section h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 16px; letter-spacing: 2px; }
+.mockups-section .sub { color: var(--text2); margin-bottom: 60px; font-size: 1rem; text-transform: none; font-family: 'Inter'; }
+.mockup-row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+
+.phone {
+  width: 280px; height: 580px; background: #000;
+  border-radius: 40px; padding: 10px; position: relative;
+  box-shadow: 0 0 40px rgba(59,130,246,.1), 0 24px 80px rgba(0,0,0,.5);
+  border: 1px solid rgba(59,130,246,.15);
+  transition: transform .4s; flex-shrink: 0;
+}
+.phone:hover { transform: translateY(-8px); box-shadow: 0 0 60px var(--blue-glow), 0 24px 80px rgba(0,0,0,.5); }
+.phone-screen {
+  width: 100%; height: 100%; border-radius: 32px;
+  background: var(--bg); overflow: hidden;
+}
+.phone-notch {
+  width: 120px; height: 28px; background: #000;
+  border-radius: 0 0 16px 16px; margin: 0 auto;
+}
+.phone-content { padding: 6px 14px; }
+
+/* Mockup 1: Challenge Screen */
+.ch-header { font-family: 'Rajdhani'; font-size: .85rem; font-weight: 700; color: var(--neon); text-transform: uppercase; letter-spacing: 2px; text-align: center; margin: 8px 0; }
+.game-selector {
+  display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto;
+}
+.game-chip {
+  flex-shrink: 0; padding: 6px 12px; border-radius: 8px;
+  font-size: .65rem; font-weight: 600; text-transform: uppercase;
+  border: 1px solid rgba(59,130,246,.2); color: var(--text2);
+  letter-spacing: 1px;
+}
+.game-chip.active { background: var(--gradient); color: #fff; border-color: transparent; }
+.challenge-card {
+  background: var(--surface); border-radius: 16px; padding: 16px;
+  border: 1px solid rgba(59,130,246,.1); margin-bottom: 10px;
+}
+.challenge-card .vs { display: flex; align-items: center; justify-content: space-between; }
+.player {
+  text-align: center;
+}
+.player .p-av {
+  width: 48px; height: 48px; border-radius: 14px; margin: 0 auto 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}
+.player .p-name { font-size: .7rem; font-weight: 600; }
+.player .p-rank { font-size: .6rem; color: var(--neon); }
+.vs-badge {
+  font-family: 'Rajdhani'; font-size: 1.4rem; font-weight: 700;
+  background: var(--gradient); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.stake-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(59,130,246,.08);
+}
+.stake-label { font-size: .6rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+.stake-amount { font-family: 'Rajdhani'; font-size: 1rem; font-weight: 700; color: var(--green); }
+.accept-btn {
+  padding: 10px; border-radius: 10px; background: var(--gradient);
+  color: #fff; font-family: 'Rajdhani'; font-weight: 700;
+  font-size: .8rem; text-transform: uppercase; letter-spacing: 2px;
+  border: none; width: 100%; margin-top: 10px;
+}
+
+/* Mockup 2: Live Match */
+.live-badge { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); animation: blink 1s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+.live-text { font-family: 'Rajdhani'; font-size: .8rem; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 2px; }
+.match-score {
+  display: flex; align-items: center; justify-content: center; gap: 20px;
+  margin: 12px 0;
+}
+.score-player { text-align: center; }
+.score-player .sp-av { width: 40px; height: 40px; border-radius: 12px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }
+.score-player .sp-name { font-size: .65rem; font-weight: 600; }
+.score-num { font-family: 'Rajdhani'; font-size: 2.5rem; font-weight: 700; }
+.score-num.winning { color: var(--neon); }
+.score-num.losing { color: var(--text2); }
+.score-dash { font-family: 'Rajdhani'; font-size: 1.5rem; color: var(--text2); }
+.match-updates { margin-top: 12px; }
+.update-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; background: var(--surface); border-radius: 10px;
+  margin-bottom: 6px; font-size: .7rem;
+}
+.update-icon { font-size: 14px; }
+.update-text { color: var(--text2); }
+.update-text strong { color: var(--text); }
+.trash-talk {
+  background: linear-gradient(135deg, rgba(59,130,246,.1), rgba(34,211,238,.1));
+  border-radius: 12px; padding: 10px; margin-top: 8px;
+  border: 1px solid rgba(34,211,238,.15);
+}
+.trash-talk .tt-name { font-size: .6rem; color: var(--neon); font-weight: 600; }
+.trash-talk .tt-msg { font-size: .72rem; color: var(--text); margin-top: 2px; }
+
+/* Mockup 3: Win Screen */
+.win-screen { text-align: center; padding-top: 8px; }
+.win-banner {
+  font-family: 'Rajdhani'; font-size: 1.8rem; font-weight: 700;
+  background: var(--gradient2); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; margin: 8px 0;
+  text-transform: uppercase; letter-spacing: 3px;
+}
+.win-trophy { font-size: 56px; margin: 8px 0; }
+.win-player { font-size: .9rem; font-weight: 600; margin-bottom: 4px; }
+.win-game { font-size: .7rem; color: var(--text2); }
+.win-stats { display: flex; gap: 8px; margin: 14px 0; }
+.win-stat {
+  flex: 1; background: var(--surface); border-radius: 12px; padding: 10px;
+  text-align: center;
+}
+.win-stat .ws-num { font-family: 'Rajdhani'; font-size: 1.3rem; font-weight: 700; color: var(--neon); }
+.win-stat .ws-label { font-size: .5rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+.clip-card {
+  background: var(--surface); border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(59,130,246,.1);
+}
+.clip-preview {
+  height: 80px; background: linear-gradient(135deg, #0f1420, #161d2e);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+}
+.clip-info { padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; }
+.clip-label { font-size: .65rem; color: var(--text2); }
+.clip-share {
+  font-size: .6rem; padding: 4px 12px; border-radius: 6px;
+  background: var(--gradient); color: #fff; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* Features */
+.features { text-align: center; }
+.features h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 48px; letter-spacing: 2px; }
+.feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.feat-card {
+  background: var(--surface); border-radius: var(--card-radius); padding: 32px 24px;
+  border: 1px solid rgba(59,130,246,.08); text-align: left;
+  transition: transform .3s, border-color .3s;
+}
+.feat-card:hover { transform: translateY(-4px); border-color: rgba(59,130,246,.25); }
+.feat-icon { font-size: 28px; margin-bottom: 12px; }
+.feat-card h4 { font-size: 1.05rem; margin-bottom: 8px; letter-spacing: 1px; }
+.feat-card p { font-size: .9rem; color: var(--text2); line-height: 1.5; text-transform: none; font-family: 'Inter'; }
+
+.why-section { text-align: center; }
+.why-section h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 48px; letter-spacing: 2px; }
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.why-card {
+  background: var(--surface); border-radius: 20px; padding: 36px 28px;
+  border: 1px solid rgba(59,130,246,.08);
+}
+.why-card .num {
+  font-family: 'Rajdhani'; font-size: 2.5rem; font-weight: 700;
+  background: var(--gradient); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; margin-bottom: 12px;
+}
+.why-card h4 { margin-bottom: 8px; letter-spacing: 1px; }
+.why-card p { color: var(--text2); line-height: 1.5; font-size: .95rem; text-transform: none; font-family: 'Inter'; }
+
+.palette-section { text-align: center; }
+.palette-section h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 48px; }
+.palette-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+.swatch {
+  width: 80px; height: 80px; border-radius: 16px;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 8px; font-size: .6rem; color: #fff; font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+.type-sample {
+  background: var(--surface); border-radius: 20px; padding: 40px;
+  display: inline-block; text-align: left;
+}
+.type-sample h3 { font-family: 'Rajdhani'; font-size: 2.2rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 3px; }
+.type-sample p { color: var(--text2); text-transform: none; }
+
+.reveal { opacity: 0; transform: translateY(40px); transition: all .7s cubic-bezier(.16,1,.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  section { padding: 60px 16px; }
+  .ps-grid { grid-template-columns: 1fr; }
+  .phone { width: 260px; height: 540px; }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.documentElement.classList.toggle('light'); this.textContent = document.documentElement.classList.contains('light') ? '🌙' : '☀️'">☀️</button>
+
+<section class="hero">
+  <div class="logo-mark">🎮</div>
+  <h1>Clutch</h1>
+  <p class="tagline">Put your skill where your mouth is.</p>
+  <button class="hero-cta">Enter the Arena</button>
+</section>
+
+<section>
+  <div class="ps-grid reveal">
+    <div class="ps-card">
+      <div class="label">The Problem</div>
+      <p>Gamers talk trash all day but there's no real way to settle it — no stakes, no verified results, no clout on the line.</p>
+    </div>
+    <div class="ps-card">
+      <div class="label">The Solution</div>
+      <p>Clutch lets you challenge anyone to a 1v1, bet tokens on the outcome, and auto-verify results through game APIs. Real stakes. Real bragging rights.</p>
+    </div>
+  </div>
+</section>
+
+<section class="mockups-section">
+  <h2 class="reveal">The Arena</h2>
+  <p class="sub reveal">Challenge. Compete. Dominate.</p>
+  <div class="mockup-row">
+    <!-- Challenge Screen -->
+    <div class="phone reveal">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="ch-header">New Challenge</div>
+          <div class="game-selector">
+            <div class="game-chip active">Fortnite</div>
+            <div class="game-chip">Warzone</div>
+            <div class="game-chip">FIFA</div>
+            <div class="game-chip">Rocket</div>
+          </div>
+          <div class="challenge-card">
+            <div class="vs">
+              <div class="player">
+                <div class="p-av" style="background:linear-gradient(135deg,#3b82f6,#22d3ee)">YOU</div>
+                <div class="p-name">MaxDegen</div>
+                <div class="p-rank">#142</div>
+              </div>
+              <div class="vs-badge">VS</div>
+              <div class="player">
+                <div class="p-av" style="background:linear-gradient(135deg,#ef4444,#f97316)">TK</div>
+                <div class="p-name">Tyler_K</div>
+                <div class="p-rank">#89</div>
+              </div>
+            </div>
+            <div class="stake-row">
+              <div class="stake-label">Stake</div>
+              <div class="stake-amount">500 tokens</div>
+            </div>
+          </div>
+          <div class="challenge-card">
+            <div class="vs">
+              <div class="player">
+                <div class="p-av" style="background:linear-gradient(135deg,#3b82f6,#22d3ee)">YOU</div>
+                <div class="p-name">MaxDegen</div>
+                <div class="p-rank">#142</div>
+              </div>
+              <div class="vs-badge">VS</div>
+              <div class="player">
+                <div class="p-av" style="background:linear-gradient(135deg,#a855f7,#ec4899)">SK</div>
+                <div class="p-name">SarahSnipe</div>
+                <div class="p-rank">#203</div>
+              </div>
+            </div>
+            <div class="stake-row">
+              <div class="stake-label">Stake</div>
+              <div class="stake-amount">200 tokens</div>
+            </div>
+          </div>
+          <button class="accept-btn">Send Challenge</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Match -->
+    <div class="phone reveal">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="live-badge">
+            <div class="live-dot"></div>
+            <div class="live-text">Live Match</div>
+          </div>
+          <div style="text-align:center;font-size:.65rem;color:var(--text2);margin-bottom:6px;">Fortnite 1v1 — Build Battle</div>
+          <div class="match-score">
+            <div class="score-player">
+              <div class="sp-av" style="background:linear-gradient(135deg,#3b82f6,#22d3ee)">YOU</div>
+              <div class="sp-name">MaxDegen</div>
+            </div>
+            <div class="score-num winning">3</div>
+            <div class="score-dash">:</div>
+            <div class="score-num losing">1</div>
+            <div class="score-player">
+              <div class="sp-av" style="background:linear-gradient(135deg,#ef4444,#f97316)">TK</div>
+              <div class="sp-name">Tyler_K</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:.6rem;color:var(--text2);">First to 5 — 500 tokens on the line</div>
+          <div class="match-updates">
+            <div class="update-item"><div class="update-icon">💥</div><div class="update-text"><strong>MaxDegen</strong> won Round 3 — headshot</div></div>
+            <div class="update-item"><div class="update-icon">🎯</div><div class="update-text"><strong>Tyler_K</strong> won Round 2 — zone play</div></div>
+            <div class="update-item"><div class="update-icon">⚡</div><div class="update-text"><strong>MaxDegen</strong> won Round 1 — clutch build</div></div>
+          </div>
+          <div class="trash-talk">
+            <div class="tt-name">Tyler_K</div>
+            <div class="tt-msg">Lucky shots bro. This isn't over 💀</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Win Screen -->
+    <div class="phone reveal">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="win-screen">
+            <div class="win-trophy">🏆</div>
+            <div class="win-banner">Victory</div>
+            <div class="win-player">MaxDegen</div>
+            <div class="win-game">Fortnite 1v1 vs Tyler_K</div>
+            <div class="win-stats">
+              <div class="win-stat"><div class="ws-num">5-2</div><div class="ws-label">Final</div></div>
+              <div class="win-stat"><div class="ws-num">+500</div><div class="ws-label">Tokens</div></div>
+              <div class="win-stat"><div class="ws-num">#128</div><div class="ws-label">New Rank</div></div>
+            </div>
+            <div class="clip-card">
+              <div class="clip-preview">🎬</div>
+              <div class="clip-info">
+                <div class="clip-label">Highlight clip ready</div>
+                <div class="clip-share">Share</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <h2 class="reveal">Arsenal</h2>
+  <div class="feat-grid">
+    <div class="feat-card reveal"><div class="feat-icon">⚔️</div><h4>1v1 Challenges</h4><p>Challenge any friend or climb the ladder against strangers. Pick your game, set the stake, and go.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🔗</div><h4>Auto-Verify</h4><p>Game API integration confirms results automatically. No disputes. No screenshots. Just truth.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🏆</div><h4>Global Rankings</h4><p>ELO-based leaderboard across every game. Your rank is your reputation. Every match matters.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🎬</div><h4>Clip Sharing</h4><p>Auto-capture your best moments. Share highlight clips directly from the win screen. Build your legacy.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">💬</div><h4>Trash Talk</h4><p>In-match chat for pre-game hype and mid-game taunts. The psychological warfare is half the game.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">📊</div><h4>Stat Tracking</h4><p>Win rate, streak history, most-played games, biggest wins. Your entire competitive identity in one place.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🎮</div><h4>Multi-Game</h4><p>Fortnite, Warzone, FIFA, Rocket League, Apex, Valorant — one platform for every competitive game.</p></div>
+  </div>
+</section>
+
+<section class="why-section">
+  <h2 class="reveal">Why It Wins</h2>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="num">01</div>
+      <h4>Identity Layer</h4>
+      <p>Your Clutch rank becomes your gaming identity. People flex their rank in bios, Discord, and streams. The brand transcends the app.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="num">02</div>
+      <h4>Stakes = Engagement</h4>
+      <p>A casual match is forgettable. A match with 500 tokens on the line? Your heart rate doubles. Stakes transform engagement metrics.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="num">03</div>
+      <h4>Clip Virality</h4>
+      <p>Highlight clips with Clutch branding spread on TikTok, Twitter, and YouTube. Every shared clip is free acquisition for the platform.</p>
+    </div>
+  </div>
+</section>
+
+<section class="palette-section">
+  <h2 class="reveal">Brand DNA</h2>
+  <div class="palette-row reveal">
+    <div class="swatch" style="background:#080b12">#080B12</div>
+    <div class="swatch" style="background:#0f1420">#0F1420</div>
+    <div class="swatch" style="background:#3b82f6">#3B82F6</div>
+    <div class="swatch" style="background:#22d3ee">#22D3EE</div>
+    <div class="swatch" style="background:#10b981">#10B981</div>
+  </div>
+  <div class="type-sample reveal">
+    <h3>Rajdhani</h3>
+    <p style="font-family:'Rajdhani';font-size:1.5rem;text-transform:uppercase;letter-spacing:3px;margin-bottom:4px;">Aggressive. Fast. Dominant.</p>
+    <p>Inter for body — clarity under pressure.</p>
+  </div>
+</section>
+
+<div style="text-align:center;padding:60px 24px 80px;color:var(--text2);font-size:.85rem;">
+  <p style="font-family:'Rajdhani';font-size:1.2rem;margin-bottom:8px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700;text-transform:uppercase;letter-spacing:3px;">Clutch</p>
+  <p style="text-transform:none;font-family:'Inter';">Concept Deck — 2026</p>
+</div>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

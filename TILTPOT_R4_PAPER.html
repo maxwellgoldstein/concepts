@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TiltPot R4 — Paper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #F2F1ED;
+  --bg-base: #FAFAF8;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #F5F5F2;
+  --text-primary: #1A1A1A;
+  --text-secondary: #5C5C5C;
+  --text-tertiary: #9A9A9A;
+  --accent: #DC3522;
+  --accent-dim: rgba(220, 53, 34, 0.08);
+  --accent-glow: rgba(220, 53, 34, 0.04);
+  --border: rgba(0,0,0,0.07);
+  --border-accent: rgba(220, 53, 34, 0.15);
+  --shadow-paper: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.03);
+  --shadow-hover: 0 2px 4px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06), 0 16px 48px rgba(0,0,0,0.04);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 4px;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+.dark-mode {
+  --bg-deep: #111110;
+  --bg-base: #1A1A18;
+  --bg-card: #222220;
+  --bg-elevated: #2A2A28;
+  --text-primary: #F0EDE8;
+  --text-secondary: #A09C94;
+  --text-tertiary: #6B6862;
+  --accent: #E84432;
+  --accent-dim: rgba(232, 68, 50, 0.12);
+  --accent-glow: rgba(232, 68, 50, 0.06);
+  --border: rgba(255,255,255,0.06);
+  --border-accent: rgba(232, 68, 50, 0.2);
+  --shadow-paper: 0 1px 2px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.15), 0 12px 40px rgba(0,0,0,0.1);
+  --shadow-hover: 0 2px 4px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.2), 0 16px 48px rgba(0,0,0,0.15);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ─── Reveal ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.12s; }
+.reveal-delay-2 { transition-delay: 0.24s; }
+.reveal-delay-3 { transition-delay: 0.36s; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+/* ─── Theme Toggle ─── */
+.theme-toggle {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-paper);
+}
+.theme-toggle:hover { border-color: var(--accent); }
+
+/* ─── Hero ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 32px;
+}
+
+.logo-mark {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 48px;
+  box-shadow: 0 4px 20px rgba(220, 53, 34, 0.2);
+}
+.logo-letter {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 30px;
+  color: #fff;
+  font-style: italic;
+  transform: rotate(-6deg);
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(52px, 9vw, 96px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  margin-bottom: 24px;
+}
+.hero h1 span {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.hero-sub {
+  font-size: clamp(16px, 2vw, 19px);
+  color: var(--text-secondary);
+  font-weight: 400;
+  max-width: 440px;
+  line-height: 1.65;
+}
+
+.concept-badge {
+  margin-top: 48px;
+  padding: 8px 20px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-paper);
+}
+
+/* ─── Section ─── */
+section { padding: 100px 0; }
+.section-label {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--accent);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+.section-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  max-width: 480px;
+  line-height: 1.7;
+}
+
+/* ─── Divider ─── */
+.editorial-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 80px 0;
+  color: var(--text-tertiary);
+}
+.editorial-divider::before, .editorial-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.editorial-divider span {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* ─── Palette ─── */
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.swatch {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: var(--shadow-paper);
+}
+.swatch:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+.swatch-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.5));
+}
+.swatch-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.swatch-hex {
+  font-size: 11px;
+  font-family: var(--mono);
+  color: rgba(255,255,255,0.7);
+}
+
+/* ─── Typography ─── */
+.type-showcase {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.type-row {
+  display: flex;
+  align-items: baseline;
+  gap: 40px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+}
+.type-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: var(--mono);
+  min-width: 110px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.type-display {
+  font-family: var(--serif);
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.type-heading {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 600;
+  font-style: italic;
+}
+.type-body {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 480px;
+}
+.type-caption {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
+}
+.type-mono {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* ─── Phone Mockups ─── */
+.phones-section { padding: 100px 0; }
+.phones-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: 60px;
+}
+.phone-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.phone-label {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+.phone {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 9/19.5;
+  background: var(--bg-base);
+  border-radius: 40px;
+  border: 3px solid var(--bg-elevated);
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-hover), 0 0 0 1px var(--border);
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.phone-screen::-webkit-scrollbar { display: none; }
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 24px 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dynamic-island {
+  width: 120px;
+  height: 32px;
+  background: #000;
+  border-radius: 20px;
+  margin: 0 auto 8px;
+}
+.dark-mode .dynamic-island { background: #000; }
+
+.screen-header {
+  padding: 8px 20px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.screen-title {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.screen-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  font-family: var(--serif);
+  font-style: italic;
+}
+
+/* Paper cards */
+.paper-card {
+  margin: 0 12px 12px;
+  padding: 18px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.02);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.feed-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.feed-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.av-1 { background: #4A4A4A; }
+.av-2 { background: #8B6914; }
+.av-3 { background: #2D5A3D; }
+.av-4 { background: #6B3A5D; }
+.av-5 { background: var(--accent); }
+.feed-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.feed-time {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+.feed-action {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+.feed-action strong { color: var(--text-primary); }
+.feed-action .accent { color: var(--accent); font-weight: 600; }
+
+.market-card-mini {
+  padding: 12px 14px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-xs);
+  margin-bottom: 12px;
+}
+.market-card-q {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.thin-bar {
+  height: 2px;
+  background: var(--bg-deep);
+  border-radius: 1px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.thin-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+.reactions {
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* Market detail */
+.market-hero { padding: 16px 20px; }
+.market-question {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.market-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-bottom: 16px;
+}
+.live-dot {
+  color: var(--accent);
+  font-weight: 600;
+}
+.live-dot::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 4px;
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+.big-probability {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.big-prob-num {
+  font-family: var(--mono);
+  font-size: 52px;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.big-prob-label {
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+.market-bar {
+  height: 3px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.market-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.side-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0 20px 20px;
+}
+.side-btn {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+}
+.side-btn.yes {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--border-accent);
+}
+.side-btn.no {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+}
+
+.bettors { padding: 0 20px 12px; }
+.bettors-label {
+  font-family: var(--serif);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-tertiary);
+  margin-bottom: 12px;
+}
+.bettor-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.bettor-row:last-child { border-bottom: none; }
+.bettor-av { width: 24px; height: 24px; border-radius: 50%; }
+.bettor-name { flex: 1; font-size: 13px; font-weight: 500; }
+.bettor-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.bettor-badge.yes { background: var(--accent-dim); color: var(--accent); }
+.bettor-badge.no { background: rgba(100,100,100,0.1); color: var(--text-tertiary); }
+.bettor-amt {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.comments { padding: 0 20px 20px; }
+.comment {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+}
+.comment-av { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; }
+.comment-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+.comment-text strong { color: var(--text-primary); }
+
+/* Win */
+.win-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 40px 20px;
+  text-align: center;
+}
+.win-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+.win-title {
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.win-sub {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin-bottom: 28px;
+  font-style: italic;
+  font-family: var(--serif);
+}
+.win-amount {
+  font-family: var(--mono);
+  font-size: 56px;
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.win-label {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-bottom: 28px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+}
+.win-ref {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-secondary);
+  max-width: 240px;
+  line-height: 1.5;
+  margin-bottom: 28px;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-paper);
+}
+.win-crew {
+  display: flex;
+  margin-bottom: 12px;
+}
+.win-crew-av {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-base);
+  margin-left: -6px;
+}
+.win-crew-av:first-child { margin-left: 0; }
+.win-crew-text {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-bottom: 24px;
+}
+.win-btn {
+  padding: 13px 28px;
+  border-radius: 100px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  box-shadow: 0 4px 16px rgba(220, 53, 34, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.win-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 24px rgba(220, 53, 34, 0.3);
+}
+
+/* Bottom nav */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg-base);
+  position: sticky;
+  bottom: 0;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+.nav-item.active { color: var(--accent); }
+.nav-icon {
+  font-size: 16px;
+}
+
+/* Logo */
+.logo-section { padding: 100px 0; text-align: center; }
+.logo-concept {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 48px;
+}
+.logo-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(220, 53, 34, 0.2);
+}
+.logo-icon-letter {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 24px;
+  color: #fff;
+  font-style: italic;
+  transform: rotate(-6deg);
+}
+.logo-wordmark {
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.logo-wordmark span { color: var(--accent); font-style: italic; }
+
+footer {
+  text-align: center;
+  padding: 60px 32px;
+  border-top: 1px solid var(--border);
+  color: var(--text-tertiary);
+  font-size: 13px;
+  font-family: var(--serif);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .phones-grid { grid-template-columns: 1fr; gap: 48px; }
+  .palette-grid { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .type-row { flex-direction: column; gap: 8px; }
+  .container { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.body.classList.toggle('dark-mode'); this.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙'">🌙</button>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="reveal">
+    <div class="logo-mark"><span class="logo-letter">T</span></div>
+  </div>
+  <h1 class="reveal reveal-delay-1">Tilt<span>Pot</span></h1>
+  <p class="hero-sub reveal reveal-delay-2">Beautifully crafted predictions between friends who know each other too well</p>
+  <div class="concept-badge reveal reveal-delay-3">R4 Concept — Paper</div>
+</section>
+
+<!-- PALETTE -->
+<section class="container">
+  <div class="reveal">
+    <span class="section-label">Colour</span>
+    <h2 class="section-title">Paper Palette</h2>
+    <p class="section-desc">Warm ivory, deep ink, and a single vermillion that punctuates like a wax seal on parchment.</p>
+  </div>
+  <div class="palette-grid reveal reveal-delay-1">
+    <div class="swatch" style="background: #FAFAF8;"><div class="swatch-info"><div class="swatch-name">Ivory</div><div class="swatch-hex">#FAFAF8</div></div></div>
+    <div class="swatch" style="background: #F2F1ED;"><div class="swatch-info"><div class="swatch-name">Parchment</div><div class="swatch-hex">#F2F1ED</div></div></div>
+    <div class="swatch" style="background: #1A1A1A;"><div class="swatch-info"><div class="swatch-name">Ink</div><div class="swatch-hex">#1A1A1A</div></div></div>
+    <div class="swatch" style="background: #DC3522;"><div class="swatch-info"><div class="swatch-name">Vermillion</div><div class="swatch-hex">#DC3522</div></div></div>
+    <div class="swatch" style="background: #9A9A9A;"><div class="swatch-info"><div class="swatch-name">Graphite</div><div class="swatch-hex">#9A9A9A</div></div></div>
+  </div>
+</section>
+
+<div class="container"><div class="editorial-divider reveal"><span>typography</span></div></div>
+
+<!-- TYPOGRAPHY -->
+<section class="container">
+  <div class="reveal">
+    <span class="section-label">Typefaces</span>
+    <h2 class="section-title">Serif meets Sans</h2>
+    <p class="section-desc">Playfair Display for headlines that command. Inter for body that breathes. A magazine in your pocket.</p>
+  </div>
+  <div class="type-showcase">
+    <div class="type-row reveal">
+      <span class="type-label">Display</span>
+      <span class="type-display">Who's calling it?</span>
+    </div>
+    <div class="type-row reveal reveal-delay-1">
+      <span class="type-label">Heading</span>
+      <span class="type-heading">Your crew, your markets</span>
+    </div>
+    <div class="type-row reveal reveal-delay-2">
+      <span class="type-label">Body</span>
+      <span class="type-body">Create prediction markets with your inner circle. Stake tokens on anything — from who shows up late to who breaks first. Beautiful chaos, beautifully organized.</span>
+    </div>
+    <div class="type-row reveal reveal-delay-2">
+      <span class="type-label">Caption</span>
+      <span class="type-caption">3 friends bet · 420 tokens in pot · Closes in 2h</span>
+    </div>
+    <div class="type-row reveal reveal-delay-3">
+      <span class="type-label">Data</span>
+      <span class="type-mono">1,250 TILT</span>
+    </div>
+  </div>
+</section>
+
+<!-- PHONE MOCKUPS -->
+<section class="phones-section container">
+  <div class="reveal">
+    <span class="section-label">Screens</span>
+    <h2 class="section-title">Every page, a spread</h2>
+    <p class="section-desc">The app reads like a magazine. Each screen is a page you want to linger on.</p>
+  </div>
+  <div class="phones-grid">
+    <!-- FEED -->
+    <div class="phone-wrapper reveal">
+      <span class="phone-label">The Feed</span>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span>9:41</span><span>●●●</span>
+          </div>
+          <div class="dynamic-island"></div>
+          <div class="screen-header">
+            <span class="screen-title">Feed</span>
+            <div class="screen-avatar">M</div>
+          </div>
+
+          <div class="paper-card">
+            <div class="feed-user">
+              <div class="feed-avatar av-1"></div>
+              <div><div class="feed-name">Jake</div><div class="feed-time">Just now</div></div>
+            </div>
+            <div class="feed-action"><strong>Jake</strong> bet <span class="accent">250 TILT</span> on YES</div>
+            <div class="market-card-mini">
+              <div class="market-card-q">Will Marcus actually show up on time Friday?</div>
+              <div style="font-size: 11px; color: var(--text-tertiary);">23% chance · 6 bettors</div>
+              <div class="thin-bar"><div class="thin-fill" style="width: 23%;"></div></div>
+            </div>
+            <div class="reactions"><span>🔥 4</span><span>💬 3</span></div>
+          </div>
+
+          <div class="paper-card">
+            <div class="feed-user">
+              <div class="feed-avatar av-2"></div>
+              <div><div class="feed-name">Priya</div><div class="feed-time">18 min ago</div></div>
+            </div>
+            <div class="feed-action"><strong>Priya</strong> created a new market</div>
+            <div class="market-card-mini">
+              <div class="market-card-q">Does Dylan ask for the aux cord at the cabin trip?</div>
+              <div style="font-size: 11px; color: var(--text-tertiary);">87% chance · 4 bettors</div>
+              <div class="thin-bar"><div class="thin-fill" style="width: 87%;"></div></div>
+            </div>
+            <div class="reactions"><span>🔥 11</span><span>💬 6</span></div>
+          </div>
+
+          <div class="paper-card">
+            <div class="feed-user">
+              <div class="feed-avatar av-3"></div>
+              <div><div class="feed-name">Sof</div><div class="feed-time">1h ago</div></div>
+            </div>
+            <div class="feed-action"><strong>Sof</strong> commented: "Marcus you are COOKED lmaooo 💀"</div>
+            <div class="reactions"><span>😂 14</span><span>💬 2</span></div>
+          </div>
+
+          <div class="paper-card">
+            <div class="feed-user">
+              <div class="feed-avatar av-4"></div>
+              <div><div class="feed-name">Dylan</div><div class="feed-time">3h ago</div></div>
+            </div>
+            <div class="feed-action"><strong>Dylan</strong> bet <span class="accent">500 TILT</span> on NO — <em>"Sleep on me fr"</em></div>
+            <div class="market-card-mini">
+              <div class="market-card-q">Will Dylan finish the marathon under 4 hours?</div>
+              <div class="thin-bar"><div class="thin-fill" style="width: 34%;"></div></div>
+            </div>
+            <div class="reactions"><span>🔥 8</span><span>💬 12</span></div>
+          </div>
+
+          <div class="bottom-nav">
+            <div class="nav-item active"><span class="nav-icon">◆</span>Feed</div>
+            <div class="nav-item"><span class="nav-icon">◇</span>Markets</div>
+            <div class="nav-item"><span class="nav-icon">+</span>Create</div>
+            <div class="nav-item"><span class="nav-icon">◎</span>Crew</div>
+            <div class="nav-item"><span class="nav-icon">○</span>You</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKET DETAIL -->
+    <div class="phone-wrapper reveal reveal-delay-1">
+      <span class="phone-label">Market Detail</span>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+          <div class="dynamic-island"></div>
+          <div class="screen-header">
+            <span style="font-size: 14px; color: var(--accent); font-weight: 500;">← Back</span>
+            <span style="font-size: 12px; color: var(--text-tertiary); font-family: var(--serif); font-style: italic;">The Squad</span>
+          </div>
+
+          <div class="market-hero">
+            <div class="market-question">Will Marcus actually show up on time Friday?</div>
+            <div class="market-meta">
+              <span class="live-dot">LIVE</span>
+              <span>Closes Fri 7pm</span>
+              <span>6 bettors</span>
+            </div>
+            <div class="big-probability">
+              <span class="big-prob-num">23%</span>
+              <span class="big-prob-label">chance YES</span>
+            </div>
+            <div class="market-bar"><div class="market-bar-fill" style="width: 23%"></div></div>
+          </div>
+
+          <div class="side-btns">
+            <div class="side-btn yes">Bet YES ↑</div>
+            <div class="side-btn no">Bet NO ↓</div>
+          </div>
+
+          <div class="bettors">
+            <div class="bettors-label">Who's wagered</div>
+            <div class="bettor-row">
+              <div class="bettor-av av-1"></div>
+              <span class="bettor-name">Jake</span>
+              <span class="bettor-badge yes">YES</span>
+              <span class="bettor-amt">250</span>
+            </div>
+            <div class="bettor-row">
+              <div class="bettor-av av-2"></div>
+              <span class="bettor-name">Priya</span>
+              <span class="bettor-badge no">NO</span>
+              <span class="bettor-amt">400</span>
+            </div>
+            <div class="bettor-row">
+              <div class="bettor-av av-3"></div>
+              <span class="bettor-name">Sof</span>
+              <span class="bettor-badge no">NO</span>
+              <span class="bettor-amt">300</span>
+            </div>
+            <div class="bettor-row">
+              <div class="bettor-av av-5"></div>
+              <span class="bettor-name">Dylan</span>
+              <span class="bettor-badge yes">YES</span>
+              <span class="bettor-amt">150</span>
+            </div>
+          </div>
+
+          <div class="comments">
+            <div class="bettors-label">The discourse</div>
+            <div class="comment">
+              <div class="comment-av av-3"></div>
+              <div class="comment-text"><strong>Sof</strong> Marcus has been late to everything since 2019</div>
+            </div>
+            <div class="comment">
+              <div class="comment-av av-1"></div>
+              <div class="comment-text"><strong>Jake</strong> He set 3 alarms. I believe in redemption arcs</div>
+            </div>
+            <div class="comment">
+              <div class="comment-av av-4"></div>
+              <div class="comment-text"><strong>Dylan</strong> bro is NOT showing up on time 💀</div>
+            </div>
+          </div>
+
+          <div class="bottom-nav">
+            <div class="nav-item"><span class="nav-icon">◆</span>Feed</div>
+            <div class="nav-item active"><span class="nav-icon">◇</span>Markets</div>
+            <div class="nav-item"><span class="nav-icon">+</span>Create</div>
+            <div class="nav-item"><span class="nav-icon">◎</span>Crew</div>
+            <div class="nav-item"><span class="nav-icon">○</span>You</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIN -->
+    <div class="phone-wrapper reveal reveal-delay-2">
+      <span class="phone-label">Victory</span>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+          <div class="dynamic-island"></div>
+          <div class="win-screen">
+            <div class="win-icon">🏆</div>
+            <div class="win-title">You called it.</div>
+            <div class="win-sub">Market resolved — NO wins</div>
+            <div class="win-amount">+750</div>
+            <div class="win-label">TILT tokens won</div>
+            <div class="win-ref">"Will Marcus actually show up on time Friday?"<br><span style="font-size: 12px; color: var(--text-tertiary); font-style: normal; font-family: var(--sans);">He did not. Classic Marcus.</span></div>
+            <div class="win-crew">
+              <div class="win-crew-av av-2"></div>
+              <div class="win-crew-av av-3"></div>
+              <div class="win-crew-av av-4"></div>
+            </div>
+            <div class="win-crew-text">You won with Priya, Sof & Dylan</div>
+            <button class="win-btn">Share the W</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGO -->
+<section class="logo-section container">
+  <div class="reveal">
+    <span class="section-label">Brand</span>
+    <h2 class="section-title">Logo Concept</h2>
+  </div>
+  <div class="logo-concept reveal reveal-delay-1">
+    <div class="logo-icon"><span class="logo-icon-letter">T</span></div>
+    <span class="logo-wordmark">tilt<span>pot</span></span>
+  </div>
+</section>
+
+<footer>TiltPot R4 — Paper Concept</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

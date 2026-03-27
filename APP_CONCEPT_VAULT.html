@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vault — App Concept</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fdf8f5;
+  --surface: #ffffff;
+  --surface2: #f9f2ee;
+  --text: #2d1f2a;
+  --text2: #8a7580;
+  --rose: #c48b7c;
+  --rose-gold: #e8c4b8;
+  --plum: #5c3d5e;
+  --plum-light: #f0e4f0;
+  --blush: #f5e1d8;
+  --card-radius: 24px;
+}
+html.dark {
+  --bg: #1a1118;
+  --surface: #241a22;
+  --surface2: #2e222c;
+  --text: #f0e6eb;
+  --text2: #9a8590;
+  --plum-light: #3a2838;
+  --blush: #2e1e28;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  transition: background .4s, color .4s;
+}
+h1, h2 { font-family: 'Cormorant Garamond', serif; }
+h3, h4 { font-family: 'Nunito Sans', sans-serif; font-weight: 700; }
+
+.theme-toggle {
+  position: fixed; top: 20px; right: 20px; z-index: 100;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--surface); border: 1px solid rgba(196,139,124,.2);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; transition: all .3s;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+.theme-toggle:hover { transform: scale(1.1); }
+
+section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  position: relative;
+}
+.hero::before {
+  content: ''; position: absolute; width: 800px; height: 800px;
+  background: radial-gradient(ellipse, rgba(196,139,124,.1), rgba(92,61,94,.05), transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+}
+.logo-mark {
+  width: 88px; height: 88px; border-radius: 24px;
+  background: linear-gradient(135deg, var(--rose), var(--plum));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px; margin-bottom: 32px;
+  box-shadow: 0 16px 48px rgba(196,139,124,.3);
+  animation: glow 3s ease-in-out infinite alternate;
+}
+@keyframes glow {
+  0% { box-shadow: 0 16px 48px rgba(196,139,124,.2); }
+  100% { box-shadow: 0 16px 60px rgba(196,139,124,.4); }
+}
+.hero h1 {
+  font-size: clamp(3.5rem, 9vw, 6rem);
+  color: var(--text); line-height: 1; font-weight: 400;
+}
+.hero h1 em {
+  font-style: italic; color: var(--rose);
+}
+.tagline {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem); color: var(--text2);
+  margin-top: 20px; max-width: 400px; line-height: 1.6;
+}
+.hero-cta {
+  margin-top: 40px; padding: 16px 40px; border-radius: 50px;
+  background: linear-gradient(135deg, var(--rose), var(--plum));
+  color: #fff; font-weight: 600; font-size: 1rem; border: none;
+  cursor: pointer; transition: all .3s;
+}
+.hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(196,139,124,.35);
+}
+
+.ps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 48px; }
+.ps-card {
+  background: var(--surface); border-radius: var(--card-radius);
+  padding: 40px; border: 1px solid rgba(196,139,124,.1);
+  transition: transform .3s;
+}
+.ps-card:hover { transform: translateY(-4px); }
+.ps-card .label {
+  font-size: .75rem; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--rose); font-weight: 700; margin-bottom: 16px;
+}
+.ps-card p { font-size: 1.1rem; line-height: 1.6; color: var(--text2); }
+
+.mockups-section { text-align: center; }
+.mockups-section h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 16px; }
+.mockups-section .sub { color: var(--text2); margin-bottom: 60px; font-size: 1.05rem; }
+.mockup-row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+
+.phone {
+  width: 280px; height: 580px; background: var(--surface);
+  border-radius: 40px; padding: 10px; position: relative;
+  box-shadow: 0 24px 80px rgba(92,61,94,.12);
+  border: 1px solid rgba(196,139,124,.1);
+  transition: transform .4s; flex-shrink: 0;
+}
+html.dark .phone { background: #1a1118; box-shadow: 0 24px 80px rgba(0,0,0,.4); }
+.phone:hover { transform: translateY(-8px); }
+.phone-screen {
+  width: 100%; height: 100%; border-radius: 32px;
+  background: var(--bg); overflow: hidden;
+}
+.phone-notch {
+  width: 120px; height: 28px; background: var(--surface);
+  border-radius: 0 0 16px 16px; margin: 0 auto;
+}
+html.dark .phone-notch { background: #1a1118; }
+.phone-content { padding: 6px 14px; }
+
+/* Mockup 1: Shared Timeline */
+.tl-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 8px 0;
+}
+.tl-header .couple { font-family: 'Cormorant Garamond'; font-size: 1rem; font-weight: 600; }
+.tl-header .heart { color: var(--rose); font-size: .8rem; }
+.tl-counter {
+  text-align: center; background: var(--blush); border-radius: 14px;
+  padding: 10px; margin-bottom: 10px;
+}
+.tl-counter .days { font-family: 'Cormorant Garamond'; font-size: 1.6rem; font-weight: 700; color: var(--plum); }
+.tl-counter .lbl { font-size: .6rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+.memory-card {
+  border-radius: 16px; overflow: hidden; margin-bottom: 10px;
+  background: var(--surface); border: 1px solid rgba(196,139,124,.08);
+}
+.memory-photo {
+  width: 100%; height: 100px; object-fit: cover;
+  background: linear-gradient(135deg, var(--rose-gold), var(--blush));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+.memory-info { padding: 10px 12px; }
+.memory-info .m-date { font-size: .6rem; color: var(--rose); font-weight: 600; }
+.memory-info .m-caption { font-size: .75rem; color: var(--text); margin-top: 3px; }
+
+/* Mockup 2: Date Night Spinner */
+.spinner-title { text-align: center; font-family: 'Cormorant Garamond'; font-size: 1.1rem; margin: 12px 0 6px; }
+.spinner-sub { text-align: center; font-size: .7rem; color: var(--text2); margin-bottom: 16px; }
+.spinner-wheel {
+  width: 180px; height: 180px; margin: 0 auto 16px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--rose) 0deg 51deg, var(--plum) 51deg 103deg,
+    var(--rose-gold) 103deg 154deg, #d4956a 154deg 206deg,
+    var(--rose) 206deg 257deg, var(--plum) 257deg 309deg,
+    var(--rose-gold) 309deg 360deg
+  );
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 32px rgba(196,139,124,.2);
+  animation: spin-slow 20s linear infinite;
+  position: relative;
+}
+@keyframes spin-slow { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+.spinner-center {
+  width: 80px; height: 80px; border-radius: 50%; background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .7rem; font-weight: 700; color: var(--plum); text-align: center;
+  animation: spin-slow 20s linear infinite reverse;
+}
+.date-options {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+}
+.date-opt {
+  background: var(--surface2); border-radius: 12px; padding: 10px 8px;
+  text-align: center; font-size: .7rem; transition: background .2s;
+}
+.date-opt:hover { background: var(--blush); }
+.date-opt .d-icon { font-size: 20px; margin-bottom: 4px; }
+.date-opt .d-name { font-weight: 600; font-size: .65rem; color: var(--text); }
+
+/* Mockup 3: Memory */
+.otd-badge {
+  text-align: center; margin: 12px 0 8px;
+}
+.otd-badge span {
+  background: linear-gradient(135deg, var(--rose), var(--plum));
+  color: #fff; font-size: .65rem; font-weight: 700;
+  padding: 6px 16px; border-radius: 20px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.otd-card {
+  background: var(--surface); border-radius: 20px; overflow: hidden;
+  border: 1px solid rgba(196,139,124,.1); margin-bottom: 10px;
+}
+.otd-photo {
+  width: 100%; height: 140px;
+  background: linear-gradient(135deg, #e8c4b8, #f5e1d8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+}
+.otd-info { padding: 14px; }
+.otd-info .otd-date { font-family: 'Cormorant Garamond'; font-size: 1.1rem; color: var(--plum); font-weight: 600; }
+.otd-info .otd-caption { font-size: .78rem; color: var(--text2); margin-top: 4px; line-height: 1.4; }
+.otd-reactions {
+  display: flex; gap: 8px; margin-top: 8px;
+}
+.otd-react {
+  background: var(--blush); border-radius: 10px; padding: 4px 10px;
+  font-size: .75rem;
+}
+
+/* Features */
+.features { text-align: center; }
+.features h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 48px; }
+.feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.feat-card {
+  background: var(--surface); border-radius: 20px; padding: 32px 24px;
+  border: 1px solid rgba(196,139,124,.08); text-align: left;
+  transition: transform .3s;
+}
+.feat-card:hover { transform: translateY(-4px); }
+.feat-icon { font-size: 28px; margin-bottom: 12px; }
+.feat-card h4 { font-size: 1rem; margin-bottom: 8px; }
+.feat-card p { font-size: .9rem; color: var(--text2); line-height: 1.5; }
+
+.why-section { text-align: center; }
+.why-section h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 48px; }
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.why-card {
+  background: var(--surface); border-radius: 20px; padding: 36px 28px;
+  border: 1px solid rgba(196,139,124,.08);
+}
+.why-card .num {
+  font-family: 'Cormorant Garamond'; font-size: 2.5rem; font-weight: 700;
+  color: var(--rose); margin-bottom: 12px;
+}
+.why-card h4 { margin-bottom: 8px; }
+.why-card p { color: var(--text2); line-height: 1.5; font-size: .95rem; }
+
+.palette-section { text-align: center; }
+.palette-section h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 48px; }
+.palette-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+.swatch {
+  width: 80px; height: 80px; border-radius: 20px;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 8px; font-size: .6rem; font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+.type-sample {
+  background: var(--surface); border-radius: 20px; padding: 40px;
+  display: inline-block; text-align: left;
+}
+.type-sample h3 { font-family: 'Cormorant Garamond'; font-size: 2rem; margin-bottom: 8px; }
+.type-sample p { color: var(--text2); }
+
+.reveal { opacity: 0; transform: translateY(40px); transition: all .7s cubic-bezier(.16,1,.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  section { padding: 60px 16px; }
+  .ps-grid { grid-template-columns: 1fr; }
+  .phone { width: 260px; height: 540px; }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.documentElement.classList.toggle('dark'); this.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙'">🌙</button>
+
+<section class="hero">
+  <div class="logo-mark">💎</div>
+  <h1><em>Vault</em></h1>
+  <p class="tagline">Your relationship, beautifully kept.</p>
+  <button class="hero-cta">See the Vision</button>
+</section>
+
+<section>
+  <div class="ps-grid reveal">
+    <div class="ps-card">
+      <div class="label">The Problem</div>
+      <p>Couples share their most intimate moments across scattered apps — texts, photos, notes — with no dedicated, private space that's just theirs.</p>
+    </div>
+    <div class="ps-card">
+      <div class="label">The Solution</div>
+      <p>Vault is a beautiful shared world for two — photos, memories, bucket lists, date ideas, and anniversary countdowns in one private, ad-free space.</p>
+    </div>
+  </div>
+</section>
+
+<section class="mockups-section">
+  <h2 class="reveal">The Experience</h2>
+  <p class="sub reveal">A world built for two.</p>
+  <div class="mockup-row">
+    <!-- Shared Timeline -->
+    <div class="phone reveal">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="tl-header">
+            <div class="couple">Max & Emma</div>
+            <div class="heart">together</div>
+          </div>
+          <div class="tl-counter">
+            <div class="days">847</div>
+            <div class="lbl">Days Together</div>
+          </div>
+          <div class="memory-card">
+            <div class="memory-photo">🌅</div>
+            <div class="memory-info">
+              <div class="m-date">Today</div>
+              <div class="m-caption">"Coffee on the balcony before the world wakes up"</div>
+            </div>
+          </div>
+          <div class="memory-card">
+            <div class="memory-photo" style="background:linear-gradient(135deg,#d4956a,#e8c4b8)">🍝</div>
+            <div class="memory-info">
+              <div class="m-date">Yesterday</div>
+              <div class="m-caption">"Finally nailed that pasta recipe"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Night Spinner -->
+    <div class="phone reveal">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="spinner-title">Date Night Roulette</div>
+          <div class="spinner-sub">Spin for tonight's adventure</div>
+          <div class="spinner-wheel">
+            <div class="spinner-center">SPIN<br>ME</div>
+          </div>
+          <div class="date-options">
+            <div class="date-opt"><div class="d-icon">🎬</div><div class="d-name">Movie Night</div></div>
+            <div class="date-opt"><div class="d-icon">👨‍🍳</div><div class="d-name">Cook Together</div></div>
+            <div class="date-opt"><div class="d-icon">🌙</div><div class="d-name">Stargazing</div></div>
+            <div class="date-opt"><div class="d-icon">🎨</div><div class="d-name">Paint & Sip</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- On This Day Memory -->
+    <div class="phone reveal">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="otd-badge"><span>On This Day</span></div>
+          <div class="otd-card">
+            <div class="otd-photo">🏖️</div>
+            <div class="otd-info">
+              <div class="otd-date">1 Year Ago Today</div>
+              <div class="otd-caption">Our first trip together. You got sunburned within 20 minutes and I still thought you were cute.</div>
+              <div class="otd-reactions">
+                <div class="otd-react">❤️ Max</div>
+                <div class="otd-react">😂 Emma</div>
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--surface);border-radius:16px;padding:14px;border:1px solid rgba(196,139,124,.08);">
+            <div style="font-size:.65rem;color:var(--rose);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Coming Up</div>
+            <div style="font-size:.8rem;font-weight:600;">Anniversary in 18 days</div>
+            <div style="font-size:.7rem;color:var(--text2);margin-top:3px;">Shared wishlist has 3 ideas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <h2 class="reveal">Built With Love</h2>
+  <div class="feat-grid">
+    <div class="feat-card reveal"><div class="feat-icon">📸</div><h4>Shared Timeline</h4><p>A beautiful photo journal that both of you build together. Every moment, one tap to save forever.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🎰</div><h4>Date Night Roulette</h4><p>"What should we do tonight?" is now a game. Spin the wheel, add your own ideas, never run out of plans.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">💌</div><h4>On This Day</h4><p>Daily memory resurface — "1 year ago today." The nostalgia hit that keeps couples coming back every morning.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🎯</div><h4>Bucket List</h4><p>Shared dreams, tracked together. From "visit Japan" to "learn to salsa." Check them off as you go.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🎁</div><h4>Wishlists</h4><p>Never scramble for gift ideas again. Both partners quietly add hints all year long.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🔒</div><h4>Completely Private</h4><p>No followers. No likes. No algorithm. No ads. Just you two and your world. Period.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">📅</div><h4>Anniversary Countdowns</h4><p>Every milestone tracked — first date, first trip, the big one. Never forget again.</p></div>
+  </div>
+</section>
+
+<section class="why-section">
+  <h2 class="reveal">Why It Wins</h2>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="num">01</div>
+      <h4>Emotional Moat</h4>
+      <p>Every memory stored makes Vault harder to leave. After 2 years, your entire relationship lives here. Switching cost is emotional, not financial.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="num">02</div>
+      <h4>Daily Return Trigger</h4>
+      <p>"On This Day" memories create a morning ritual for couples. You open Vault like you check the weather — every single day.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="num">03</div>
+      <h4>Word of Mouth</h4>
+      <p>Couples talk to other couples. "Have you tried Vault?" spreads naturally at dinners, weddings, and group trips. Zero ad spend growth.</p>
+    </div>
+  </div>
+</section>
+
+<section class="palette-section">
+  <h2 class="reveal">Brand DNA</h2>
+  <div class="palette-row reveal">
+    <div class="swatch" style="background:#fdf8f5;color:#555;border:1px solid #e0d5cf">#FDF8F5</div>
+    <div class="swatch" style="background:#c48b7c;color:#fff">#C48B7C</div>
+    <div class="swatch" style="background:#e8c4b8;color:#5c3d5e">#E8C4B8</div>
+    <div class="swatch" style="background:#5c3d5e;color:#fff">#5C3D5E</div>
+    <div class="swatch" style="background:#2d1f2a;color:#fff">#2D1F2A</div>
+  </div>
+  <div class="type-sample reveal">
+    <h3 style="font-style:italic;">Cormorant Garamond</h3>
+    <p style="font-family:'Cormorant Garamond';font-size:1.4rem;margin-bottom:4px;font-style:italic;">Romantic. Intimate. Timeless.</p>
+    <p>Nunito Sans for body — soft, round, approachable.</p>
+  </div>
+</section>
+
+<div style="text-align:center;padding:60px 24px 80px;color:var(--text2);font-size:.85rem;">
+  <p style="font-family:'Cormorant Garamond';font-size:1.3rem;margin-bottom:8px;color:var(--rose);font-style:italic;">Vault</p>
+  <p>Concept Deck — 2026</p>
+</div>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

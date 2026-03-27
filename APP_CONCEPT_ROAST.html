@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoastMe — App Concept</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #141420;
+  --surface2: #1c1c2e;
+  --text: #f0f0f5;
+  --text2: #8888a0;
+  --purple: #a855f7;
+  --pink: #ec4899;
+  --gradient: linear-gradient(135deg, #a855f7, #ec4899);
+  --gradient2: linear-gradient(135deg, #ec4899, #f97316);
+  --card-radius: 24px;
+}
+html.light {
+  --bg: #f8f7fc;
+  --surface: #ffffff;
+  --surface2: #f0eef5;
+  --text: #1a1a2e;
+  --text2: #6b6b80;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  transition: background .4s, color .4s;
+}
+h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed; top: 20px; right: 20px; z-index: 100;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--surface2); border: 1px solid rgba(168,85,247,.3);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; transition: all .3s;
+}
+.theme-toggle:hover { transform: scale(1.1); border-color: var(--purple); }
+
+/* Sections */
+section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+
+/* Hero */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  position: relative;
+}
+.hero::before {
+  content: ''; position: absolute; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(168,85,247,.15), transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+}
+.logo-mark {
+  width: 100px; height: 100px; border-radius: 28px;
+  background: var(--gradient); display: flex; align-items: center; justify-content: center;
+  font-size: 48px; margin-bottom: 32px;
+  box-shadow: 0 20px 60px rgba(168,85,247,.3);
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.hero h1 {
+  font-size: clamp(3rem, 8vw, 6rem); font-weight: 700;
+  background: var(--gradient); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; line-height: 1.05;
+}
+.tagline {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: var(--text2);
+  margin-top: 20px; max-width: 500px; line-height: 1.5;
+}
+.hero-cta {
+  margin-top: 40px; padding: 16px 40px; border-radius: 50px;
+  background: var(--gradient); color: #fff; font-weight: 600;
+  font-size: 1.05rem; border: none; cursor: pointer;
+  transition: transform .3s, box-shadow .3s;
+}
+.hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(168,85,247,.4);
+}
+
+/* Problem / Solution */
+.ps-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  margin-top: 48px;
+}
+.ps-card {
+  background: var(--surface); border-radius: var(--card-radius);
+  padding: 40px; border: 1px solid rgba(168,85,247,.1);
+  transition: transform .3s, box-shadow .3s;
+}
+.ps-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,.3);
+}
+.ps-card .label {
+  font-size: .75rem; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--purple); font-weight: 600; margin-bottom: 16px;
+}
+.ps-card p { font-size: 1.15rem; line-height: 1.6; color: var(--text2); }
+
+/* Phone mockups */
+.mockups-section { text-align: center; }
+.mockups-section h2 {
+  font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 16px;
+}
+.mockups-section .sub { color: var(--text2); margin-bottom: 60px; font-size: 1.1rem; }
+.mockup-row {
+  display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+}
+.phone {
+  width: 280px; height: 580px; background: #000;
+  border-radius: 40px; padding: 12px; position: relative;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5);
+  transition: transform .4s;
+  flex-shrink: 0;
+}
+.phone:hover { transform: translateY(-8px) scale(1.02); }
+.phone-screen {
+  width: 100%; height: 100%; border-radius: 32px;
+  background: #0d0d18; overflow: hidden; position: relative;
+}
+.phone-notch {
+  width: 120px; height: 28px; background: #000; border-radius: 0 0 16px 16px;
+  margin: 0 auto; position: relative; z-index: 2;
+}
+.phone-content { padding: 8px 16px; }
+
+/* Mockup 1: Prompt Card */
+.prompt-time { font-size: .7rem; color: #666; text-align: center; margin: 8px 0; }
+.prompt-card {
+  background: linear-gradient(135deg, #1a1030, #2a1040);
+  border-radius: 20px; padding: 24px 16px; text-align: center;
+  border: 1px solid rgba(168,85,247,.3); margin-bottom: 16px;
+}
+.prompt-emoji { font-size: 40px; margin-bottom: 12px; }
+.prompt-text { font-family: 'Space Grotesk', sans-serif; font-size: .95rem; font-weight: 600; color: #f0f0f5; line-height: 1.3; }
+.prompt-timer { font-size: .7rem; color: var(--pink); margin-top: 12px; }
+.friend-row { display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+.friend-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: #fff; font-weight: 600; cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+.friend-avatar:hover { transform: scale(1.15); box-shadow: 0 0 16px rgba(168,85,247,.5); }
+.vote-btn {
+  width: 100%; padding: 12px; border-radius: 14px; margin-top: 16px;
+  background: var(--gradient); border: none; color: #fff;
+  font-weight: 600; font-size: .85rem;
+}
+
+/* Mockup 2: Voting */
+.voting-header { font-size: .8rem; color: #888; text-align: center; margin: 12px 0 8px; }
+.vote-option {
+  display: flex; align-items: center; gap: 10px;
+  background: #161625; border-radius: 14px; padding: 12px;
+  margin-bottom: 8px; border: 1px solid transparent;
+  transition: border-color .2s;
+}
+.vote-option:hover { border-color: var(--purple); }
+.vote-option .av {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #fff; font-weight: 600; flex-shrink: 0;
+}
+.vote-option .name { font-size: .8rem; font-weight: 500; color: #ddd; }
+.vote-option .handle { font-size: .65rem; color: #666; }
+
+/* Mockup 3: Results */
+.reveal-title { text-align: center; margin: 12px 0 4px; }
+.reveal-title span { font-size: .75rem; color: var(--pink); font-weight: 600; }
+.result-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 14px; margin-bottom: 6px;
+}
+.result-item.gold { background: linear-gradient(135deg, rgba(168,85,247,.2), rgba(236,72,153,.2)); border: 1px solid rgba(168,85,247,.3); }
+.result-item .rank { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.1rem; width: 24px; }
+.result-item .rank.first { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.result-item .r-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #fff; font-weight: 600; }
+.result-item .r-name { font-size: .78rem; font-weight: 500; color: #ddd; }
+.result-item .r-votes { margin-left: auto; font-size: .7rem; color: var(--purple); font-weight: 600; }
+.result-bar { height: 3px; border-radius: 2px; background: var(--gradient); margin-top: 4px; }
+
+/* Features */
+.features { text-align: center; }
+.features h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 48px; }
+.feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.feat-card {
+  background: var(--surface); border-radius: 20px; padding: 32px 24px;
+  border: 1px solid rgba(168,85,247,.08); text-align: left;
+  transition: transform .3s, border-color .3s;
+}
+.feat-card:hover { transform: translateY(-4px); border-color: rgba(168,85,247,.3); }
+.feat-icon { font-size: 28px; margin-bottom: 12px; }
+.feat-card h4 { font-size: 1.05rem; margin-bottom: 8px; }
+.feat-card p { font-size: .9rem; color: var(--text2); line-height: 1.5; }
+
+/* Why it wins */
+.why-section { text-align: center; }
+.why-section h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 48px; }
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.why-card {
+  background: var(--surface); border-radius: 20px; padding: 36px 28px;
+  border: 1px solid rgba(168,85,247,.08);
+}
+.why-card .num {
+  font-family: 'Space Grotesk'; font-size: 2.5rem; font-weight: 700;
+  background: var(--gradient); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; margin-bottom: 12px;
+}
+.why-card h4 { margin-bottom: 8px; }
+.why-card p { color: var(--text2); line-height: 1.5; font-size: .95rem; }
+
+/* Palette */
+.palette-section { text-align: center; }
+.palette-section h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 48px; }
+.palette-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+.swatch {
+  width: 80px; height: 80px; border-radius: 20px;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 8px; font-size: .65rem; color: #fff; font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+.type-sample {
+  background: var(--surface); border-radius: 20px; padding: 40px;
+  display: inline-block; text-align: left;
+}
+.type-sample h3 { font-size: 2rem; margin-bottom: 8px; }
+.type-sample p { color: var(--text2); }
+
+/* Animations */
+.reveal { opacity: 0; transform: translateY(40px); transition: all .7s cubic-bezier(.16,1,.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Mobile */
+@media (max-width: 768px) {
+  section { padding: 60px 16px; }
+  .ps-grid { grid-template-columns: 1fr; }
+  .phone { width: 260px; height: 540px; }
+  .mockup-row { gap: 24px; }
+}
+@media (max-width: 480px) {
+  .phone { width: 240px; height: 500px; }
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.documentElement.classList.toggle('light'); this.textContent = document.documentElement.classList.contains('light') ? '🌙' : '☀️'">☀️</button>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="logo-mark">🔥</div>
+  <h1>RoastMe</h1>
+  <p class="tagline">Your friends are talking. Find out what they said.</p>
+  <button class="hero-cta">See How It Works</button>
+</section>
+
+<!-- PROBLEM / SOLUTION -->
+<section>
+  <div class="ps-grid reveal">
+    <div class="ps-card">
+      <div class="label">The Problem</div>
+      <p>Group chats are full of inside jokes and unspoken opinions, but nobody ever says what they really think — because saying it out loud is awkward.</p>
+    </div>
+    <div class="ps-card">
+      <div class="label">The Solution</div>
+      <p>RoastMe turns those thoughts into a game — daily anonymous prompts where friends vote on each other, with results revealed at 9pm to keep everyone hooked.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MOCKUPS -->
+<section class="mockups-section">
+  <h2 class="reveal">The Experience</h2>
+  <p class="sub reveal">Three screens. Infinite drama.</p>
+  <div class="mockup-row">
+    <!-- Phone 1: Daily Prompt -->
+    <div class="phone reveal">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <p class="prompt-time">Today's Prompt — 4 of 5</p>
+          <div class="prompt-card">
+            <div class="prompt-emoji">💀</div>
+            <div class="prompt-text">Who has the worst fashion sense?</div>
+            <div class="prompt-timer">Reveal in 6h 23m</div>
+          </div>
+          <div class="friend-row">
+            <div class="friend-avatar" style="background:linear-gradient(135deg,#a855f7,#6d28d9)">JM</div>
+            <div class="friend-avatar" style="background:linear-gradient(135deg,#ec4899,#be185d)">SK</div>
+            <div class="friend-avatar" style="background:linear-gradient(135deg,#f97316,#ea580c)">AL</div>
+            <div class="friend-avatar" style="background:linear-gradient(135deg,#14b8a6,#0d9488)">RW</div>
+            <div class="friend-avatar" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">TC</div>
+          </div>
+          <button class="vote-btn">Cast Your Vote</button>
+          <p style="text-align:center;font-size:.65rem;color:#555;margin-top:12px">3 of 8 friends have voted</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone 2: Voting -->
+    <div class="phone reveal" style="animation-delay:.15s">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <p class="voting-header">Who would survive a zombie apocalypse <strong style="color:#ec4899">last</strong>?</p>
+          <div class="vote-option">
+            <div class="av" style="background:linear-gradient(135deg,#a855f7,#6d28d9)">JM</div>
+            <div><div class="name">Jake M.</div><div class="handle">@jakethesnake</div></div>
+          </div>
+          <div class="vote-option" style="border-color:var(--purple);">
+            <div class="av" style="background:linear-gradient(135deg,#ec4899,#be185d)">SK</div>
+            <div><div class="name">Sarah K.</div><div class="handle">@sarahkay</div></div>
+          </div>
+          <div class="vote-option">
+            <div class="av" style="background:linear-gradient(135deg,#f97316,#ea580c)">AL</div>
+            <div><div class="name">Alex L.</div><div class="handle">@alexlion</div></div>
+          </div>
+          <div class="vote-option">
+            <div class="av" style="background:linear-gradient(135deg,#14b8a6,#0d9488)">RW</div>
+            <div><div class="name">Riley W.</div><div class="handle">@rileywild</div></div>
+          </div>
+          <div class="vote-option">
+            <div class="av" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">TC</div>
+            <div><div class="name">Tyler C.</div><div class="handle">@tylerchamp</div></div>
+          </div>
+          <button class="vote-btn" style="margin-top:12px">Confirm Vote</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone 3: Results -->
+    <div class="phone reveal" style="animation-delay:.3s">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-content">
+          <div class="reveal-title"><span>9:00 PM REVEAL</span></div>
+          <p style="text-align:center;font-size:.85rem;font-weight:600;color:#f0f0f5;margin:4px 0 12px;">Worst fashion sense? 💀</p>
+          <div class="result-item gold">
+            <div class="rank first">1</div>
+            <div class="r-av" style="background:linear-gradient(135deg,#a855f7,#6d28d9)">JM</div>
+            <div><div class="r-name">Jake M.</div>
+            <div class="result-bar" style="width:90%"></div></div>
+            <div class="r-votes">6 votes</div>
+          </div>
+          <div class="result-item" style="background:rgba(255,255,255,.03)">
+            <div class="rank" style="color:#888">2</div>
+            <div class="r-av" style="background:linear-gradient(135deg,#f97316,#ea580c)">AL</div>
+            <div><div class="r-name">Alex L.</div>
+            <div class="result-bar" style="width:50%"></div></div>
+            <div class="r-votes">3 votes</div>
+          </div>
+          <div class="result-item" style="background:rgba(255,255,255,.02)">
+            <div class="rank" style="color:#555">3</div>
+            <div class="r-av" style="background:linear-gradient(135deg,#ec4899,#be185d)">SK</div>
+            <div><div class="r-name">Sarah K.</div>
+            <div class="result-bar" style="width:20%"></div></div>
+            <div class="r-votes">1 vote</div>
+          </div>
+          <div style="text-align:center;margin-top:16px;">
+            <div style="font-size:.7rem;color:#666;margin-bottom:6px;">Jake's Reaction</div>
+            <div style="background:#1a1030;border-radius:12px;padding:10px;font-size:.8rem;color:#ddd">"I feel attacked 😤🔥"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <h2 class="reveal">Features That Slap</h2>
+  <div class="feat-grid">
+    <div class="feat-card reveal"><div class="feat-icon">🎯</div><h4>Daily Prompts</h4><p>5 fresh prompts every day — funny, savage, and weirdly specific. Never the same game twice.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🕘</div><h4>9pm Reveals</h4><p>Results drop at 9pm sharp. The anticipation is the product. Everyone checking at the same time.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">👻</div><h4>Anonymous Voting</h4><p>No one knows who voted for who. Say what you actually think — zero consequences.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🔥</div><h4>Roast Streaks</h4><p>Vote every day to keep your streak alive. Miss a day, lose your crown. FOMO as a feature.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">💬</div><h4>Reaction Replies</h4><p>Winners can post a reaction when they get called out. The comments are half the fun.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">👑</div><h4>Weekly Crowns</h4><p>End-of-week superlatives. Who got roasted the most? Who dodged every bullet? Trophies forever.</p></div>
+    <div class="feat-card reveal"><div class="feat-icon">🔔</div><h4>Push Notifications</h4><p>"Your friends answered a question about you..." — the notification you cannot ignore.</p></div>
+  </div>
+</section>
+
+<!-- WHY IT WINS -->
+<section class="why-section">
+  <h2 class="reveal">Why It Wins</h2>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="num">01</div>
+      <h4>Curiosity Loop</h4>
+      <p>The notification "Someone answered about you" is the most irresistible push in social apps. Gas proved it. We weaponize it.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="num">02</div>
+      <h4>Daily Ritual</h4>
+      <p>Fixed reveal time creates appointment viewing. Every friend group has a 9pm moment now. Retention built into the clock.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="num">03</div>
+      <h4>Viral by Nature</h4>
+      <p>You literally need friends to play. Every user recruits 5-10 more. The game doesn't work alone — growth is the mechanic.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PALETTE -->
+<section class="palette-section">
+  <h2 class="reveal">Brand DNA</h2>
+  <div class="palette-row reveal">
+    <div class="swatch" style="background:#0a0a0f">#0A0A0F</div>
+    <div class="swatch" style="background:#141420">#141420</div>
+    <div class="swatch" style="background:#a855f7">#A855F7</div>
+    <div class="swatch" style="background:#ec4899">#EC4899</div>
+    <div class="swatch" style="background:#f97316">#F97316</div>
+  </div>
+  <div class="type-sample reveal">
+    <h3>Space Grotesk</h3>
+    <p style="font-family:'Space Grotesk';font-size:1.5rem;margin-bottom:4px;">Bold. Sharp. Unapologetic.</p>
+    <p>Inter for body text — clean, legible, modern.</p>
+  </div>
+</section>
+
+<div style="text-align:center;padding:60px 24px 80px;color:var(--text2);font-size:.85rem;">
+  <p style="font-family:'Space Grotesk';font-size:1.2rem;margin-bottom:8px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600;">RoastMe</p>
+  <p>Concept Deck — 2026</p>
+</div>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
