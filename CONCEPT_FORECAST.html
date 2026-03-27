@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forecast — Pitch Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0C1524;
+  --bg2: #152238;
+  --blue: #3B82F6;
+  --blue-light: #60A5FA;
+  --orange: #F97316;
+  --orange-light: #FB923C;
+  --text: #E8EDF5;
+  --text-dim: #6B7FA8;
+  --card: rgba(59,130,246,0.06);
+  --border: rgba(59,130,246,0.15);
+}
+.light {
+  --bg: #F5F8FC;
+  --bg2: #E8EDF5;
+  --text: #0C1524;
+  --text-dim: #6B7FA8;
+  --card: rgba(59,130,246,0.05);
+  --border: rgba(59,130,246,0.15);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; transition: background 0.4s, color 0.4s; }
+h1,h2,h3,.mono { font-family:'DM Sans',sans-serif; }
+.mono { font-family:'Space Mono',monospace; }
+
+.theme-toggle { position:fixed; top:20px; right:20px; z-index:100; width:48px; height:48px; border-radius:50%; background:var(--bg2); border:1px solid var(--border); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:20px; transition:all 0.3s; }
+.theme-toggle:hover { transform:scale(1.1); }
+.back { position:fixed; top:20px; left:20px; z-index:100; width:48px; height:48px; border-radius:50%; background:var(--bg2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; text-decoration:none; color:var(--text); font-size:18px; transition:all 0.3s; }
+
+.hero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:80px 24px 60px; position:relative; }
+.hero::before { content:''; position:absolute; top:-150px; left:50%; transform:translateX(-50%); width:700px; height:700px; background:radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(249,115,22,0.08) 40%, transparent 65%); pointer-events:none; }
+.hero-badge { display:inline-flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:100px; padding:8px 20px; font-size:13px; font-weight:600; color:var(--blue-light); margin-bottom:32px; }
+.hero h1 { font-size:clamp(56px,12vw,100px); font-weight:700; line-height:0.95; margin-bottom:20px; background:linear-gradient(135deg, var(--blue-light), var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.hero .tagline { font-size:clamp(17px,3vw,24px); color:var(--text-dim); max-width:580px; line-height:1.5; margin-bottom:40px; }
+.hero .cta { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, var(--blue), var(--orange)); color:#fff; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:700; padding:16px 36px; border-radius:100px; text-decoration:none; transition:all 0.3s; }
+.hero .cta:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(59,130,246,0.3); }
+
+.section { padding:100px 24px; max-width:1100px; margin:0 auto; }
+.section-label { font-size:12px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:3px; margin-bottom:12px; }
+.section h2 { font-size:clamp(32px,5vw,48px); font-weight:700; margin-bottom:20px; line-height:1.1; }
+.section .desc { color:var(--text-dim); font-size:17px; line-height:1.7; max-width:600px; margin-bottom:48px; }
+
+.viral-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px; margin-top:40px; }
+.viral-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; transition:all 0.4s; }
+.viral-card:hover { transform:translateY(-4px); border-color:var(--blue); }
+.viral-icon { width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg, var(--blue), var(--orange)); display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:20px; }
+.viral-card h3 { font-size:20px; font-weight:700; margin-bottom:10px; }
+.viral-card p { color:var(--text-dim); font-size:14px; line-height:1.6; }
+
+.mockup-section { padding:80px 24px; overflow:hidden; }
+.mockup-row { display:flex; gap:32px; justify-content:center; align-items:flex-start; flex-wrap:wrap; max-width:1200px; margin:0 auto; }
+.mockup-container { text-align:center; }
+.mockup-label { font-size:13px; font-weight:600; color:var(--orange); text-transform:uppercase; letter-spacing:2px; margin-bottom:16px; }
+.phone { width:280px; height:580px; background:#0C1524; border-radius:40px; border:3px solid rgba(59,130,246,0.15); position:relative; overflow:hidden; box-shadow:0 40px 80px rgba(0,0,0,0.5); }
+.phone-notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:28px; background:#000; border-radius:0 0 18px 18px; z-index:10; }
+.phone-screen { width:100%; height:100%; padding:40px 16px 16px; display:flex; flex-direction:column; }
+
+/* S1: Sunday Predictions */
+.pred-header { text-align:center; margin-bottom:12px; }
+.pred-header .day { font-size:11px; color:var(--orange); font-weight:700; text-transform:uppercase; letter-spacing:1.5px; }
+.pred-header h3 { font-size:16px; font-weight:700; margin-top:4px; }
+.pred-friend { background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.12); border-radius:16px; padding:14px; margin-bottom:10px; }
+.pred-friend-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.pred-av { width:32px; height:32px; border-radius:50%; flex-shrink:0; }
+.pred-friend-name { font-size:14px; font-weight:700; }
+.pred-item { display:flex; align-items:center; gap:8px; margin-bottom:6px; padding:8px 10px; background:rgba(0,0,0,0.2); border-radius:10px; font-size:12px; }
+.pred-item .will { color:#22C55E; font-weight:700; font-size:10px; text-transform:uppercase; }
+.pred-item .wont { color:#EF4444; font-weight:700; font-size:10px; text-transform:uppercase; }
+
+/* S2: Mid-Week Tracker */
+.track-header { text-align:center; margin-bottom:12px; }
+.track-header h3 { font-size:15px; font-weight:700; }
+.track-header p { font-size:11px; color:var(--text-dim); }
+.track-card { background:rgba(59,130,246,0.06); border-radius:14px; padding:14px; margin-bottom:8px; }
+.track-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.track-card-header .name { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; }
+.track-card-header .status { font-size:10px; font-weight:700; padding:3px 8px; border-radius:100px; }
+.track-pred { display:flex; align-items:center; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:12px; }
+.track-pred:last-child { border:none; }
+.track-pred .check { font-size:14px; }
+
+/* S3: Friday Results */
+.results-header { text-align:center; margin-bottom:14px; }
+.results-header .tag { display:inline-flex; align-items:center; gap:4px; background:rgba(249,115,22,0.15); color:var(--orange); font-size:11px; font-weight:700; padding:4px 12px; border-radius:100px; margin-bottom:6px; }
+.results-header h3 { font-size:16px; font-weight:700; }
+.leaderboard { margin-bottom:12px; }
+.lb-item { display:flex; align-items:center; gap:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:12px; margin-bottom:6px; }
+.lb-item.first { background:linear-gradient(135deg, rgba(249,115,22,0.12), rgba(59,130,246,0.08)); border:1px solid rgba(249,115,22,0.2); }
+.lb-rank { font-size:14px; font-weight:800; color:var(--text-dim); width:20px; text-align:center; font-family:'Space Mono',monospace; }
+.lb-item.first .lb-rank { color:var(--orange); }
+.lb-av { width:28px; height:28px; border-radius:50%; flex-shrink:0; }
+.lb-info { flex:1; }
+.lb-name { font-size:13px; font-weight:700; }
+.lb-acc { font-size:11px; color:var(--text-dim); }
+.lb-pct { font-size:16px; font-weight:800; font-family:'Space Mono',monospace; }
+.lb-item.first .lb-pct { color:var(--orange); }
+.result-detail { background:rgba(255,255,255,0.03); border-radius:12px; padding:12px; margin-top:8px; }
+.result-detail .title { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.result-line { display:flex; align-items:center; justify-content:space-between; padding:5px 0; font-size:12px; }
+.result-line .pred-text { color:var(--text); }
+.result-line .outcome { font-weight:700; }
+.correct { color:#22C55E; }
+.wrong { color:#EF4444; }
+
+.features-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px; }
+.feature { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; }
+.feature .num { font-size:28px; font-weight:700; color:var(--blue); font-family:'Space Mono',monospace; margin-bottom:8px; }
+.feature h4 { font-size:15px; font-weight:700; margin-bottom:6px; }
+.feature p { font-size:13px; color:var(--text-dim); line-height:1.5; }
+
+.palette-section { padding:80px 24px; max-width:1100px; margin:0 auto; }
+.palette-row { display:flex; gap:16px; flex-wrap:wrap; margin-top:24px; }
+.swatch { width:100px; height:100px; border-radius:16px; display:flex; align-items:flex-end; padding:10px; font-size:11px; font-weight:600; }
+.type-sample { margin-top:32px; }
+.type-sample h3 { font-size:40px; font-weight:700; margin-bottom:8px; }
+.type-sample p { font-size:16px; color:var(--text-dim); font-family:'Space Mono',monospace; }
+
+.fade-up { opacity:0; transform:translateY(40px); transition:all 0.8s cubic-bezier(0.16,1,0.3,1); }
+.fade-up.visible { opacity:1; transform:translateY(0); }
+.fade-up.d1 { transition-delay:0.1s; }
+.fade-up.d2 { transition-delay:0.2s; }
+.fade-up.d3 { transition-delay:0.3s; }
+
+@media(max-width:768px) {
+  .phone { width:240px; height:500px; }
+  .section { padding:60px 20px; }
+}
+</style>
+</head>
+<body>
+<a href="index.html" class="back">←</a>
+<button class="theme-toggle" onclick="document.body.classList.toggle('light');this.textContent=document.body.classList.contains('light')?'🌙':'☀️'">☀️</button>
+
+<div class="hero">
+  <div class="hero-badge fade-up">🌤 New Concept</div>
+  <h1 class="fade-up d1">Forecast</h1>
+  <p class="tagline fade-up d2">Predict your friends' week before it happens.<br>Sunday predictions. Friday results. Accuracy leaderboard.</p>
+  <a href="#viral" class="cta fade-up d3">See Why It Goes Viral ↓</a>
+</div>
+
+<div class="section" id="viral">
+  <div class="section-label fade-up">The Viral Loop</div>
+  <h2 class="fade-up d1">Why Friends Can't Stop Predicting</h2>
+  <p class="desc fade-up d2">Forecast turns your friends into the subject of a prediction market. Making predictions ABOUT someone means talking about them, thinking about them, and forcing them to engage.</p>
+  <div class="viral-grid">
+    <div class="viral-card fade-up">
+      <div class="viral-icon">🔮</div>
+      <h3>Predictions = Engagement</h3>
+      <p>"Someone predicted you WILL text your ex this week." That notification forces a download. You're the subject of predictions you can't see — unless you join.</p>
+    </div>
+    <div class="viral-card fade-up d1">
+      <div class="viral-icon">📈</div>
+      <h3>Weekly Ritual</h3>
+      <p>Sunday predictions, mid-week check-ins, Friday reveals. Three engagement moments per week that become ingrained in your group's routine. Miss a week and you're out.</p>
+    </div>
+    <div class="viral-card fade-up d2">
+      <div class="viral-icon">🏅</div>
+      <h3>Accuracy = Bragging Rights</h3>
+      <p>Who knows the group best? The accuracy leaderboard creates healthy competition. "I predicted all 3 of Jake's moves perfectly" becomes a flex worth sharing.</p>
+    </div>
+  </div>
+</div>
+
+<div class="mockup-section">
+  <div class="mockup-row">
+    <div class="mockup-container fade-up">
+      <div class="mockup-label">Sunday Predictions</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#0C1524;">
+          <div class="pred-header">
+            <div class="day">Sunday Setup</div>
+            <h3>Predict Their Week</h3>
+          </div>
+          <div class="pred-friend">
+            <div class="pred-friend-header">
+              <div class="pred-av" style="background:linear-gradient(135deg,#3B82F6,#60A5FA);"></div>
+              <div class="pred-friend-name">Jake</div>
+            </div>
+            <div class="pred-item"><span class="will">WILL</span> Go to the gym 3+ times</div>
+            <div class="pred-item"><span class="wont">WON'T</span> Cook a single meal at home</div>
+            <div class="pred-item"><span class="will">WILL</span> Post an Instagram story</div>
+          </div>
+          <div class="pred-friend">
+            <div class="pred-friend-header">
+              <div class="pred-av" style="background:linear-gradient(135deg,#EC4899,#F472B6);"></div>
+              <div class="pred-friend-name">Maya</div>
+            </div>
+            <div class="pred-item"><span class="wont">WON'T</span> Text her ex back</div>
+            <div class="pred-item"><span class="will">WILL</span> Be late to brunch Saturday</div>
+            <div class="pred-item"><span class="will">WILL</span> Start a new Netflix show</div>
+          </div>
+          <div style="width:100%;padding:12px;background:linear-gradient(135deg,#3B82F6,#F97316);color:#fff;border-radius:12px;font-weight:700;font-size:14px;text-align:center;margin-top:10px;">Lock In Predictions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup-container fade-up d1">
+      <div class="mockup-label">Mid-Week Tracker</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#0C1524;">
+          <div class="track-header">
+            <h3>Week Progress</h3>
+            <p>Wednesday — 3 days remaining</p>
+          </div>
+          <div class="track-card">
+            <div class="track-card-header">
+              <div class="name"><div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#60A5FA);"></div> Jake</div>
+              <div class="status" style="background:rgba(34,197,94,0.15);color:#22C55E;">2/3 on track</div>
+            </div>
+            <div class="track-pred"><span>Gym 3+ times</span><span class="check">✅ 2 so far</span></div>
+            <div class="track-pred"><span>Cook at home</span><span class="check">✅ Still no</span></div>
+            <div class="track-pred"><span>Post IG story</span><span class="check">⏳ Not yet</span></div>
+          </div>
+          <div class="track-card">
+            <div class="track-card-header">
+              <div class="name"><div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#EC4899,#F472B6);"></div> Maya</div>
+              <div class="status" style="background:rgba(239,68,68,0.15);color:#EF4444;">1/3 on track</div>
+            </div>
+            <div class="track-pred"><span>Text her ex</span><span class="check">❌ She did</span></div>
+            <div class="track-pred"><span>Late to brunch</span><span class="check">⏳ Saturday</span></div>
+            <div class="track-pred"><span>New Netflix show</span><span class="check">✅ Started one</span></div>
+          </div>
+          <div class="track-card">
+            <div class="track-card-header">
+              <div class="name"><div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#10B981,#34D399);"></div> Sam</div>
+              <div class="status" style="background:rgba(34,197,94,0.15);color:#22C55E;">3/3 on track</div>
+            </div>
+            <div class="track-pred"><span>Skip Monday class</span><span class="check">✅ Skipped</span></div>
+            <div class="track-pred"><span>Buy new shoes</span><span class="check">✅ Bought</span></div>
+            <div class="track-pred"><span>Complain about work</span><span class="check">✅ Day 1</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup-container fade-up d2">
+      <div class="mockup-label">Friday Results</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#0C1524;">
+          <div class="results-header">
+            <div class="tag">📊 WEEK 12 RESULTS</div>
+            <h3>Accuracy Leaderboard</h3>
+          </div>
+          <div class="leaderboard">
+            <div class="lb-item first">
+              <div class="lb-rank">1</div>
+              <div class="lb-av" style="background:linear-gradient(135deg,#F97316,#FB923C);"></div>
+              <div class="lb-info"><div class="lb-name">You</div><div class="lb-acc">8/9 correct</div></div>
+              <div class="lb-pct">89%</div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank">2</div>
+              <div class="lb-av" style="background:linear-gradient(135deg,#3B82F6,#60A5FA);"></div>
+              <div class="lb-info"><div class="lb-name">Jake</div><div class="lb-acc">7/9 correct</div></div>
+              <div class="lb-pct">78%</div>
+            </div>
+            <div class="lb-item">
+              <div class="lb-rank">3</div>
+              <div class="lb-av" style="background:linear-gradient(135deg,#EC4899,#F472B6);"></div>
+              <div class="lb-info"><div class="lb-name">Maya</div><div class="lb-acc">6/9 correct</div></div>
+              <div class="lb-pct">67%</div>
+            </div>
+          </div>
+          <div class="result-detail">
+            <div class="title">Your predictions this week</div>
+            <div class="result-line"><span class="pred-text">Jake: Gym 3x</span><span class="outcome correct">Correct</span></div>
+            <div class="result-line"><span class="pred-text">Jake: No cooking</span><span class="outcome correct">Correct</span></div>
+            <div class="result-line"><span class="pred-text">Jake: Post story</span><span class="outcome correct">Correct</span></div>
+            <div class="result-line"><span class="pred-text">Maya: No ex text</span><span class="outcome wrong">Wrong</span></div>
+            <div class="result-line"><span class="pred-text">Maya: Late brunch</span><span class="outcome correct">Correct</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label fade-up">Features</div>
+  <h2 class="fade-up d1">What Makes Forecast Stick</h2>
+  <div class="features-grid" style="margin-top:40px;">
+    <div class="feature fade-up"><div class="num">01</div><h4>Sunday Prediction Ritual</h4><p>Every Sunday, make 3 predictions per friend. Quick, fun, forces you to think about each person's upcoming week.</p></div>
+    <div class="feature fade-up d1"><div class="num">02</div><h4>Mid-Week Check-Ins</h4><p>Friends confirm or deny predictions in real-time. "Did you actually go to the gym?" keeps everyone engaged mid-week.</p></div>
+    <div class="feature fade-up d2"><div class="num">03</div><h4>Friday Reveal</h4><p>Full accuracy breakdown every Friday. Who predicted the group best? Leaderboard bragging rights on the line.</p></div>
+    <div class="feature fade-up"><div class="num">04</div><h4>Accuracy Streaks</h4><p>Track consecutive weeks of 80%+ accuracy. The "Oracle" badge for anyone who hits 90%+ three weeks running.</p></div>
+    <div class="feature fade-up d1"><div class="num">05</div><h4>Prediction History</h4><p>"Remember when everyone predicted Sam would fail his diet? Week 1 he proved everyone wrong." Memories built in.</p></div>
+    <div class="feature fade-up d2"><div class="num">06</div><h4>Predictability Score</h4><p>How predictable are you? If friends nail your predictions, you're predictable. If you surprise them, you're chaotic.</p></div>
+  </div>
+</div>
+
+<div class="palette-section">
+  <div class="section-label fade-up">Design System</div>
+  <h2 class="fade-up d1">Color & Typography</h2>
+  <div class="palette-row fade-up d2">
+    <div class="swatch" style="background:#3B82F6;color:#fff;">Blue</div>
+    <div class="swatch" style="background:#60A5FA;color:#fff;">Sky</div>
+    <div class="swatch" style="background:#F97316;color:#fff;">Orange</div>
+    <div class="swatch" style="background:#0C1524;color:#E8EDF5;border:1px solid rgba(255,255,255,0.1);">Navy</div>
+    <div class="swatch" style="background:#152238;color:#E8EDF5;border:1px solid rgba(255,255,255,0.1);">Surface</div>
+  </div>
+  <div class="type-sample fade-up d3">
+    <h3>DM Sans</h3>
+    <p style="font-family:'Space Mono',monospace;">Space Mono for data</p>
+  </div>
+</div>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold:0.15 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Unfiltered — Pitch Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0A0A;
+  --bg2: #1A1A1A;
+  --pink: #EC4899;
+  --pink-light: #F472B6;
+  --green: #22D85A;
+  --green-light: #4ADE80;
+  --text: #F5F5F5;
+  --text-dim: #737373;
+  --card: rgba(236,72,153,0.06);
+  --border: rgba(236,72,153,0.15);
+}
+.light {
+  --bg: #FAFAFA;
+  --bg2: #F0F0F0;
+  --text: #0A0A0A;
+  --text-dim: #737373;
+  --card: rgba(236,72,153,0.05);
+  --border: rgba(236,72,153,0.15);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; overflow-x:hidden; transition: background 0.4s, color 0.4s; }
+h1,h2,h3 { font-family:'Outfit',sans-serif; }
+
+.theme-toggle { position:fixed; top:20px; right:20px; z-index:100; width:48px; height:48px; border-radius:50%; background:var(--bg2); border:1px solid var(--border); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:20px; transition:all 0.3s; }
+.theme-toggle:hover { transform:scale(1.1); }
+.back { position:fixed; top:20px; left:20px; z-index:100; width:48px; height:48px; border-radius:50%; background:var(--bg2); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; text-decoration:none; color:var(--text); font-size:18px; transition:all 0.3s; }
+
+.hero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:80px 24px 60px; position:relative; }
+.hero::before { content:''; position:absolute; top:-100px; left:30%; width:500px; height:500px; background:radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 60%); pointer-events:none; }
+.hero::after { content:''; position:absolute; top:0; right:20%; width:400px; height:400px; background:radial-gradient(circle, rgba(34,216,90,0.12) 0%, transparent 60%); pointer-events:none; }
+.hero-badge { display:inline-flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:100px; padding:8px 20px; font-size:13px; font-weight:600; color:var(--pink); margin-bottom:32px; }
+.hero h1 { font-size:clamp(52px,12vw,100px); font-weight:900; line-height:0.95; margin-bottom:20px; }
+.hero h1 .pink { color:var(--pink); }
+.hero h1 .green { color:var(--green); }
+.hero .tagline { font-size:clamp(17px,3vw,24px); color:var(--text-dim); max-width:560px; line-height:1.5; margin-bottom:40px; }
+.hero .cta { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg, var(--pink), var(--green)); color:#fff; font-family:'Outfit',sans-serif; font-size:16px; font-weight:700; padding:16px 36px; border-radius:100px; text-decoration:none; transition:all 0.3s; }
+.hero .cta:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(236,72,153,0.3); }
+
+.section { padding:100px 24px; max-width:1100px; margin:0 auto; }
+.section-label { font-size:12px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:3px; margin-bottom:12px; }
+.section h2 { font-size:clamp(32px,5vw,48px); font-weight:800; margin-bottom:20px; line-height:1.1; }
+.section .desc { color:var(--text-dim); font-size:17px; line-height:1.7; max-width:600px; margin-bottom:48px; }
+
+.viral-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px; margin-top:40px; }
+.viral-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; transition:all 0.4s; }
+.viral-card:hover { transform:translateY(-4px); border-color:var(--pink); }
+.viral-icon { width:56px; height:56px; border-radius:16px; background:linear-gradient(135deg, var(--pink), var(--green)); display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:20px; }
+.viral-card h3 { font-size:20px; font-weight:700; margin-bottom:10px; }
+.viral-card p { color:var(--text-dim); font-size:14px; line-height:1.6; }
+
+.mockup-section { padding:80px 24px; overflow:hidden; }
+.mockup-row { display:flex; gap:32px; justify-content:center; align-items:flex-start; flex-wrap:wrap; max-width:1200px; margin:0 auto; }
+.mockup-container { text-align:center; }
+.mockup-label { font-size:13px; font-weight:600; color:var(--pink); text-transform:uppercase; letter-spacing:2px; margin-bottom:16px; }
+.phone { width:280px; height:580px; background:#0A0A0A; border-radius:40px; border:3px solid rgba(236,72,153,0.15); position:relative; overflow:hidden; box-shadow:0 40px 80px rgba(0,0,0,0.5); }
+.phone-notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:28px; background:#000; border-radius:0 0 18px 18px; z-index:10; }
+.phone-screen { width:100%; height:100%; padding:40px 16px 16px; display:flex; flex-direction:column; }
+
+/* S1: Photo Roulette Spinner */
+.spin-header { text-align:center; margin-bottom:10px; }
+.spin-header h3 { font-size:18px; font-weight:800; }
+.spin-header p { font-size:11px; color:var(--text-dim); }
+.roulette { width:200px; height:200px; margin:10px auto; border-radius:50%; border:4px solid var(--pink); position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; animation:spin-glow 3s ease-in-out infinite; }
+@keyframes spin-glow {
+  0%,100% { box-shadow:0 0 20px rgba(236,72,153,0.3); }
+  50% { box-shadow:0 0 40px rgba(236,72,153,0.6), 0 0 80px rgba(34,216,90,0.2); }
+}
+.roulette-inner { width:180px; height:180px; border-radius:50%; background:linear-gradient(135deg, rgba(236,72,153,0.15), rgba(34,216,90,0.08)); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.roulette-inner .icon { font-size:40px; margin-bottom:8px; }
+.roulette-inner .text { font-size:12px; font-weight:700; color:var(--pink); text-transform:uppercase; letter-spacing:1px; }
+.roulette-inner .sub { font-size:10px; color:var(--text-dim); margin-top:4px; }
+.spin-or { text-align:center; margin:12px 0; font-size:13px; font-weight:700; color:var(--text-dim); }
+.spin-truth { background:rgba(34,216,90,0.08); border:1px solid rgba(34,216,90,0.2); border-radius:14px; padding:14px; text-align:center; }
+.spin-truth .q { font-size:13px; font-weight:600; color:var(--text); line-height:1.4; }
+.spin-truth .from { font-size:10px; color:var(--green); margin-top:6px; }
+.spin-choice { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.spin-choice div { padding:12px; border-radius:12px; text-align:center; font-weight:700; font-size:13px; font-family:'Outfit',sans-serif; cursor:pointer; }
+
+/* S2: Veto Countdown */
+.veto-header { text-align:center; margin-bottom:10px; }
+.veto-header h3 { font-size:16px; font-weight:800; color:var(--pink); }
+.veto-header p { font-size:11px; color:var(--text-dim); }
+.veto-photo { width:100%; aspect-ratio:3/4; border-radius:20px; background:linear-gradient(135deg, #2A1A2E, #1A2A1E); margin-bottom:10px; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.veto-photo .blur-text { font-size:48px; filter:blur(0px); }
+.veto-photo .overlay { position:absolute; bottom:0; left:0; right:0; padding:16px; background:linear-gradient(transparent, rgba(0,0,0,0.8)); }
+.veto-photo .overlay .filename { font-size:10px; color:var(--text-dim); }
+.veto-photo .overlay .date { font-size:11px; color:#fff; font-weight:600; }
+.veto-timer { text-align:center; margin-bottom:12px; }
+.veto-timer .big-time { font-size:56px; font-weight:900; font-family:'Outfit',sans-serif; background:linear-gradient(135deg, var(--pink), var(--green)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.veto-timer .label { font-size:11px; color:var(--text-dim); }
+.veto-btns { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.veto-btns div { padding:14px; border-radius:12px; text-align:center; font-weight:700; font-size:14px; font-family:'Outfit',sans-serif; }
+
+/* S3: Group Reaction Feed */
+.feed-header { text-align:center; margin-bottom:12px; }
+.feed-header h3 { font-size:16px; font-weight:800; }
+.feed-header p { font-size:11px; color:var(--text-dim); }
+.feed-item { background:rgba(255,255,255,0.03); border-radius:16px; padding:12px; margin-bottom:8px; }
+.feed-item-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.feed-av { width:28px; height:28px; border-radius:50%; flex-shrink:0; }
+.feed-name { font-size:13px; font-weight:700; }
+.feed-time { font-size:10px; color:var(--text-dim); }
+.feed-content { border-radius:12px; overflow:hidden; margin-bottom:8px; }
+.feed-photo { width:100%; height:120px; background:linear-gradient(135deg, #2A1A2E, #1A2A1E); display:flex; align-items:center; justify-content:center; font-size:32px; border-radius:12px; }
+.feed-caption { font-size:12px; color:var(--text-dim); line-height:1.4; }
+.feed-reactions { display:flex; gap:6px; margin-top:6px; }
+.feed-react { background:rgba(255,255,255,0.06); border-radius:100px; padding:4px 10px; font-size:12px; }
+.feed-truth-card { background:linear-gradient(135deg, rgba(34,216,90,0.08), rgba(236,72,153,0.05)); border:1px solid rgba(34,216,90,0.15); border-radius:12px; padding:12px; font-size:12px; line-height:1.5; }
+.feed-truth-card .q-label { font-size:10px; color:var(--green); font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+
+.features-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:16px; }
+.feature { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; }
+.feature .num { font-size:28px; font-weight:900; background:linear-gradient(135deg, var(--pink), var(--green)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-family:'Outfit',sans-serif; margin-bottom:8px; }
+.feature h4 { font-size:15px; font-weight:700; margin-bottom:6px; }
+.feature p { font-size:13px; color:var(--text-dim); line-height:1.5; }
+
+.palette-section { padding:80px 24px; max-width:1100px; margin:0 auto; }
+.palette-row { display:flex; gap:16px; flex-wrap:wrap; margin-top:24px; }
+.swatch { width:100px; height:100px; border-radius:16px; display:flex; align-items:flex-end; padding:10px; font-size:11px; font-weight:600; }
+.type-sample { margin-top:32px; }
+.type-sample h3 { font-size:40px; font-weight:900; margin-bottom:8px; font-family:'Outfit',sans-serif; }
+.type-sample p { font-size:16px; color:var(--text-dim); }
+
+.fade-up { opacity:0; transform:translateY(40px); transition:all 0.8s cubic-bezier(0.16,1,0.3,1); }
+.fade-up.visible { opacity:1; transform:translateY(0); }
+.fade-up.d1 { transition-delay:0.1s; }
+.fade-up.d2 { transition-delay:0.2s; }
+.fade-up.d3 { transition-delay:0.3s; }
+
+@media(max-width:768px) {
+  .phone { width:240px; height:500px; }
+  .section { padding:60px 20px; }
+}
+</style>
+</head>
+<body>
+<a href="index.html" class="back">←</a>
+<button class="theme-toggle" onclick="document.body.classList.toggle('light');this.textContent=document.body.classList.contains('light')?'🌙':'☀️'">☀️</button>
+
+<div class="hero">
+  <div class="hero-badge fade-up">🤪 New Concept</div>
+  <h1 class="fade-up d1"><span class="pink">Un</span><span class="green">filtered</span></h1>
+  <p class="tagline fade-up d2">Photo roulette meets truth or dare.<br>Random camera roll photo or answer a truth. You choose.</p>
+  <a href="#viral" class="cta fade-up d3">See Why It Goes Viral ↓</a>
+</div>
+
+<div class="section" id="viral">
+  <div class="section-label fade-up">The Viral Loop</div>
+  <h2 class="fade-up d1">Why This Breaks The Internet</h2>
+  <p class="desc fade-up d2">Unfiltered generates inherently shareable content. Every round produces a screenshot-worthy moment — an embarrassing photo, a shocking truth, a hilarious reaction. It's content creation disguised as a game.</p>
+  <div class="viral-grid">
+    <div class="viral-card fade-up">
+      <div class="viral-icon">📸</div>
+      <h3>Screenshot-Worthy Moments</h3>
+      <p>Every single round produces content people want to share. The photo that almost got shown, the truth that got revealed instead — these become group lore and TikTok content.</p>
+    </div>
+    <div class="viral-card fade-up d1">
+      <div class="viral-icon">😰</div>
+      <h3>Adrenaline Rush Addiction</h3>
+      <p>The 5-second veto countdown is pure adrenaline. "What photo is about to be shown?!" The fear and excitement creates a dopamine loop that keeps groups playing for hours.</p>
+    </div>
+    <div class="viral-card fade-up d2">
+      <div class="viral-icon">👥</div>
+      <h3>Only Works With Friends</h3>
+      <p>You need your friend group to play. It's not fun alone. Every player who joins makes it more chaotic and fun. Pure network effects — the more friends, the more unhinged it gets.</p>
+    </div>
+  </div>
+</div>
+
+<div class="mockup-section">
+  <div class="mockup-row">
+    <div class="mockup-container fade-up">
+      <div class="mockup-label">Photo Roulette</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#0A0A0A;">
+          <div class="spin-header">
+            <h3>Your Turn</h3>
+            <p>A random photo is being selected...</p>
+          </div>
+          <div class="roulette">
+            <div class="roulette-inner">
+              <div class="icon">🎰</div>
+              <div class="text">Selecting...</div>
+              <div class="sub">From your camera roll</div>
+            </div>
+          </div>
+          <div class="spin-or">— OR —</div>
+          <div class="spin-truth">
+            <div class="q">What's the most embarrassing thing you've googled this week?</div>
+            <div class="from">Submitted by Maya</div>
+          </div>
+          <div class="spin-choice">
+            <div style="background:var(--pink);color:#fff;">Show Photo</div>
+            <div style="background:var(--green);color:#fff;">Answer Truth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup-container fade-up d1">
+      <div class="mockup-label">5-Second Veto</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#0A0A0A;">
+          <div class="veto-header">
+            <h3>Photo Selected!</h3>
+            <p>Preview before your group sees it</p>
+          </div>
+          <div class="veto-photo">
+            <div class="blur-text">🏖️</div>
+            <div class="overlay">
+              <div class="filename">IMG_4832.jpg</div>
+              <div class="date">Beach trip — Aug 2025</div>
+            </div>
+          </div>
+          <div class="veto-timer">
+            <div class="big-time">3</div>
+            <div class="label">seconds to decide</div>
+          </div>
+          <div class="veto-btns">
+            <div style="background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid rgba(239,68,68,0.3);">VETO</div>
+            <div style="background:rgba(34,216,90,0.15);color:#22D85A;border:1px solid rgba(34,216,90,0.3);">SEND IT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mockup-container fade-up d2">
+      <div class="mockup-label">Group Reactions</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#0A0A0A;">
+          <div class="feed-header">
+            <h3>Tonight's Session</h3>
+            <p>Squad Goals · 5 playing</p>
+          </div>
+          <div class="feed-item">
+            <div class="feed-item-header">
+              <div class="feed-av" style="background:linear-gradient(135deg,#3B82F6,#60A5FA);"></div>
+              <div><div class="feed-name">Jake</div><div class="feed-time">chose PHOTO</div></div>
+            </div>
+            <div class="feed-photo">🏖️</div>
+            <div class="feed-caption">Beach trip throwback — someone was NOT ready for that tan line reveal</div>
+            <div class="feed-reactions">
+              <span class="feed-react">😂 4</span>
+              <span class="feed-react">💀 2</span>
+              <span class="feed-react">🔥 1</span>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-item-header">
+              <div class="feed-av" style="background:linear-gradient(135deg,#EC4899,#F472B6);"></div>
+              <div><div class="feed-name">Maya</div><div class="feed-time">chose TRUTH</div></div>
+            </div>
+            <div class="feed-truth-card">
+              <div class="q-label">Truth</div>
+              What's the last lie you told the group?<br><br><strong style="color:#F5F5F5;">"I said I couldn't come to brunch because I was sick but I was actually on a date"</strong>
+            </div>
+            <div class="feed-reactions">
+              <span class="feed-react">😱 5</span>
+              <span class="feed-react">👀 3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label fade-up">Features</div>
+  <h2 class="fade-up d1">Maximum Chaos, Maximum Fun</h2>
+  <div class="features-grid" style="margin-top:40px;">
+    <div class="feature fade-up"><div class="num">01</div><h4>Photo Roulette</h4><p>Random photo from your camera roll. 5-second preview to veto. The anticipation is everything.</p></div>
+    <div class="feature fade-up d1"><div class="num">02</div><h4>Truth Escape</h4><p>Don't want to show the photo? Answer a truth question your friends submitted instead. Choose your poison.</p></div>
+    <div class="feature fade-up d2"><div class="num">03</div><h4>Reaction Feed</h4><p>Real-time reactions from the group. Emojis, comments, chaos. Every round becomes a shared memory.</p></div>
+    <div class="feature fade-up"><div class="num">04</div><h4>Veto Limit</h4><p>Only 3 vetoes per session. Use them wisely. Running out of vetoes raises the stakes dramatically.</p></div>
+    <div class="feature fade-up d1"><div class="num">05</div><h4>Custom Truth Bank</h4><p>Friends submit truth questions for each other. The more personal, the better. "When was the last time you cried?"</p></div>
+    <div class="feature fade-up d2"><div class="num">06</div><h4>Highlight Reel</h4><p>Best moments saved automatically. Weekly recap of the funniest photos and wildest truths from your group.</p></div>
+    <div class="feature fade-up"><div class="num">07</div><h4>Dare Mode (Premium)</h4><p>Third option: complete a dare instead. "Send a screenshot of your last DM" or "Call someone on speaker."</p></div>
+  </div>
+</div>
+
+<div class="palette-section">
+  <div class="section-label fade-up">Design System</div>
+  <h2 class="fade-up d1">Color & Typography</h2>
+  <div class="palette-row fade-up d2">
+    <div class="swatch" style="background:#EC4899;color:#fff;">Pink</div>
+    <div class="swatch" style="background:#F472B6;color:#fff;">Light Pink</div>
+    <div class="swatch" style="background:#22D85A;color:#fff;">Green</div>
+    <div class="swatch" style="background:#0A0A0A;color:#F5F5F5;border:1px solid rgba(255,255,255,0.1);">Black</div>
+    <div class="swatch" style="background:#1A1A1A;color:#F5F5F5;border:1px solid rgba(255,255,255,0.1);">Surface</div>
+  </div>
+  <div class="type-sample fade-up d3">
+    <h3>Outfit</h3>
+    <p>Inter for body — bold, chaotic, high energy</p>
+  </div>
+</div>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold:0.15 });
+document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
