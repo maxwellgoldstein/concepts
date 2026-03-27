@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stage — Point. Describe. Watch It Happen.</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050508;--bg2:#0a0a10;--text:#e8eaed;--text2:#6b7280;--cyan:#00e5ff;--cyan2:#00b8d4;--cyan-glow:rgba(0,229,255,0.12);--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.06);--dark:#111118;--dark2:#18181f}
+[data-theme="light"]{--bg:#f0f0f2;--bg2:#e8e8ec;--text:#111118;--text2:#6b7280;--cyan:#0097a7;--cyan2:#00838f;--cyan-glow:rgba(0,151,167,0.08);--card:rgba(0,0,0,0.03);--border:rgba(0,0,0,0.08);--dark:#ddd;--dark2:#d0d0d0}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;transition:background .5s,color .5s}
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .3s}
+.theme-toggle:hover{transform:scale(1.1);border-color:var(--cyan)}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 30%,rgba(0,229,255,0.06) 0%,transparent 70%);pointer-events:none}
+.scan-line{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);top:0;animation:scanDown 4s linear infinite;opacity:.3}
+@keyframes scanDown{0%{top:0}100%{top:100%}}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.3;mask-image:radial-gradient(ellipse at center,black 30%,transparent 70%)}
+
+.logo-mark{position:relative;z-index:1;margin-bottom:32px}
+.logo-icon{width:80px;height:80px;border-radius:16px;background:#000;border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 0 40px rgba(0,229,255,0.3),inset 0 0 20px rgba(0,229,255,0.1)}
+.logo-icon-inner{width:36px;height:36px;border:2px solid var(--cyan);border-radius:4px;position:relative}
+.logo-icon-inner::before{content:'';position:absolute;top:50%;left:50%;width:12px;height:12px;background:var(--cyan);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 12px var(--cyan)}
+.logo-text{font-size:56px;font-weight:700;letter-spacing:-2px;position:relative;z-index:1}
+.logo-text span{color:var(--cyan);text-shadow:0 0 30px rgba(0,229,255,0.5)}
+.tagline{font-family:'Space Mono',monospace;font-size:16px;color:var(--cyan);margin-top:12px;opacity:.8;letter-spacing:2px}
+.hero-sub{font-size:17px;color:var(--text2);max-width:520px;margin:24px auto 0;line-height:1.7}
+
+/* Letterbox */
+.letterbox{position:relative}
+.letterbox::before,.letterbox::after{content:'';position:absolute;left:0;right:0;height:24px;background:var(--bg);z-index:2}
+.letterbox::before{top:0;border-bottom:1px solid var(--border)}
+.letterbox::after{bottom:0;border-top:1px solid var(--border)}
+
+section{padding:100px 24px;max-width:1100px;margin:0 auto}
+.section-label{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px}
+.section-title{font-size:40px;font-weight:700;letter-spacing:-1px;line-height:1.2;margin-bottom:20px}
+.section-desc{font-size:17px;color:var(--text2);line-height:1.8;max-width:650px}
+
+/* Magic */
+.magic{background:var(--dark);border-radius:24px;padding:60px 40px;margin:0 auto;max-width:1100px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--border)}
+.magic::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent)}
+.magic-text{font-size:22px;line-height:1.9;max-width:700px;margin:0 auto;color:var(--text)}
+.magic-text em{color:var(--cyan);font-style:normal;font-weight:600}
+
+/* Mockups */
+.mockups{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:60px}
+@media(max-width:768px){.mockups{grid-template-columns:1fr;max-width:320px;margin:60px auto 0}}
+.phone-wrap{text-align:center}
+.phone{width:280px;height:560px;background:#000;border-radius:36px;border:2px solid var(--border);margin:0 auto;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 40px rgba(0,229,255,0.05)}
+.phone-notch{width:120px;height:28px;background:#000;border-radius:0 0 16px 16px;margin:0 auto;position:relative;z-index:5}
+.phone-screen{padding:8px 16px;height:calc(100% - 28px);display:flex;flex-direction:column}
+.phone-label{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--cyan);margin-top:20px;letter-spacing:2px}
+
+/* Phone 1: Camera Viewfinder */
+.viewfinder{flex:1;display:flex;flex-direction:column;position:relative}
+.vf-scene{flex:1;background:linear-gradient(180deg,#1a1520 0%,#2a2030 40%,#3a2a28 70%,#2a2520 100%);border-radius:8px;position:relative;overflow:hidden;margin-bottom:8px}
+.vf-corner{position:absolute;width:20px;height:20px;border-color:var(--cyan);border-style:solid;border-width:0;opacity:.6}
+.vf-corner.tl{top:8px;left:8px;border-top-width:2px;border-left-width:2px}
+.vf-corner.tr{top:8px;right:8px;border-top-width:2px;border-right-width:2px}
+.vf-corner.bl{bottom:8px;left:8px;border-bottom-width:2px;border-left-width:2px}
+.vf-corner.br{bottom:8px;right:8px;border-bottom-width:2px;border-right-width:2px}
+.vf-room{position:absolute;bottom:20%;left:10%;right:10%;height:40%}
+.vf-floor{position:absolute;bottom:0;left:0;right:0;height:40%;background:linear-gradient(180deg,#4a3a30,#3a2a20);border-radius:2px}
+.vf-wall{position:absolute;top:0;left:0;right:0;bottom:40%;background:#2a2028}
+.vf-couch{position:absolute;bottom:42%;left:15%;width:50%;height:20%;background:#5a4a40;border-radius:4px 4px 2px 2px}
+.vf-lamp{position:absolute;bottom:42%;right:15%;width:8%;height:35%;background:linear-gradient(180deg,#ffd700,#a08020);border-radius:2px}
+.vf-rec{position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;color:#ff3b30}
+.vf-rec-dot{width:6px;height:6px;border-radius:50%;background:#ff3b30;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.vf-prompt{background:rgba(0,0,0,0.7);border:1px solid rgba(0,229,255,0.3);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+.vf-prompt-text{font-size:11px;color:var(--cyan);flex:1;font-family:'Space Mono',monospace}
+.vf-prompt-btn{width:28px;height:28px;border-radius:50%;background:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:12px}
+
+/* Phone 2: Split Screen */
+.split-view{flex:1;display:flex;flex-direction:column;gap:4px}
+.split-label{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin:8px 0 4px}
+.split-half{flex:1;border-radius:8px;position:relative;overflow:hidden}
+.split-real{background:linear-gradient(180deg,#1a1520,#2a2028)}
+.split-gen{background:linear-gradient(180deg,#1a1520,#2a2028)}
+.split-room-base{position:absolute;bottom:0;left:0;right:0;height:70%}
+.split-room-base .vf-floor{height:45%}
+.split-room-base .vf-wall{bottom:45%}
+.split-room-base .vf-couch{bottom:47%;left:10%;width:55%;height:18%}
+.split-dog{position:absolute;bottom:48%;left:50%;width:24px;height:18px;background:#b08050;border-radius:10px 10px 4px 4px;box-shadow:0 0 8px rgba(0,229,255,0.3)}
+.split-dog::before{content:'';position:absolute;top:-6px;left:2px;width:8px;height:8px;background:#a07040;border-radius:50%}
+.split-dog::after{content:'';position:absolute;bottom:-4px;left:3px;width:4px;height:6px;background:#a07040;border-radius:0 0 2px 2px}
+.split-badge{position:absolute;top:6px;right:6px;font-size:8px;font-weight:700;padding:3px 6px;border-radius:4px;letter-spacing:1px}
+.badge-real{background:rgba(255,255,255,0.1);color:var(--text2)}
+.badge-ai{background:rgba(0,229,255,0.15);color:var(--cyan)}
+.scrub-bar{height:32px;display:flex;align-items:center;gap:8px;padding:0 4px}
+.scrub-track{flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;position:relative}
+.scrub-fill{width:35%;height:100%;background:var(--cyan);border-radius:2px}
+.scrub-thumb{position:absolute;top:-4px;left:35%;width:10px;height:10px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan)}
+.scrub-time{font-size:9px;color:var(--text2);font-family:'Space Mono',monospace}
+
+/* Phone 3: Gallery */
+.gallery-header{font-size:18px;font-weight:700;margin:12px 0 8px}
+.gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1}
+.gallery-item{border-radius:8px;overflow:hidden;position:relative;background:#1a1520}
+.gallery-item.tall{grid-row:span 2}
+.gallery-thumb{width:100%;height:100%;min-height:70px;display:flex;flex-direction:column;justify-content:flex-end;padding:6px}
+.gallery-thumb.t1{background:linear-gradient(180deg,#2a1a30,#1a1020)}
+.gallery-thumb.t2{background:linear-gradient(180deg,#1a2a30,#102020)}
+.gallery-thumb.t3{background:linear-gradient(180deg,#2a2a10,#1a1a08)}
+.gallery-thumb.t4{background:linear-gradient(180deg,#1a1a30,#101028)}
+.gallery-thumb.t5{background:linear-gradient(180deg,#2a1a1a,#1a1010)}
+.gallery-prompt{font-size:8px;color:rgba(255,255,255,0.6);font-family:'Space Mono',monospace;line-height:1.3}
+.gallery-plays{font-size:7px;color:var(--cyan);margin-top:2px}
+.gallery-play-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:10px}
+
+/* Viral */
+.viral-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+@media(max-width:768px){.viral-grid{grid-template-columns:1fr}}
+.viral-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .3s}
+.viral-card:hover{transform:translateY(-4px);border-color:var(--cyan);box-shadow:0 0 30px rgba(0,229,255,0.1)}
+.viral-emoji{font-size:28px;margin-bottom:12px}
+.viral-title{font-size:15px;font-weight:700;margin-bottom:8px}
+.viral-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* Features */
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:40px}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+.feature{display:flex;align-items:flex-start;gap:14px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;transition:all .3s}
+.feature:hover{border-color:rgba(0,229,255,0.3)}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--cyan-glow);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.feature-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.feature-desc{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* Palette */
+.palette-section{margin-top:80px;text-align:center}
+.palette-row{display:flex;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap}
+.swatch{width:80px;height:80px;border-radius:16px;position:relative;transition:transform .3s;border:1px solid var(--border)}
+.swatch:hover{transform:scale(1.1)}
+.swatch-label{font-size:10px;margin-top:8px;color:var(--text2);text-align:center}
+.type-sample{margin-top:24px}
+.type-sample h3{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;letter-spacing:-1px}
+.type-sample p{font-family:'Space Mono',monospace;font-size:14px;color:var(--cyan);margin-top:8px;letter-spacing:1px}
+
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+footer{text-align:center;padding:60px 24px;font-size:13px;color:var(--text2)}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon">&#9790;</span></button>
+
+<div class="hero">
+<div class="scan-line"></div>
+<div class="grid-bg"></div>
+<div class="logo-mark">
+<div class="logo-icon"><div class="logo-icon-inner"></div></div>
+<div class="logo-text"><span>Stage</span></div>
+<div class="tagline">Point. Describe. Watch it happen.</div>
+</div>
+<p class="hero-sub">Point your camera at the real world. Describe what you want to happen. Watch photorealistic video play out in your actual environment — correct shadows, physics, lighting.</p>
+</div>
+
+<div class="magic reveal">
+<div class="section-label">The Magic Moment</div>
+<p class="magic-text">You point your phone at your empty living room. You type <em>"a golden retriever runs across the floor, slides on the rug, and crashes into the couch."</em> Two seconds later, you watch it happen. The dog casts shadows on YOUR floor. Its paws slip on YOUR rug. The couch cushion actually compresses. Your roommate walks in and asks <em>when you got a dog.</em></p>
+</div>
+
+<section class="reveal">
+<div class="section-label">Product</div>
+<div class="section-title">Three screens. Infinite scenes.</div>
+<div class="mockups">
+<!-- Phone 1: Viewfinder -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="viewfinder">
+<div class="vf-scene letterbox">
+<div class="vf-corner tl"></div><div class="vf-corner tr"></div><div class="vf-corner bl"></div><div class="vf-corner br"></div>
+<div class="vf-room">
+<div class="vf-wall"></div>
+<div class="vf-floor"></div>
+<div class="vf-couch"></div>
+<div class="vf-lamp"></div>
+</div>
+<div class="vf-rec"><div class="vf-rec-dot"></div> REC</div>
+</div>
+<div class="vf-prompt">
+<span class="vf-prompt-text">a dog runs across the floor...</span>
+<div class="vf-prompt-btn">&#9654;</div>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Camera + Prompt</div>
+</div>
+<!-- Phone 2: Split -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="split-view">
+<div class="split-label">Comparison</div>
+<div class="split-half split-real">
+<div class="split-room-base"><div class="vf-wall"></div><div class="vf-floor"></div><div class="vf-couch"></div></div>
+<span class="split-badge badge-real">REAL</span>
+</div>
+<div class="split-half split-gen">
+<div class="split-room-base"><div class="vf-wall"></div><div class="vf-floor"></div><div class="vf-couch"></div></div>
+<div class="split-dog"></div>
+<span class="split-badge badge-ai">AI SCENE</span>
+</div>
+<div class="scrub-bar">
+<span class="scrub-time">0:01</span>
+<div class="scrub-track"><div class="scrub-fill"></div><div class="scrub-thumb"></div></div>
+<span class="scrub-time">0:04</span>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Real vs. Generated</div>
+</div>
+<!-- Phone 3: Gallery -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="gallery-header">My Scenes</div>
+<div class="gallery-grid">
+<div class="gallery-item tall">
+<div class="gallery-thumb t1">
+<div class="gallery-play-icon">&#9654;</div>
+<div class="gallery-prompt">"dragon perched on rooftop"</div>
+<div class="gallery-plays">12.4K views</div>
+</div>
+</div>
+<div class="gallery-item">
+<div class="gallery-thumb t2">
+<div class="gallery-play-icon">&#9654;</div>
+<div class="gallery-prompt">"rain inside office"</div>
+<div class="gallery-plays">8.1K views</div>
+</div>
+</div>
+<div class="gallery-item">
+<div class="gallery-thumb t3">
+<div class="gallery-play-icon">&#9654;</div>
+<div class="gallery-prompt">"cat walks on ceiling"</div>
+<div class="gallery-plays">23.7K views</div>
+</div>
+</div>
+<div class="gallery-item">
+<div class="gallery-thumb t4">
+<div class="gallery-play-icon">&#9654;</div>
+<div class="gallery-prompt">"flowers grow from desk"</div>
+<div class="gallery-plays">5.3K views</div>
+</div>
+</div>
+<div class="gallery-item">
+<div class="gallery-thumb t5">
+<div class="gallery-play-icon">&#9654;</div>
+<div class="gallery-prompt">"snow falls in kitchen"</div>
+<div class="gallery-plays">15.9K views</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Scene Gallery</div>
+</div>
+</div>
+</section>
+
+<section class="reveal">
+<div class="section-label">Virality</div>
+<div class="section-title">Why it goes viral</div>
+<div class="viral-grid">
+<div class="viral-card">
+<div class="viral-emoji">&#127909;</div>
+<div class="viral-title">Every video IS viral content</div>
+<div class="viral-desc">Users don't use Stage and then share separately. The output itself is the content. Every creation is an "HOW DID THEY DO THAT" post waiting to happen.</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#127968;</div>
+<div class="viral-title">Your room is the canvas</div>
+<div class="viral-desc">Because it uses YOUR actual space, every video feels personal and impossible. "That's clearly my apartment and there's clearly a dinosaur in it."</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#127922;</div>
+<div class="viral-title">Infinite creative playground</div>
+<div class="viral-desc">Directors, comedians, pranksters, artists — every creative person discovers a different use. The prompt bar is the most powerful creative tool on a phone.</div>
+</div>
+</div>
+</section>
+
+<section class="reveal">
+<div class="section-label">Features</div>
+<div class="section-title">Director's toolkit</div>
+<div class="features-grid">
+<div class="feature"><div class="feature-icon">&#127916;</div><div><div class="feature-name">Scene Understanding</div><div class="feature-desc">AI maps your room's geometry, lighting, and surfaces in real-time for physically accurate generation.</div></div></div>
+<div class="feature"><div class="feature-icon">&#9889;</div><div><div class="feature-name">2-Second Generation</div><div class="feature-desc">From prompt to photorealistic video in under two seconds. Real-time enough to feel like magic.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128161;</div><div><div class="feature-name">Shadow Matching</div><div class="feature-desc">Generated objects cast correct shadows based on your room's actual light sources. No flat overlays.</div></div></div>
+<div class="feature"><div class="feature-icon">&#127922;</div><div><div class="feature-name">Physics Engine</div><div class="feature-desc">Objects interact with your real environment. They bounce off your table, slide on your floor, respect gravity.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128257;</div><div><div class="feature-name">Scene Stacking</div><div class="feature-desc">Add multiple prompts to the same scene. Build complex narratives layer by layer in your space.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128247;</div><div><div class="feature-name">Export Anywhere</div><div class="feature-desc">4K export, green-screen mode, social-optimized formats. One tap to TikTok, Reels, or YouTube.</div></div></div>
+</div>
+</section>
+
+<section class="palette-section reveal">
+<div class="section-label">Design System</div>
+<div class="section-title">Color &amp; Typography</div>
+<div class="palette-row">
+<div><div class="swatch" style="background:#050508"></div><div class="swatch-label">Black<br>#050508</div></div>
+<div><div class="swatch" style="background:#111118"></div><div class="swatch-label">Dark<br>#111118</div></div>
+<div><div class="swatch" style="background:#00e5ff"></div><div class="swatch-label">Electric Cyan<br>#00E5FF</div></div>
+<div><div class="swatch" style="background:#00b8d4"></div><div class="swatch-label">Deep Cyan<br>#00B8D4</div></div>
+<div><div class="swatch" style="background:#e8eaed"></div><div class="swatch-label">Light<br>#E8EAED</div></div>
+</div>
+<div class="type-sample">
+<h3>Space Grotesk — Cinematic authority</h3>
+<p>Space Mono — Technical, precise prompts</p>
+</div>
+</section>
+
+<footer>Stage Concept &mdash; 2026</footer>
+
+<script>
+function toggleTheme(){const b=document.body;b.dataset.theme=b.dataset.theme==='light'?'':'light';document.querySelector('.theme-icon').innerHTML=b.dataset.theme==='light'?'&#9788;':'&#9790;';}
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

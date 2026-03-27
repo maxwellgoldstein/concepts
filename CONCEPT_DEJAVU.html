@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deja Vu — Perfect Memory. On Your Phone.</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#111114;--bg2:#18181c;--text:#e4e4e8;--text2:#6b6b78;--blue:#4a9eff;--blue2:#3a7ed8;--blue-glow:rgba(74,158,255,0.1);--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.06);--surface:#1e1e24;--surface2:#24242c}
+[data-theme="light"]{--bg:#f4f4f8;--bg2:#eaeaee;--text:#111114;--text2:#6b6b78;--blue:#2a7edf;--blue2:#1a6ecf;--blue-glow:rgba(42,126,223,0.06);--card:rgba(0,0,0,0.02);--border:rgba(0,0,0,0.06);--surface:#e0e0e4;--surface2:#d6d6da}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;overflow-x:hidden;transition:background .5s,color .5s}
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .3s}
+.theme-toggle:hover{transform:scale(1.1);border-color:var(--blue)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;position:relative}
+.hero::before{content:'';position:absolute;top:20%;left:50%;transform:translateX(-50%);width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,var(--blue-glow),transparent 70%);pointer-events:none}
+
+.logo-mark{position:relative;z-index:1;margin-bottom:32px}
+.logo-icon{width:80px;height:80px;border-radius:20px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;overflow:hidden}
+.logo-ripple{position:absolute;width:40px;height:40px;border-radius:50%;border:2px solid var(--blue);opacity:.4;animation:ripple 3s ease-out infinite}
+.logo-ripple:nth-child(2){animation-delay:1s}
+.logo-ripple:nth-child(3){animation-delay:2s}
+@keyframes ripple{0%{transform:scale(0.5);opacity:.6}100%{transform:scale(2.5);opacity:0}}
+.logo-center{width:16px;height:16px;border-radius:50%;background:var(--blue);position:relative;z-index:2;box-shadow:0 0 20px var(--blue)}
+.logo-text{font-size:52px;font-weight:700;letter-spacing:-2px}
+.logo-text .accent{color:var(--blue)}
+.tagline{font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--blue);margin-top:10px;letter-spacing:1px}
+.hero-sub{font-size:17px;color:var(--text2);max-width:500px;margin:24px auto 0;line-height:1.7}
+
+section{padding:100px 24px;max-width:1100px;margin:0 auto}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:12px}
+.section-title{font-size:40px;font-weight:700;letter-spacing:-1px;line-height:1.2;margin-bottom:20px}
+
+.magic{background:var(--surface);border-radius:24px;padding:60px 40px;margin:0 auto;max-width:1100px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--border)}
+.magic::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.magic-text{font-size:22px;line-height:1.9;max-width:700px;margin:0 auto;font-weight:300}
+.magic-text em{color:var(--blue);font-style:normal;font-weight:500}
+
+.mockups{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:60px}
+@media(max-width:768px){.mockups{grid-template-columns:1fr;max-width:320px;margin:60px auto 0}}
+.phone-wrap{text-align:center}
+.phone{width:280px;height:560px;background:var(--bg2);border-radius:36px;border:2px solid var(--border);margin:0 auto;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.5)}
+.phone-notch{width:120px;height:28px;background:var(--bg);border-radius:0 0 16px 16px;margin:0 auto;position:relative;z-index:5}
+.phone-screen{padding:8px 16px;height:calc(100% - 28px);display:flex;flex-direction:column}
+.phone-label{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--blue);margin-top:20px;letter-spacing:2px}
+
+/* Phone 1: Search */
+.search-view{flex:1;display:flex;flex-direction:column}
+.search-bar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;margin:12px 0;display:flex;align-items:center;gap:8px}
+.search-icon{color:var(--blue);font-size:14px}
+.search-input{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text);background:none;border:none;flex:1}
+.search-query{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--blue)}
+.search-results{flex:1;display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px}
+.result-source{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.result-avatar{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff}
+.result-meta{font-size:9px;color:var(--text2)}
+.result-meta strong{color:var(--text);font-weight:600}
+.result-transcript{font-size:11px;line-height:1.5;color:var(--text2)}
+.result-transcript mark{background:rgba(74,158,255,0.15);color:var(--blue);padding:1px 3px;border-radius:2px}
+.result-time{font-size:9px;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:4px}
+.result-confidence{font-size:8px;color:var(--blue);background:var(--blue-glow);padding:2px 6px;border-radius:4px;font-weight:500;margin-left:auto}
+
+/* Phone 2: Timeline */
+.timeline-header{font-size:18px;font-weight:700;margin:12px 0 4px}
+.timeline-date{font-size:11px;color:var(--text2);margin-bottom:10px}
+.timeline{flex:1;display:flex;flex-direction:column;gap:2px}
+.tl-hour{display:flex;gap:8px;align-items:stretch;min-height:36px}
+.tl-time{font-size:9px;color:var(--text2);min-width:32px;padding-top:2px;font-family:'IBM Plex Mono',monospace}
+.tl-blocks{flex:1;display:flex;gap:2px;align-items:center}
+.tl-block{height:24px;border-radius:4px;flex:1}
+.tl-block.voice{background:linear-gradient(90deg,rgba(74,158,255,0.15),rgba(74,158,255,0.25));border:1px solid rgba(74,158,255,0.2)}
+.tl-block.silence{background:var(--card);border:1px solid var(--border)}
+.tl-block.photo{background:linear-gradient(135deg,rgba(74,158,255,0.1),rgba(74,158,255,0.2));border:1px solid rgba(74,158,255,0.15);display:flex;align-items:center;justify-content:center;font-size:8px}
+.tl-summary{font-size:8px;color:var(--text2);margin-top:2px}
+
+/* Phone 3: Privacy */
+.privacy-header{font-size:18px;font-weight:700;margin:12px 0 8px}
+.privacy-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:#4ade80;background:rgba(74,222,128,0.1);padding:4px 10px;border-radius:8px;margin-bottom:12px}
+.privacy-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.privacy-icon{width:36px;height:36px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.privacy-info{flex:1}
+.privacy-name{font-size:13px;font-weight:600}
+.privacy-desc{font-size:10px;color:var(--text2);margin-top:2px}
+.privacy-toggle-track{width:40px;height:22px;border-radius:11px;background:var(--blue);position:relative;flex-shrink:0}
+.privacy-toggle-thumb{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;right:2px;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.privacy-toggle-track.off{background:var(--surface2)}
+.privacy-toggle-track.off .privacy-toggle-thumb{right:auto;left:2px}
+.pause-btn{width:100%;padding:12px;border-radius:12px;background:var(--surface);border:2px solid var(--border);text-align:center;margin-top:12px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.pause-icon{width:24px;height:24px;border-radius:50%;background:rgba(239,68,68,0.1);display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:12px}
+
+.viral-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+@media(max-width:768px){.viral-grid{grid-template-columns:1fr}}
+.viral-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .3s}
+.viral-card:hover{transform:translateY(-4px);border-color:var(--blue);box-shadow:0 0 30px var(--blue-glow)}
+.viral-emoji{font-size:28px;margin-bottom:12px}
+.viral-title{font-size:15px;font-weight:700;margin-bottom:8px}
+.viral-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:40px}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+.feature{display:flex;align-items:flex-start;gap:14px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;transition:all .3s}
+.feature:hover{border-color:rgba(74,158,255,0.3)}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--blue-glow);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.feature-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.feature-desc{font-size:12px;color:var(--text2);line-height:1.5}
+
+.palette-section{margin-top:80px;text-align:center}
+.palette-row{display:flex;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap}
+.swatch{width:80px;height:80px;border-radius:16px;transition:transform .3s;border:1px solid var(--border)}
+.swatch:hover{transform:scale(1.1)}
+.swatch-label{font-size:10px;margin-top:8px;color:var(--text2);text-align:center}
+.type-sample{margin-top:24px}
+.type-sample h3{font-family:'IBM Plex Sans',sans-serif;font-size:32px;font-weight:700;letter-spacing:-1px}
+.type-sample p{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--blue);margin-top:8px}
+
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+footer{text-align:center;padding:60px 24px;font-size:13px;color:var(--text2)}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon">&#9790;</span></button>
+
+<div class="hero">
+<div class="logo-mark">
+<div class="logo-icon">
+<div class="logo-ripple"></div><div class="logo-ripple"></div><div class="logo-ripple"></div>
+<div class="logo-center"></div>
+</div>
+<div class="logo-text">D<span class="accent">&eacute;</span>j&agrave; Vu</div>
+<div class="tagline">Perfect memory. On your phone.</div>
+</div>
+<p class="hero-sub">Always-listening memory engine. Search everything you've heard or said. Instant answers with exact transcripts. All on-device. All private.</p>
+</div>
+
+<div class="magic reveal">
+<div class="section-label">The Magic Moment</div>
+<p class="magic-text">Three weeks ago, Jake mentioned a restaurant while you were walking to lunch. You can't remember the name. You open D&eacute;j&agrave; Vu, type <em>"what restaurant did Jake recommend"</em> — and in 0.3 seconds, there it is: the exact transcript, the exact moment, the exact name. <em>"Oh yeah, Osteria Francescana."</em> You never wrote it down. You didn't have to.</p>
+</div>
+
+<section class="reveal">
+<div class="section-label">Product</div>
+<div class="section-title">Search your entire life</div>
+<div class="mockups">
+<!-- Phone 1: Search -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="search-view">
+<div class="search-bar">
+<span class="search-icon">&#128269;</span>
+<span class="search-query">what did Jake say about his job</span>
+</div>
+<div style="font-size:10px;color:var(--text2);margin-bottom:4px">3 results &bull; 0.2s</div>
+<div class="search-results">
+<div class="result-card">
+<div class="result-source">
+<div class="result-avatar" style="background:linear-gradient(135deg,#4a9eff,#3a7ed8)">J</div>
+<div class="result-meta"><strong>Jake Chen</strong> &bull; Mar 14 &bull; Lunch walk</div>
+</div>
+<div class="result-transcript">"...honestly <mark>thinking about leaving</mark>. The new manager is making it impossible. I might <mark>apply to that startup</mark> Sarah told me about..."</div>
+<div class="result-time">&#128339; 12:34 PM <span class="result-confidence">98% match</span></div>
+</div>
+<div class="result-card">
+<div class="result-source">
+<div class="result-avatar" style="background:linear-gradient(135deg,#4a9eff,#3a7ed8)">J</div>
+<div class="result-meta"><strong>Jake Chen</strong> &bull; Mar 8 &bull; Coffee</div>
+</div>
+<div class="result-transcript">"...got the <mark>promotion offer</mark> but the pay bump was insulting. Like 3%. For running a whole <mark>team of twelve</mark>..."</div>
+<div class="result-time">&#128339; 3:15 PM <span class="result-confidence">95% match</span></div>
+</div>
+<div class="result-card">
+<div class="result-source">
+<div class="result-avatar" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">S</div>
+<div class="result-meta"><strong>Sarah Kim</strong> &bull; Feb 28 &bull; Dinner</div>
+</div>
+<div class="result-transcript">"...yeah <mark>Jake's been miserable</mark> there. I told him about Cortex, they're <mark>hiring engineering leads</mark>..."</div>
+<div class="result-time">&#128339; 7:42 PM <span class="result-confidence">91% match</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Search Results</div>
+</div>
+<!-- Phone 2: Timeline -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="timeline-header">Today</div>
+<div class="timeline-date">Thursday, March 27</div>
+<div class="timeline">
+<div class="tl-hour"><div class="tl-time">8am</div><div class="tl-blocks"><div class="tl-block silence" style="flex:2"></div><div class="tl-block voice" style="flex:3"></div><div class="tl-block silence"></div></div></div>
+<div class="tl-summary" style="margin-left:40px">Morning standup — 12 min captured</div>
+<div class="tl-hour"><div class="tl-time">9am</div><div class="tl-blocks"><div class="tl-block voice" style="flex:1"></div><div class="tl-block silence" style="flex:4"></div></div></div>
+<div class="tl-hour"><div class="tl-time">10am</div><div class="tl-blocks"><div class="tl-block silence" style="flex:1"></div><div class="tl-block voice" style="flex:2"></div><div class="tl-block silence" style="flex:2"></div></div></div>
+<div class="tl-summary" style="margin-left:40px">Design review — 8 min captured</div>
+<div class="tl-hour"><div class="tl-time">11am</div><div class="tl-blocks"><div class="tl-block voice" style="flex:4"></div><div class="tl-block photo" style="flex:1">&#128247;</div></div></div>
+<div class="tl-summary" style="margin-left:40px">1:1 with Maria + photo note</div>
+<div class="tl-hour"><div class="tl-time">12pm</div><div class="tl-blocks"><div class="tl-block voice" style="flex:3"></div><div class="tl-block silence" style="flex:2"></div></div></div>
+<div class="tl-summary" style="margin-left:40px">Lunch with Jake — 18 min captured</div>
+<div class="tl-hour"><div class="tl-time">1pm</div><div class="tl-blocks"><div class="tl-block silence" style="flex:3"></div><div class="tl-block voice" style="flex:2"></div></div></div>
+<div class="tl-hour"><div class="tl-time">2pm</div><div class="tl-blocks"><div class="tl-block voice" style="flex:2"></div><div class="tl-block silence" style="flex:1"></div><div class="tl-block voice" style="flex:2"></div></div></div>
+<div class="tl-summary" style="margin-left:40px">Client call — 22 min captured</div>
+<div class="tl-hour"><div class="tl-time">3pm</div><div class="tl-blocks"><div class="tl-block silence" style="flex:4"></div><div class="tl-block voice" style="flex:1"></div></div></div>
+</div>
+</div>
+</div>
+<div class="phone-label">Day Timeline</div>
+</div>
+<!-- Phone 3: Privacy -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="privacy-header">Privacy</div>
+<div class="privacy-badge">&#128274; All data on-device</div>
+<div class="privacy-item">
+<div class="privacy-icon">&#128225;</div>
+<div class="privacy-info"><div class="privacy-name">On-Device Processing</div><div class="privacy-desc">Audio never leaves your phone. All transcription happens locally.</div></div>
+<div class="privacy-toggle-track"><div class="privacy-toggle-thumb"></div></div>
+</div>
+<div class="privacy-item">
+<div class="privacy-icon">&#128272;</div>
+<div class="privacy-info"><div class="privacy-name">End-to-End Encrypted</div><div class="privacy-desc">AES-256 encryption on all stored transcripts.</div></div>
+<div class="privacy-toggle-track"><div class="privacy-toggle-thumb"></div></div>
+</div>
+<div class="privacy-item">
+<div class="privacy-icon">&#128683;</div>
+<div class="privacy-info"><div class="privacy-name">No Cloud Backup</div><div class="privacy-desc">Your memories stay on your device. Period.</div></div>
+<div class="privacy-toggle-track"><div class="privacy-toggle-thumb"></div></div>
+</div>
+<div class="privacy-item">
+<div class="privacy-icon">&#128465;</div>
+<div class="privacy-info"><div class="privacy-name">Auto-Delete</div><div class="privacy-desc">Set retention: 30 days, 90 days, or forever.</div></div>
+<div class="privacy-toggle-track off"><div class="privacy-toggle-thumb"></div></div>
+</div>
+<div class="pause-btn"><div class="pause-icon">&#9724;</div> Pause Listening</div>
+</div>
+</div>
+<div class="phone-label">Privacy Dashboard</div>
+</div>
+</div>
+</section>
+
+<section class="reveal">
+<div class="section-label">Virality</div>
+<div class="section-title">Why it goes viral</div>
+<div class="viral-grid">
+<div class="viral-card">
+<div class="viral-emoji">&#129327;</div>
+<div class="viral-title">"I searched my life and it FOUND IT"</div>
+<div class="viral-desc">The tweet that goes viral. People posting screenshots of impossible-to-remember things that D&eacute;j&agrave; Vu found instantly. The "how is this real" reaction.</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#128170;</div>
+<div class="viral-title">Professional superpower</div>
+<div class="viral-desc">"What did the client say about the timeline?" becomes a 2-second search instead of a 20-minute email thread. Knowledge workers tell knowledge workers.</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#128274;</div>
+<div class="viral-title">Privacy as a feature, not a compromise</div>
+<div class="viral-desc">All on-device. The privacy dashboard isn't buried — it's prominently shown. People share it because they trust it.</div>
+</div>
+</div>
+</section>
+
+<section class="reveal">
+<div class="section-label">Features</div>
+<div class="section-title">Total recall, total control</div>
+<div class="features-grid">
+<div class="feature"><div class="feature-icon">&#128269;</div><div><div class="feature-name">Natural Language Search</div><div class="feature-desc">Ask like you'd ask a friend. "What was that thing about the deadline?" works perfectly.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128100;</div><div><div class="feature-name">Speaker Identification</div><div class="feature-desc">Knows who said what. Search by person, by topic, or both. "What did Sarah say about the budget?"</div></div></div>
+<div class="feature"><div class="feature-icon">&#128225;</div><div><div class="feature-name">100% On-Device</div><div class="feature-desc">Custom on-device ML model. Your audio never touches a server. Transcription happens in the neural engine.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128247;</div><div><div class="feature-name">Photo Anchors</div><div class="feature-desc">Snap a photo during conversations to bookmark moments. Photos appear on your timeline as context markers.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128338;</div><div><div class="feature-name">Smart Silence Detection</div><div class="feature-desc">Only captures conversation, not ambient noise. Intelligent filtering saves storage and relevance.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128202;</div><div><div class="feature-name">Insights Dashboard</div><div class="feature-desc">See conversation patterns, topics over time, and relationships. Understand your own communication style.</div></div></div>
+</div>
+</section>
+
+<section class="palette-section reveal">
+<div class="section-label">Design System</div>
+<div class="section-title">Color &amp; Typography</div>
+<div class="palette-row">
+<div><div class="swatch" style="background:#111114"></div><div class="swatch-label">Charcoal<br>#111114</div></div>
+<div><div class="swatch" style="background:#1e1e24"></div><div class="swatch-label">Surface<br>#1E1E24</div></div>
+<div><div class="swatch" style="background:#4a9eff"></div><div class="swatch-label">Soft Blue<br>#4A9EFF</div></div>
+<div><div class="swatch" style="background:#3a7ed8"></div><div class="swatch-label">Deep Blue<br>#3A7ED8</div></div>
+<div><div class="swatch" style="background:#e4e4e8"></div><div class="swatch-label">Light<br>#E4E4E8</div></div>
+</div>
+<div class="type-sample">
+<h3>IBM Plex Sans — Clean, trustworthy</h3>
+<p>IBM Plex Mono — Technical precision</p>
+</div>
+</section>
+
+<footer>D&eacute;j&agrave; Vu Concept &mdash; 2026</footer>
+
+<script>
+function toggleTheme(){const b=document.body;b.dataset.theme=b.dataset.theme==='light'?'':'light';document.querySelector('.theme-icon').innerHTML=b.dataset.theme==='light'?'&#9788;':'&#9790;';}
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

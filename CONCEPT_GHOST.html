@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ghost — Drop Your Voice. They'll Find It.</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d0a14;--bg2:#140f1e;--text:#e8e4f0;--text2:#7a7088;--purple:#8b5cf6;--purple2:#7c3aed;--teal:#2dd4bf;--teal2:#14b8a6;--teal-glow:rgba(45,212,191,0.1);--purple-glow:rgba(139,92,246,0.1);--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.06);--surface:#1a1424;--surface2:#201a2c}
+[data-theme="light"]{--bg:#f6f4fa;--bg2:#edeaf2;--text:#1a1424;--text2:#7a7088;--purple:#7c3aed;--purple2:#6d28d9;--teal:#0d9488;--teal2:#0f766e;--teal-glow:rgba(13,148,136,0.06);--purple-glow:rgba(124,58,237,0.06);--card:rgba(0,0,0,0.02);--border:rgba(0,0,0,0.06);--surface:#e4e0ec;--surface2:#dbd6e4}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;overflow-x:hidden;transition:background .5s,color .5s}
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .3s}
+.theme-toggle:hover{transform:scale(1.1);border-color:var(--teal)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;position:relative;overflow:hidden}
+.hero-glow{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
+.hero-glow.g1{width:500px;height:500px;background:var(--purple);top:-150px;left:-100px;opacity:.15;animation:floatG 10s ease-in-out infinite}
+.hero-glow.g2{width:400px;height:400px;background:var(--teal);bottom:-100px;right:-100px;opacity:.1;animation:floatG 8s ease-in-out infinite 3s}
+@keyframes floatG{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-20px)}}
+
+/* Floating particles */
+.particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.particle{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--teal);opacity:.3;animation:drift 15s linear infinite}
+.particle:nth-child(2){left:20%;animation-delay:2s;width:3px;height:3px;background:var(--purple)}
+.particle:nth-child(3){left:50%;animation-delay:5s;width:5px;height:5px}
+.particle:nth-child(4){left:70%;animation-delay:8s;width:3px;height:3px;background:var(--purple)}
+.particle:nth-child(5){left:90%;animation-delay:11s}
+@keyframes drift{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:.3}90%{opacity:.3}100%{transform:translateY(-100vh) rotate(360deg);opacity:0}}
+
+.logo-mark{position:relative;z-index:1;margin-bottom:32px}
+.logo-icon{width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 20px 60px rgba(139,92,246,0.25);position:relative}
+.logo-icon::before{content:'';position:absolute;inset:-2px;border-radius:26px;background:linear-gradient(135deg,var(--purple),var(--teal));opacity:.5;filter:blur(8px)}
+.ghost-shape{width:32px;height:40px;background:rgba(255,255,255,0.9);border-radius:16px 16px 0 0;position:relative}
+.ghost-shape::before{content:'';position:absolute;bottom:-6px;left:0;right:0;height:12px;background:rgba(255,255,255,0.9);-webkit-mask-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 32 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0C4 12 8 0 12 12C16 0 20 12 24 0C28 12 32 0 32 12V0H0Z' fill='white'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 32 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0C4 12 8 0 12 12C16 0 20 12 24 0C28 12 32 0 32 12V0H0Z' fill='white'/%3E%3C/svg%3E")}
+.ghost-eyes{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.ghost-eye{width:5px;height:7px;border-radius:50%;background:var(--purple)}
+.logo-text{font-size:56px;font-weight:800;letter-spacing:-2px;background:linear-gradient(135deg,var(--text),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tagline{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--teal);margin-top:8px}
+.hero-sub{font-size:17px;color:var(--text2);max-width:500px;margin:24px auto 0;line-height:1.8}
+
+section{padding:100px 24px;max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+.section-title{font-size:40px;font-weight:800;letter-spacing:-1px;line-height:1.2;margin-bottom:20px}
+
+.magic{background:var(--surface);border-radius:24px;padding:60px 40px;margin:0 auto;max-width:1100px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--border)}
+.magic::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.magic-text{font-family:'Cormorant Garamond',serif;font-size:24px;line-height:1.9;max-width:700px;margin:0 auto}
+.magic-text em{color:var(--teal);font-style:italic}
+
+.mockups{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:60px}
+@media(max-width:768px){.mockups{grid-template-columns:1fr;max-width:320px;margin:60px auto 0}}
+.phone-wrap{text-align:center}
+.phone{width:280px;height:560px;background:var(--bg2);border-radius:36px;border:2px solid var(--border);margin:0 auto;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.5),0 0 40px rgba(139,92,246,0.05)}
+.phone-notch{width:120px;height:28px;background:var(--bg);border-radius:0 0 16px 16px;margin:0 auto;position:relative;z-index:5}
+.phone-screen{padding:8px 16px;height:calc(100% - 28px);display:flex;flex-direction:column}
+.phone-label{font-size:13px;font-weight:600;color:var(--teal);margin-top:20px;letter-spacing:1px}
+
+/* Phone 1: Drop Screen */
+.drop-view{flex:1;display:flex;flex-direction:column;position:relative}
+.drop-cam{flex:1;background:linear-gradient(180deg,#1a1428,#201830,#181420);border-radius:10px;position:relative;overflow:hidden;margin-bottom:8px}
+.drop-scene{position:absolute;bottom:0;left:0;right:0;height:60%}
+.drop-ground{position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(180deg,#2a2438,#1a1428)}
+.drop-buildings{position:absolute;bottom:50%;left:0;right:0;height:40%;display:flex;gap:4px;align-items:flex-end;justify-content:center;padding:0 10px}
+.drop-bldg{background:rgba(40,30,60,0.6);border-radius:2px 2px 0 0}
+.drop-bldg:nth-child(1){width:20%;height:60%}
+.drop-bldg:nth-child(2){width:15%;height:80%}
+.drop-bldg:nth-child(3){width:25%;height:45%}
+.drop-bldg:nth-child(4){width:18%;height:70%}
+.drop-pin{position:absolute;top:40%;left:50%;transform:translateX(-50%);width:40px;height:40px;display:flex;align-items:center;justify-content:center}
+.drop-pin-marker{width:24px;height:24px;border-radius:50%;background:var(--teal);box-shadow:0 0 20px rgba(45,212,191,0.4);animation:pinFloat 3s ease-in-out infinite}
+@keyframes pinFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.drop-radius{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;border:1px dashed rgba(45,212,191,0.3);animation:radiusPulse 3s ease-in-out infinite}
+@keyframes radiusPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.3}50%{transform:translate(-50%,-50%) scale(1.1);opacity:.6}}
+.drop-radius-label{position:absolute;top:calc(40% + 65px);left:50%;transform:translateX(-50%);font-size:8px;color:var(--teal);opacity:.6;white-space:nowrap}
+.drop-controls{display:flex;align-items:center;gap:8px}
+.drop-rec-btn{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 0 20px rgba(139,92,246,0.3)}
+.drop-rec-inner{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.9)}
+.drop-label{font-size:10px;color:var(--text2);text-align:center;margin-top:6px}
+
+/* Phone 2: Map */
+.map-view{flex:1;display:flex;flex-direction:column}
+.map-header{font-size:18px;font-weight:700;margin:8px 0}
+.map-area{flex:1;background:var(--surface);border-radius:10px;position:relative;overflow:hidden;margin-bottom:8px}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:30px 30px}
+.map-street{position:absolute;background:rgba(255,255,255,0.04)}
+.map-street.h1{top:30%;left:0;right:0;height:3px}
+.map-street.h2{top:60%;left:0;right:0;height:3px}
+.map-street.v1{left:25%;top:0;bottom:0;width:3px}
+.map-street.v2{left:60%;top:0;bottom:0;width:3px}
+.map-street.v3{left:80%;top:0;bottom:0;width:2px}
+.ghost-marker{position:absolute;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ghost-marker::before{content:'';position:absolute;inset:-4px;border-radius:50%;animation:ghostPulse 2s ease-in-out infinite}
+@keyframes ghostPulse{0%,100%{transform:scale(1);opacity:.3}50%{transform:scale(1.5);opacity:0}}
+.gm1{top:25%;left:20%;background:rgba(139,92,246,0.3);box-shadow:0 0 12px rgba(139,92,246,0.3)}
+.gm1::before{background:rgba(139,92,246,0.2)}
+.gm2{top:45%;left:55%;background:rgba(45,212,191,0.3);box-shadow:0 0 12px rgba(45,212,191,0.3)}
+.gm2::before{background:rgba(45,212,191,0.2);animation-delay:.5s}
+.gm3{top:70%;left:35%;background:rgba(139,92,246,0.3);box-shadow:0 0 12px rgba(139,92,246,0.3)}
+.gm3::before{background:rgba(139,92,246,0.2);animation-delay:1s}
+.gm4{top:35%;left:75%;background:rgba(45,212,191,0.3);box-shadow:0 0 12px rgba(45,212,191,0.3)}
+.gm4::before{background:rgba(45,212,191,0.2);animation-delay:1.5s}
+.gm5{top:60%;left:15%;background:rgba(245,158,11,0.3);box-shadow:0 0 12px rgba(245,158,11,0.3)}
+.gm5::before{background:rgba(245,158,11,0.2);animation-delay:.8s}
+.gm-icon{font-size:10px;position:relative;z-index:1}
+.map-legend{display:flex;gap:10px;justify-content:center}
+.map-legend-item{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--text2)}
+.map-legend-dot{width:6px;height:6px;border-radius:50%}
+
+/* Phone 3: Playback */
+.play-view{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.play-approach{font-size:10px;color:var(--text2);margin-bottom:16px;letter-spacing:1px;text-transform:uppercase}
+.play-warmth{width:120px;height:120px;border-radius:50%;background:var(--surface);position:relative;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.warmth-ring{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;border-top-color:var(--teal);border-right-color:var(--teal);animation:warmSpin 3s linear infinite}
+.warmth-fill{position:absolute;bottom:0;left:0;right:0;height:65%;background:linear-gradient(180deg,rgba(45,212,191,0.05),rgba(45,212,191,0.15));border-radius:0 0 60px 60px}
+.warmth-pct{font-size:28px;font-weight:700;color:var(--teal);position:relative;z-index:1}
+.warmth-label{font-size:10px;color:var(--text2);position:relative;z-index:1}
+@keyframes warmSpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+.play-from{font-size:14px;font-weight:600;margin-bottom:4px}
+.play-when{font-size:11px;color:var(--text2);margin-bottom:16px}
+.play-wave{display:flex;gap:2px;align-items:center;justify-content:center;height:40px;margin-bottom:16px}
+.play-wave span{width:3px;border-radius:2px;background:linear-gradient(180deg,var(--purple),var(--teal));animation:playW 1.5s ease-in-out infinite}
+.play-wave span:nth-child(1){height:8px;animation-delay:0s}
+.play-wave span:nth-child(2){height:16px;animation-delay:.1s}
+.play-wave span:nth-child(3){height:24px;animation-delay:.2s}
+.play-wave span:nth-child(4){height:32px;animation-delay:.15s}
+.play-wave span:nth-child(5){height:20px;animation-delay:.25s}
+.play-wave span:nth-child(6){height:28px;animation-delay:.05s}
+.play-wave span:nth-child(7){height:12px;animation-delay:.3s}
+.play-wave span:nth-child(8){height:22px;animation-delay:.1s}
+.play-wave span:nth-child(9){height:16px;animation-delay:.2s}
+.play-wave span:nth-child(10){height:8px;animation-delay:.35s}
+@keyframes playW{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.6)}}
+.play-transcript{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--text2);line-height:1.6;max-width:200px;margin:0 auto}
+.play-distance{font-size:11px;color:var(--teal);margin-top:12px}
+
+.viral-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+@media(max-width:768px){.viral-grid{grid-template-columns:1fr}}
+.viral-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .3s}
+.viral-card:hover{transform:translateY(-4px);border-color:var(--teal);box-shadow:0 0 30px var(--teal-glow)}
+.viral-emoji{font-size:28px;margin-bottom:12px}
+.viral-title{font-size:15px;font-weight:700;margin-bottom:8px}
+.viral-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:40px}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+.feature{display:flex;align-items:flex-start;gap:14px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;transition:all .3s}
+.feature:hover{border-color:rgba(45,212,191,0.3)}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--teal-glow);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.feature-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.feature-desc{font-size:12px;color:var(--text2);line-height:1.5}
+
+.palette-section{margin-top:80px;text-align:center}
+.palette-row{display:flex;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap}
+.swatch{width:80px;height:80px;border-radius:16px;transition:transform .3s;border:1px solid var(--border)}
+.swatch:hover{transform:scale(1.1)}
+.swatch-label{font-size:10px;margin-top:8px;color:var(--text2);text-align:center}
+.type-sample{margin-top:24px}
+.type-sample h3{font-family:'Outfit',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px}
+.type-sample p{font-family:'Cormorant Garamond',serif;font-size:24px;font-style:italic;color:var(--text2);margin-top:8px}
+
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+footer{text-align:center;padding:60px 24px;font-size:13px;color:var(--text2)}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon">&#9790;</span></button>
+
+<div class="hero">
+<div class="hero-glow g1"></div>
+<div class="hero-glow g2"></div>
+<div class="particles"><div class="particle" style="left:10%"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div></div>
+<div class="logo-mark">
+<div class="logo-icon">
+<div class="ghost-shape">
+<div class="ghost-eyes"><div class="ghost-eye"></div><div class="ghost-eye"></div></div>
+</div>
+</div>
+<div class="logo-text">Ghost</div>
+<div class="tagline">Drop your voice. They'll find it.</div>
+</div>
+<p class="hero-sub">Spatial voice notes pinned to exact real-world locations. Only plays when someone walks to that spot. Gets louder as you approach. Like finding buried treasure.</p>
+</div>
+
+<div class="magic reveal">
+<div class="section-label">The Magic Moment</div>
+<p class="magic-text">Your best friend texts you an address you don't recognize. You walk there. As you approach, your phone starts glowing. A warmth meter fills. At the exact spot, you hear her voice: <em>"This is where I was standing when I found out I got in. I wanted you to feel what this corner of the world feels like to me now."</em> You're standing on a random sidewalk, crying, <em>hearing her voice come from the ground beneath your feet.</em></p>
+</div>
+
+<section class="reveal">
+<div class="section-label">Product</div>
+<div class="section-title">Voices hidden in the real world</div>
+<div class="mockups">
+<!-- Phone 1: Drop -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="drop-view">
+<div class="drop-cam">
+<div class="drop-scene">
+<div class="drop-buildings">
+<div class="drop-bldg"></div><div class="drop-bldg"></div><div class="drop-bldg"></div><div class="drop-bldg"></div>
+</div>
+<div class="drop-ground"></div>
+</div>
+<div class="drop-radius"></div>
+<div class="drop-radius-label">50m radius</div>
+<div class="drop-pin"><div class="drop-pin-marker"></div></div>
+</div>
+<div style="text-align:center">
+<div class="drop-rec-btn"><div class="drop-rec-inner"></div></div>
+<div class="drop-label">Hold to record &bull; Drop here</div>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Drop a Ghost</div>
+</div>
+<!-- Phone 2: Map -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="map-view">
+<div class="map-header">Nearby Ghosts</div>
+<div class="map-area">
+<div class="map-grid"></div>
+<div class="map-street h1"></div>
+<div class="map-street h2"></div>
+<div class="map-street v1"></div>
+<div class="map-street v2"></div>
+<div class="map-street v3"></div>
+<div class="ghost-marker gm1"><span class="gm-icon">&#128123;</span></div>
+<div class="ghost-marker gm2"><span class="gm-icon">&#128156;</span></div>
+<div class="ghost-marker gm3"><span class="gm-icon">&#128123;</span></div>
+<div class="ghost-marker gm4"><span class="gm-icon">&#127775;</span></div>
+<div class="ghost-marker gm5"><span class="gm-icon">&#128293;</span></div>
+</div>
+<div class="map-legend">
+<div class="map-legend-item"><div class="map-legend-dot" style="background:var(--purple)"></div>Friends</div>
+<div class="map-legend-item"><div class="map-legend-dot" style="background:var(--teal)"></div>Public</div>
+<div class="map-legend-item"><div class="map-legend-dot" style="background:#f59e0b"></div>Trending</div>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Ghost Map</div>
+</div>
+<!-- Phone 3: Playback -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="play-view">
+<div class="play-approach">Approaching ghost...</div>
+<div class="play-warmth">
+<div class="warmth-ring"></div>
+<div class="warmth-fill"></div>
+<div class="warmth-pct">65%</div>
+<div class="warmth-label">warmth</div>
+</div>
+<div class="play-from">From: Emma</div>
+<div class="play-when">Dropped 3 days ago</div>
+<div class="play-wave">
+<span></span><span></span><span></span><span></span><span></span>
+<span></span><span></span><span></span><span></span><span></span>
+</div>
+<div class="play-transcript">"This is where we had our first date. I still think about that night..."</div>
+<div class="play-distance">12m away &bull; Walk closer to hear fully</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Finding a Ghost</div>
+</div>
+</div>
+</section>
+
+<section class="reveal">
+<div class="section-label">Virality</div>
+<div class="section-title">Why it goes viral</div>
+<div class="viral-grid">
+<div class="viral-card">
+<div class="viral-emoji">&#128149;</div>
+<div class="viral-title">"Where we first met" stories</div>
+<div class="viral-desc">Couples, friends, families leaving emotional voice notes at meaningful places. The content that emerges is unscriptable, raw, and universally relatable.</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#128506;</div>
+<div class="viral-title">Real-world treasure hunts</div>
+<div class="viral-desc">Creators chain Ghost messages across cities for scavenger hunts. Walk here, hear a clue, go to the next spot. The physical-digital blend is addictive.</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#128123;</div>
+<div class="viral-title">The discovery moment is shareable</div>
+<div class="viral-desc">Recording someone's face when they find a hidden Ghost message is pure gold content. The surprise + emotion combo is algorithm catnip.</div>
+</div>
+</div>
+</section>
+
+<section class="reveal">
+<div class="section-label">Features</div>
+<div class="section-title">Voices, pinned to the earth</div>
+<div class="features-grid">
+<div class="feature"><div class="feature-icon">&#128205;</div><div><div class="feature-name">GPS-Pinned Audio</div><div class="feature-desc">Messages are locked to exact coordinates. Sub-meter precision means you stand where they stood.</div></div></div>
+<div class="feature"><div class="feature-icon">&#127777;</div><div><div class="feature-name">Warmth Indicator</div><div class="feature-desc">As you approach a Ghost, your phone warms up. Visual and haptic feedback guide you to the exact spot.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128266;</div><div><div class="feature-name">Spatial Audio</div><div class="feature-desc">Messages get louder and clearer as you approach. With AirPods, the sound comes from the direction of the Ghost.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128274;</div><div><div class="feature-name">Private or Public</div><div class="feature-desc">Leave Ghosts for specific people, friends only, or the whole world. You control who hears your voice.</div></div></div>
+<div class="feature"><div class="feature-icon">&#9200;</div><div><div class="feature-name">Time Capsules</div><div class="feature-desc">Set Ghosts to unlock on a future date. Leave a message for your child's 18th birthday at the hospital where they were born.</div></div></div>
+<div class="feature"><div class="feature-icon">&#127760;</div><div><div class="feature-name">Ghost Trails</div><div class="feature-desc">Chain multiple Ghosts into guided walks. City tours, proposal paths, memory lanes — narrated by real voices.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128123;</div><div><div class="feature-name">Anonymous Ghosts</div><div class="feature-desc">Leave public messages without identity. Confessions, poems, jokes — for strangers to discover.</div></div></div>
+</div>
+</section>
+
+<section class="palette-section reveal">
+<div class="section-label">Design System</div>
+<div class="section-title">Color &amp; Typography</div>
+<div class="palette-row">
+<div><div class="swatch" style="background:#0d0a14"></div><div class="swatch-label">Deep Purple<br>#0D0A14</div></div>
+<div><div class="swatch" style="background:#1a1424"></div><div class="swatch-label">Surface<br>#1A1424</div></div>
+<div><div class="swatch" style="background:#8b5cf6"></div><div class="swatch-label">Purple<br>#8B5CF6</div></div>
+<div><div class="swatch" style="background:#2dd4bf"></div><div class="swatch-label">Soft Teal<br>#2DD4BF</div></div>
+<div><div class="swatch" style="background:#e8e4f0"></div><div class="swatch-label">Light<br>#E8E4F0</div></div>
+</div>
+<div class="type-sample">
+<h3>Outfit — Modern, ethereal weight</h3>
+<p>Cormorant Garamond — Emotional, poetic</p>
+</div>
+</section>
+
+<footer>Ghost Concept &mdash; 2026</footer>
+
+<script>
+function toggleTheme(){const b=document.body;b.dataset.theme=b.dataset.theme==='light'?'':'light';document.querySelector('.theme-icon').innerHTML=b.dataset.theme==='light'?'&#9788;':'&#9790;';}
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

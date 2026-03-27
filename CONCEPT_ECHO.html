@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Echo — Your Voice, Any Language, Still You</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a1628;--bg2:#0f1d35;--text:#f0ece4;--text2:#a0aabb;--amber:#e8a830;--amber2:#f5c563;--amber-glow:rgba(232,168,48,0.15);--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.06);--navy:#162444;--navy2:#1a2d52}
+[data-theme="light"]{--bg:#f5f0e8;--bg2:#ece6da;--text:#1a1a2e;--text2:#5a5a72;--amber:#c48820;--amber2:#a87418;--amber-glow:rgba(232,168,48,0.1);--card:rgba(0,0,0,0.03);--border:rgba(0,0,0,0.08);--navy:#e8e0d0;--navy2:#ddd5c5}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;transition:background .5s,color .5s}
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .3s}
+.theme-toggle:hover{transform:scale(1.1);border-color:var(--amber)}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40%;left:-20%;width:140%;height:140%;background:radial-gradient(ellipse at 30% 20%,rgba(232,168,48,0.08) 0%,transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(22,36,68,0.5) 0%,transparent 60%);pointer-events:none}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(80px);animation:float 8s ease-in-out infinite;opacity:.4}
+.hero-orb.o1{width:400px;height:400px;background:var(--amber);top:-100px;left:-100px;animation-delay:0s}
+.hero-orb.o2{width:300px;height:300px;background:#162444;bottom:-50px;right:-50px;animation-delay:3s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-20px)}}
+
+.logo-mark{position:relative;z-index:1;margin-bottom:32px}
+.logo-icon{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,var(--amber),var(--amber2));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 20px 60px rgba(232,168,48,0.3)}
+.logo-icon svg{width:40px;height:40px}
+.logo-text{font-size:56px;font-weight:900;letter-spacing:-2px;position:relative;z-index:1;background:linear-gradient(135deg,var(--text),var(--amber2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tagline{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--amber);margin-top:12px;opacity:.9}
+.hero-sub{font-size:17px;color:var(--text2);max-width:500px;margin:24px auto 0;line-height:1.7}
+
+/* Sections */
+section{padding:100px 24px;max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+.section-title{font-size:40px;font-weight:800;letter-spacing:-1px;line-height:1.2;margin-bottom:20px}
+.section-desc{font-size:17px;color:var(--text2);line-height:1.8;max-width:650px}
+
+/* Magic Moment */
+.magic{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:24px;padding:60px 40px;margin:0 auto;max-width:1100px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--border)}
+.magic::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+.magic-text{font-family:'Playfair Display',serif;font-size:24px;line-height:1.8;max-width:700px;margin:0 auto;color:var(--text)}
+.magic-text em{color:var(--amber);font-style:italic}
+
+/* Phone Mockups */
+.mockups{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:60px}
+@media(max-width:768px){.mockups{grid-template-columns:1fr;max-width:320px;margin:60px auto 0}}
+.phone-wrap{text-align:center}
+.phone{width:280px;height:560px;background:var(--bg2);border-radius:36px;border:2px solid var(--border);margin:0 auto;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.4)}
+.phone-notch{width:120px;height:28px;background:var(--bg);border-radius:0 0 16px 16px;margin:0 auto;position:relative;z-index:5}
+.phone-screen{padding:8px 16px;height:calc(100% - 28px);display:flex;flex-direction:column}
+.phone-label{font-size:13px;font-weight:600;color:var(--amber);margin-top:20px;letter-spacing:1px}
+
+/* Phone 1: Call Screen */
+.call-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center}
+.call-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--amber),#d4922a);margin-bottom:12px;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 30px rgba(232,168,48,0.3)}
+.call-name{font-size:18px;font-weight:700}
+.call-status{font-size:12px;color:#4ade80;margin-top:4px}
+.call-wave{width:100%;height:50px;margin:20px 0;position:relative;display:flex;align-items:center;justify-content:center;gap:2px}
+.wave-bar{width:3px;border-radius:2px;background:var(--amber);animation:waveAnim 1.2s ease-in-out infinite}
+.wave-bar:nth-child(1){height:10px;animation-delay:0s}
+.wave-bar:nth-child(2){height:20px;animation-delay:.1s}
+.wave-bar:nth-child(3){height:35px;animation-delay:.2s}
+.wave-bar:nth-child(4){height:25px;animation-delay:.3s}
+.wave-bar:nth-child(5){height:40px;animation-delay:.15s}
+.wave-bar:nth-child(6){height:20px;animation-delay:.25s}
+.wave-bar:nth-child(7){height:30px;animation-delay:.05s}
+.wave-bar:nth-child(8){height:15px;animation-delay:.35s}
+.wave-bar:nth-child(9){height:25px;animation-delay:.2s}
+.wave-bar:nth-child(10){height:10px;animation-delay:.1s}
+@keyframes waveAnim{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.8)}}
+.lang-transform{display:flex;align-items:center;gap:8px;justify-content:center;margin:8px 0}
+.lang-badge{font-size:11px;font-weight:700;background:var(--card);border:1px solid var(--border);padding:4px 10px;border-radius:8px;letter-spacing:1px}
+.lang-arrow{color:var(--amber);font-size:16px}
+.call-timer{font-size:13px;color:var(--text2);margin-top:8px;font-variant-numeric:tabular-nums}
+.call-actions{display:flex;gap:16px;margin-top:auto;margin-bottom:16px}
+.call-btn{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+.call-btn.mute{background:var(--card);border:1px solid var(--border)}
+.call-btn.end{background:#ef4444}
+.call-btn.speaker{background:var(--card);border:1px solid var(--border)}
+
+/* Phone 2: Inbox */
+.inbox-header{font-size:20px;font-weight:800;margin:12px 0 4px}
+.inbox-toggle{display:flex;background:var(--card);border-radius:8px;padding:3px;margin:12px 0;border:1px solid var(--border)}
+.inbox-toggle-btn{flex:1;text-align:center;padding:6px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer}
+.inbox-toggle-btn.active{background:var(--amber);color:#000}
+.inbox-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.inbox-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+.inbox-info{flex:1;min-width:0}
+.inbox-name{font-size:13px;font-weight:600}
+.inbox-preview{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inbox-time{font-size:10px;color:var(--text2)}
+.inbox-lang{font-size:9px;background:var(--amber-glow);color:var(--amber);padding:2px 6px;border-radius:4px;font-weight:600}
+
+/* Phone 3: Onboarding */
+.onboard-title{font-size:18px;font-weight:700;margin:16px 0 4px;text-align:center}
+.onboard-sub{font-size:12px;color:var(--text2);text-align:center}
+.voice-print{width:160px;height:160px;margin:24px auto;border-radius:50%;border:2px solid var(--amber);position:relative;display:flex;align-items:center;justify-content:center}
+.voice-print::before{content:'';position:absolute;width:120px;height:120px;border-radius:50%;border:1px solid rgba(232,168,48,0.4);animation:vpulse 2s ease-in-out infinite}
+.voice-print::after{content:'';position:absolute;width:80px;height:80px;border-radius:50%;border:1px solid rgba(232,168,48,0.2);animation:vpulse 2s ease-in-out infinite .5s}
+@keyframes vpulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.1);opacity:.5}}
+.voice-print-icon{font-size:36px;color:var(--amber)}
+.voice-progress{width:80%;height:4px;background:var(--card);border-radius:2px;margin:0 auto;overflow:hidden}
+.voice-progress-fill{width:65%;height:100%;background:var(--amber);border-radius:2px}
+.voice-timer{font-size:12px;color:var(--text2);text-align:center;margin-top:8px}
+.voice-langs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:16px}
+.voice-lang-chip{font-size:10px;padding:4px 8px;border-radius:6px;background:var(--card);border:1px solid var(--border);color:var(--text2)}
+.voice-lang-chip.detected{border-color:var(--amber);color:var(--amber)}
+
+/* Viral */
+.viral-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+@media(max-width:768px){.viral-grid{grid-template-columns:1fr}}
+.viral-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .3s}
+.viral-card:hover{transform:translateY(-4px);border-color:var(--amber);box-shadow:0 20px 40px rgba(0,0,0,0.2)}
+.viral-emoji{font-size:28px;margin-bottom:12px}
+.viral-title{font-size:15px;font-weight:700;margin-bottom:8px}
+.viral-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+/* Features */
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:40px}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+.feature{display:flex;align-items:flex-start;gap:14px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;transition:all .3s}
+.feature:hover{border-color:rgba(232,168,48,0.3)}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--amber-glow);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.feature-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.feature-desc{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* Palette */
+.palette-section{margin-top:80px;text-align:center}
+.palette-row{display:flex;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap}
+.swatch{width:80px;height:80px;border-radius:16px;position:relative;transition:transform .3s}
+.swatch:hover{transform:scale(1.1)}
+.swatch-label{font-size:10px;margin-top:8px;color:var(--text2);text-align:center}
+.type-sample{margin-top:24px}
+.type-sample h3{font-family:'Inter',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px}
+.type-sample p{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;color:var(--text2);margin-top:8px}
+
+/* Animations */
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Footer */
+footer{text-align:center;padding:60px 24px;font-size:13px;color:var(--text2)}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+<span class="theme-icon">&#9790;</span>
+</button>
+
+<!-- HERO -->
+<div class="hero">
+<div class="hero-orb o1"></div>
+<div class="hero-orb o2"></div>
+<div class="logo-mark">
+<div class="logo-icon">
+<svg viewBox="0 0 40 40" fill="none"><path d="M20 4C11.2 4 4 11.2 4 20s7.2 16 16 16 16-7.2 16-16S28.8 4 20 4zm0 6c2.2 0 4 1.8 4 4v6c0 2.2-1.8 4-4 4s-4-1.8-4-4v-6c0-2.2 1.8-4 4-4zm10 10c0 5-3.6 9.2-8.4 10v3.4h-3.2V30c-4.8-.8-8.4-5-8.4-10h3.2c0 3.8 3 6.8 6.8 6.8s6.8-3 6.8-6.8H30z" fill="#fff"/></svg>
+</div>
+<div class="logo-text">Echo</div>
+<div class="tagline">Your voice. Any language. Still you.</div>
+</div>
+<p class="hero-sub">Real-time voice translation that preserves your actual voice. You speak English, your friend in Tokyo hears <em>you</em> speaking Japanese — your laugh, your sarcasm, your tone.</p>
+</div>
+
+<!-- MAGIC MOMENT -->
+<div class="magic reveal">
+<div class="section-label" style="margin-bottom:20px">The Magic Moment</div>
+<p class="magic-text">You call your grandmother in Seoul. You speak English. She hears <em>your voice</em> — your actual voice — speaking perfect Korean. She laughs because it sounds exactly like you. She cries because for the first time in thirty years, <em>you're really talking</em>. No translator. No awkward pauses. Just you, in her language, with your warmth intact.</p>
+</div>
+
+<!-- MOCKUPS -->
+<section class="reveal">
+<div class="section-label">Product</div>
+<div class="section-title">Three screens that change everything</div>
+<div class="mockups">
+<!-- Phone 1: Live Call -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="call-screen">
+<div class="call-avatar">Y</div>
+<div class="call-name">Yuki Tanaka</div>
+<div class="call-status">&#9679; Echo Active</div>
+<div class="call-wave">
+<div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+</div>
+<div class="lang-transform">
+<span class="lang-badge">EN</span>
+<span class="lang-arrow">&#10230;</span>
+<span class="lang-badge">JP</span>
+</div>
+<div class="call-timer">04:32</div>
+<div class="call-actions">
+<div class="call-btn mute">&#128263;</div>
+<div class="call-btn end">&#128383;</div>
+<div class="call-btn speaker">&#128266;</div>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Live Call</div>
+</div>
+<!-- Phone 2: Inbox -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="inbox-header">Voice Messages</div>
+<div class="inbox-toggle">
+<div class="inbox-toggle-btn active">Original</div>
+<div class="inbox-toggle-btn">Translated</div>
+</div>
+<div class="inbox-item">
+<div class="inbox-av" style="background:linear-gradient(135deg,#e8a830,#d4922a)">M</div>
+<div class="inbox-info"><div class="inbox-name">Mama</div><div class="inbox-preview">"Come home for dinner this weekend..."</div></div>
+<div style="text-align:right"><div class="inbox-time">2m ago</div><div class="inbox-lang">KO &#8594; EN</div></div>
+</div>
+<div class="inbox-item">
+<div class="inbox-av" style="background:linear-gradient(135deg,#3b82f6,#60a5fa)">L</div>
+<div class="inbox-info"><div class="inbox-name">Luis</div><div class="inbox-preview">"The project deadline moved to..."</div></div>
+<div style="text-align:right"><div class="inbox-time">1h ago</div><div class="inbox-lang">ES &#8594; EN</div></div>
+</div>
+<div class="inbox-item">
+<div class="inbox-av" style="background:linear-gradient(135deg,#10b981,#34d399)">A</div>
+<div class="inbox-info"><div class="inbox-name">Akiko</div><div class="inbox-preview">"The cherry blossoms are beautiful..."</div></div>
+<div style="text-align:right"><div class="inbox-time">3h ago</div><div class="inbox-lang">JP &#8594; EN</div></div>
+</div>
+<div class="inbox-item">
+<div class="inbox-av" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa)">P</div>
+<div class="inbox-info"><div class="inbox-name">Pierre</div><div class="inbox-preview">"Dinner reservation confirmed for..."</div></div>
+<div style="text-align:right"><div class="inbox-time">5h ago</div><div class="inbox-lang">FR &#8594; EN</div></div>
+</div>
+<div class="inbox-item">
+<div class="inbox-av" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">S</div>
+<div class="inbox-info"><div class="inbox-name">Sven</div><div class="inbox-preview">"The meeting went really well..."</div></div>
+<div style="text-align:right"><div class="inbox-time">1d ago</div><div class="inbox-lang">DE &#8594; EN</div></div>
+</div>
+</div>
+</div>
+<div class="phone-label">Voice Inbox</div>
+</div>
+<!-- Phone 3: Onboarding -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="onboard-title">Creating Your Voice Print</div>
+<div class="onboard-sub">Read the passage below naturally</div>
+<div class="voice-print">
+<span class="voice-print-icon">&#127908;</span>
+</div>
+<div class="voice-progress"><div class="voice-progress-fill"></div></div>
+<div class="voice-timer">19s / 30s</div>
+<div class="voice-langs">
+<span class="voice-lang-chip detected">English</span>
+<span class="voice-lang-chip">Japanese</span>
+<span class="voice-lang-chip">Korean</span>
+<span class="voice-lang-chip">Spanish</span>
+<span class="voice-lang-chip">French</span>
+<span class="voice-lang-chip">German</span>
+<span class="voice-lang-chip">Arabic</span>
+<span class="voice-lang-chip">Hindi</span>
+</div>
+</div>
+</div>
+<div class="phone-label">Voice Print Setup</div>
+</div>
+</div>
+</section>
+
+<!-- WHY VIRAL -->
+<section class="reveal">
+<div class="section-label">Virality</div>
+<div class="section-title">Why it goes viral</div>
+<div class="viral-grid">
+<div class="viral-card">
+<div class="viral-emoji">&#128149;</div>
+<div class="viral-title">"Call your mom in her language"</div>
+<div class="viral-desc">The emotional TikTok content writes itself. First-generation kids calling parents in their native tongue — tears guaranteed. Unscriptable authenticity.</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#127760;</div>
+<div class="viral-title">Every traveler needs this</div>
+<div class="viral-desc">One international trip and you'll never delete it. Travel TikTok, expat communities, long-distance couples — each is a massive, vocal audience.</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#129327;</div>
+<div class="viral-title">The "wait, that's YOUR voice?" moment</div>
+<div class="viral-desc">The first time someone hears their own voice speaking another language, they record it and share it. It's genuinely uncanny and deeply personal.</div>
+</div>
+</div>
+</section>
+
+<!-- FEATURES -->
+<section class="reveal">
+<div class="section-label">Features</div>
+<div class="section-title">What makes Echo magic</div>
+<div class="features-grid">
+<div class="feature"><div class="feature-icon">&#127908;</div><div><div class="feature-name">30-Second Voice Print</div><div class="feature-desc">Record once. Echo learns your vocal DNA — pitch, rhythm, warmth, cadence — and carries it into every language.</div></div></div>
+<div class="feature"><div class="feature-icon">&#9889;</div><div><div class="feature-name">Sub-300ms Latency</div><div class="feature-desc">Real-time translation during live calls. No awkward pauses, no robotic delays. Feels like a normal conversation.</div></div></div>
+<div class="feature"><div class="feature-icon">&#127759;</div><div><div class="feature-name">40+ Languages</div><div class="feature-desc">From Japanese to Swahili. Each language model trained on native speakers for authentic pronunciation.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128172;</div><div><div class="feature-name">Async Voice Messages</div><div class="feature-desc">Record a voice note, send it translated. Recipient can toggle between your original and translated versions.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128274;</div><div><div class="feature-name">Voice Never Leaves Device</div><div class="feature-desc">Your voice print is encrypted and stored locally. Translation happens in a secure enclave. No one gets your voice.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128101;</div><div><div class="feature-name">Group Calls</div><div class="feature-desc">Five people, five languages, one conversation. Each person hears everyone else in their own language.</div></div></div>
+<div class="feature"><div class="feature-icon">&#127911;</div><div><div class="feature-name">Emotion Preservation</div><div class="feature-desc">Sarcasm, excitement, frustration, tenderness — Echo reads emotional context and preserves it in translation.</div></div></div>
+</div>
+</section>
+
+<!-- PALETTE -->
+<section class="palette-section reveal">
+<div class="section-label">Design System</div>
+<div class="section-title">Color &amp; Typography</div>
+<div class="palette-row">
+<div><div class="swatch" style="background:#0a1628"></div><div class="swatch-label">Deep Navy<br>#0A1628</div></div>
+<div><div class="swatch" style="background:#162444"></div><div class="swatch-label">Navy<br>#162444</div></div>
+<div><div class="swatch" style="background:#e8a830"></div><div class="swatch-label">Warm Amber<br>#E8A830</div></div>
+<div><div class="swatch" style="background:#f5c563"></div><div class="swatch-label">Light Amber<br>#F5C563</div></div>
+<div><div class="swatch" style="background:#f0ece4"></div><div class="swatch-label">Cream<br>#F0ECE4</div></div>
+</div>
+<div class="type-sample">
+<h3>Inter — Bold, clean, global</h3>
+<p>Playfair Display — Warm, editorial italics</p>
+</div>
+</section>
+
+<footer>Echo Concept &mdash; 2026</footer>
+
+<script>
+function toggleTheme(){
+const b=document.body;
+b.dataset.theme=b.dataset.theme==='light'?'':'light';
+document.querySelector('.theme-icon').innerHTML=b.dataset.theme==='light'?'&#9788;':'&#9790;';
+}
+const obs=new IntersectionObserver((entries)=>{
+entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

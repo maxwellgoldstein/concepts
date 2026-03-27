@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mimic — An Expert Watching Over Your Shoulder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#faf8f5;--bg2:#f2ede6;--text:#1a1a1a;--text2:#7a7068;--terra:#c75a3a;--terra2:#a84830;--terra-glow:rgba(199,90,58,0.08);--card:rgba(0,0,0,0.02);--border:rgba(0,0,0,0.06);--warm:#f5ede4;--warm2:#ebe3d8}
+[data-theme="dark"]{--bg:#1a1814;--bg2:#221f1a;--text:#f0ece4;--text2:#8a7e72;--terra:#e07050;--terra2:#c75a3a;--terra-glow:rgba(224,112,80,0.1);--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.06);--warm:#2a2520;--warm2:#322c26}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;transition:background .5s,color .5s}
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .3s}
+.theme-toggle:hover{transform:scale(1.1);border-color:var(--terra)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;position:relative}
+.hero::before{content:'';position:absolute;top:10%;left:50%;transform:translateX(-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,var(--terra-glow),transparent 70%);pointer-events:none}
+
+.logo-mark{position:relative;z-index:1;margin-bottom:32px}
+.logo-icon{width:80px;height:80px;border-radius:24px;background:linear-gradient(145deg,var(--terra),var(--terra2));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 16px 48px rgba(199,90,58,0.25)}
+.logo-eye{width:36px;height:24px;border:3px solid #fff;border-radius:50%;position:relative}
+.logo-eye::before{content:'';position:absolute;top:50%;left:50%;width:10px;height:10px;background:#fff;border-radius:50%;transform:translate(-50%,-50%)}
+.logo-text{font-family:'DM Serif Display',serif;font-size:56px;letter-spacing:-1px}
+.tagline{font-family:'DM Serif Display',serif;font-size:20px;font-style:italic;color:var(--terra);margin-top:8px}
+.hero-sub{font-size:17px;color:var(--text2);max-width:520px;margin:24px auto 0;line-height:1.8}
+
+section{padding:100px 24px;max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--terra);margin-bottom:12px}
+.section-title{font-family:'DM Serif Display',serif;font-size:40px;letter-spacing:-0.5px;line-height:1.2;margin-bottom:20px}
+.section-desc{font-size:17px;color:var(--text2);line-height:1.8;max-width:650px}
+
+.magic{background:var(--warm);border-radius:24px;padding:60px 40px;margin:0 auto;max-width:1100px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--border)}
+.magic::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--terra),transparent)}
+.magic-text{font-family:'DM Serif Display',serif;font-size:23px;line-height:1.9;max-width:700px;margin:0 auto;color:var(--text)}
+.magic-text em{color:var(--terra);font-style:italic}
+
+.mockups{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:60px}
+@media(max-width:768px){.mockups{grid-template-columns:1fr;max-width:320px;margin:60px auto 0}}
+.phone-wrap{text-align:center}
+.phone{width:280px;height:560px;background:var(--bg2);border-radius:36px;border:2px solid var(--border);margin:0 auto;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.1)}
+[data-theme="dark"] .phone{box-shadow:0 30px 80px rgba(0,0,0,0.5)}
+.phone-notch{width:120px;height:28px;background:var(--bg);border-radius:0 0 16px 16px;margin:0 auto;position:relative;z-index:5}
+.phone-screen{padding:8px 16px;height:calc(100% - 28px);display:flex;flex-direction:column}
+.phone-label{font-size:13px;font-weight:600;color:var(--terra);margin-top:20px;letter-spacing:1px}
+
+/* Phone 1: Session View */
+.session{flex:1;display:flex;flex-direction:column}
+.session-cam{flex:1;background:linear-gradient(180deg,#d4c4b0,#c4b4a0);border-radius:10px;position:relative;overflow:hidden;margin-bottom:8px}
+[data-theme="dark"] .session-cam{background:linear-gradient(180deg,#3a3028,#2a2018)}
+.session-hands{position:absolute;bottom:10%;left:15%;right:15%}
+.hand-shape{width:60%;height:30px;background:rgba(199,90,58,0.15);border:1px solid rgba(199,90,58,0.4);border-radius:20px;margin:0 auto}
+.ai-annotation{position:absolute;font-size:8px;font-weight:700;background:var(--terra);color:#fff;padding:3px 8px;border-radius:6px;white-space:nowrap}
+.ai-annotation::after{content:'';position:absolute;bottom:-4px;left:12px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid var(--terra)}
+.ann1{top:35%;left:8%}
+.ann2{top:25%;right:8%}
+.ann3{bottom:40%;left:50%;transform:translateX(-50%)}
+.session-surface{position:absolute;bottom:0;left:0;right:0;height:45%;background:rgba(180,160,140,0.3);border-radius:0 0 10px 10px}
+.session-dough{position:absolute;bottom:20%;left:30%;width:40%;height:25%;background:rgba(220,200,170,0.6);border-radius:50%;border:1px dashed rgba(199,90,58,0.3)}
+.session-voice{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px}
+.voice-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--terra),var(--terra2));display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0}
+.voice-text{font-size:10px;color:var(--text2);line-height:1.4;flex:1}
+.voice-wave-mini{display:flex;gap:1px;align-items:center}
+.voice-wave-mini span{width:2px;border-radius:1px;background:var(--terra);animation:waveM 1s ease-in-out infinite}
+.voice-wave-mini span:nth-child(1){height:8px;animation-delay:0s}
+.voice-wave-mini span:nth-child(2){height:14px;animation-delay:.1s}
+.voice-wave-mini span:nth-child(3){height:10px;animation-delay:.2s}
+.voice-wave-mini span:nth-child(4){height:16px;animation-delay:.15s}
+.voice-wave-mini span:nth-child(5){height:6px;animation-delay:.25s}
+@keyframes waveM{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.5)}}
+
+/* Phone 2: Skill Library */
+.lib-header{font-family:'DM Serif Display',serif;font-size:20px;margin:12px 0 8px}
+.lib-search{width:100%;padding:8px 12px;border-radius:10px;background:var(--card);border:1px solid var(--border);font-size:12px;color:var(--text2);margin-bottom:10px}
+.lib-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1;align-content:start}
+.lib-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+.lib-emoji{font-size:24px;margin-bottom:4px}
+.lib-name{font-size:11px;font-weight:700}
+.lib-count{font-size:9px;color:var(--text2);margin-top:2px}
+
+/* Phone 3: Progress */
+.prog-header{font-family:'DM Serif Display',serif;font-size:18px;margin:12px 0 4px}
+.prog-date{font-size:11px;color:var(--text2);margin-bottom:10px}
+.prog-timeline{flex:1;display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.prog-item{display:flex;gap:8px;align-items:flex-start}
+.prog-time{font-size:9px;color:var(--text2);min-width:36px;padding-top:2px}
+.prog-dot{width:8px;height:8px;border-radius:50%;background:var(--terra);margin-top:4px;flex-shrink:0}
+.prog-content{flex:1}
+.prog-thumb{width:100%;height:48px;border-radius:6px;margin-bottom:4px}
+.prog-thumb.p1{background:linear-gradient(135deg,#d4c4b0,#c4b4a0)}
+.prog-thumb.p2{background:linear-gradient(135deg,#c4b4a0,#b4a490)}
+.prog-thumb.p3{background:linear-gradient(135deg,#b4a490,#a49480)}
+[data-theme="dark"] .prog-thumb.p1{background:linear-gradient(135deg,#3a3028,#2a2018)}
+[data-theme="dark"] .prog-thumb.p2{background:linear-gradient(135deg,#2a2018,#1a1008)}
+[data-theme="dark"] .prog-thumb.p3{background:linear-gradient(135deg,#1a1008,#0a0800)}
+.prog-note{font-size:10px;color:var(--text2);line-height:1.4}
+.prog-note strong{color:var(--text);font-weight:600}
+.prog-score{display:flex;align-items:center;gap:4px;margin-top:4px}
+.prog-bar-track{flex:1;height:3px;background:var(--border);border-radius:2px}
+.prog-bar-fill{height:100%;background:var(--terra);border-radius:2px}
+.prog-pct{font-size:9px;font-weight:700;color:var(--terra)}
+
+.viral-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+@media(max-width:768px){.viral-grid{grid-template-columns:1fr}}
+.viral-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .3s}
+.viral-card:hover{transform:translateY(-4px);border-color:var(--terra);box-shadow:0 20px 40px rgba(0,0,0,0.05)}
+[data-theme="dark"] .viral-card:hover{box-shadow:0 20px 40px rgba(0,0,0,0.3)}
+.viral-emoji{font-size:28px;margin-bottom:12px}
+.viral-title{font-size:15px;font-weight:700;margin-bottom:8px}
+.viral-desc{font-size:13px;color:var(--text2);line-height:1.6}
+
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:40px}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+.feature{display:flex;align-items:flex-start;gap:14px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;transition:all .3s}
+.feature:hover{border-color:rgba(199,90,58,0.3)}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--terra-glow);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.feature-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.feature-desc{font-size:12px;color:var(--text2);line-height:1.5}
+
+.palette-section{margin-top:80px;text-align:center}
+.palette-row{display:flex;justify-content:center;gap:16px;margin:24px 0;flex-wrap:wrap}
+.swatch{width:80px;height:80px;border-radius:16px;transition:transform .3s;border:1px solid var(--border)}
+.swatch:hover{transform:scale(1.1)}
+.swatch-label{font-size:10px;margin-top:8px;color:var(--text2);text-align:center}
+.type-sample{margin-top:24px}
+.type-sample h3{font-family:'DM Sans',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px}
+.type-sample p{font-family:'DM Serif Display',serif;font-size:24px;font-style:italic;color:var(--text2);margin-top:8px}
+
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(0.16,1,0.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+footer{text-align:center;padding:60px 24px;font-size:13px;color:var(--text2)}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon">&#9788;</span></button>
+
+<div class="hero">
+<div class="logo-mark">
+<div class="logo-icon"><div class="logo-eye"></div></div>
+<div class="logo-text">Mimic</div>
+<div class="tagline">An expert watching over your shoulder.</div>
+</div>
+<p class="hero-sub">AI coach that sees through your camera and guides you in real-time. Cooking, repairs, guitar, art — it watches your hands and course-corrects. Live.</p>
+</div>
+
+<div class="magic reveal">
+<div class="section-label">The Magic Moment</div>
+<p class="magic-text">You're rolling pasta dough for the first time. Mimic watches through your camera and says, in a calm voice, <em>"The dough is thicker on the left — tilt your rolling pin slightly right."</em> You adjust. <em>"Perfect. Now fold it over once more."</em> Twenty minutes later you're eating the best pasta you've ever made, taught by something that could <em>actually see what you were doing.</em></p>
+</div>
+
+<section class="reveal">
+<div class="section-label">Product</div>
+<div class="section-title">Your new mentor, always available</div>
+<div class="mockups">
+<!-- Phone 1: Session -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="session">
+<div class="session-cam">
+<div class="session-surface"></div>
+<div class="session-dough"></div>
+<div class="session-hands"><div class="hand-shape"></div></div>
+<div class="ai-annotation ann1">Thicker here</div>
+<div class="ai-annotation ann2">Good pressure</div>
+<div class="ai-annotation ann3">Tilt right slightly</div>
+</div>
+<div class="session-voice">
+<div class="voice-avatar">M</div>
+<div class="voice-text">"Tilt your rolling pin slightly to the right — the left side is about 2mm thicker..."</div>
+<div class="voice-wave-mini"><span></span><span></span><span></span><span></span><span></span></div>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Live Session</div>
+</div>
+<!-- Phone 2: Library -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="lib-header">Skills</div>
+<div class="lib-search">Search skills...</div>
+<div class="lib-grid">
+<div class="lib-card"><div class="lib-emoji">&#127859;</div><div class="lib-name">Cooking</div><div class="lib-count">240+ recipes</div></div>
+<div class="lib-card"><div class="lib-emoji">&#127928;</div><div class="lib-name">Guitar</div><div class="lib-count">80+ songs</div></div>
+<div class="lib-card"><div class="lib-emoji">&#128295;</div><div class="lib-name">Home Repair</div><div class="lib-count">150+ fixes</div></div>
+<div class="lib-card"><div class="lib-emoji">&#127912;</div><div class="lib-name">Drawing</div><div class="lib-count">60+ tutorials</div></div>
+<div class="lib-card"><div class="lib-emoji">&#129520;</div><div class="lib-name">Knitting</div><div class="lib-count">45+ patterns</div></div>
+<div class="lib-card"><div class="lib-emoji">&#127803;</div><div class="lib-name">Gardening</div><div class="lib-count">90+ guides</div></div>
+<div class="lib-card"><div class="lib-emoji">&#128187;</div><div class="lib-name">Electronics</div><div class="lib-count">70+ projects</div></div>
+<div class="lib-card"><div class="lib-emoji">&#129351;</div><div class="lib-name">Fitness</div><div class="lib-count">120+ forms</div></div>
+</div>
+</div>
+</div>
+<div class="phone-label">Skill Library</div>
+</div>
+<!-- Phone 3: Progress -->
+<div class="phone-wrap">
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-screen">
+<div class="prog-header">Session Recap</div>
+<div class="prog-date">Fresh Pasta &mdash; Mar 27, 2026</div>
+<div class="prog-timeline">
+<div class="prog-item">
+<div class="prog-time">0:00</div>
+<div class="prog-dot"></div>
+<div class="prog-content">
+<div class="prog-thumb p1"></div>
+<div class="prog-note"><strong>Dough mixing</strong> — Good flour well technique. Eggs incorporated smoothly.</div>
+<div class="prog-score"><div class="prog-bar-track"><div class="prog-bar-fill" style="width:90%"></div></div><div class="prog-pct">90%</div></div>
+</div>
+</div>
+<div class="prog-item">
+<div class="prog-time">8:20</div>
+<div class="prog-dot"></div>
+<div class="prog-content">
+<div class="prog-thumb p2"></div>
+<div class="prog-note"><strong>Kneading</strong> — Uneven pressure detected. Corrected after guidance.</div>
+<div class="prog-score"><div class="prog-bar-track"><div class="prog-bar-fill" style="width:72%"></div></div><div class="prog-pct">72%</div></div>
+</div>
+</div>
+<div class="prog-item">
+<div class="prog-time">14:45</div>
+<div class="prog-dot"></div>
+<div class="prog-content">
+<div class="prog-thumb p3"></div>
+<div class="prog-note"><strong>Rolling</strong> — Great improvement after pin tilt correction. Even thickness.</div>
+<div class="prog-score"><div class="prog-bar-track"><div class="prog-bar-fill" style="width:85%"></div></div><div class="prog-pct">85%</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Session Recap</div>
+</div>
+</div>
+</section>
+
+<section class="reveal">
+<div class="section-label">Virality</div>
+<div class="section-title">Why it goes viral</div>
+<div class="viral-grid">
+<div class="viral-card">
+<div class="viral-emoji">&#128248;</div>
+<div class="viral-title">Before/after magic</div>
+<div class="viral-desc">First-timers making restaurant-quality food, playing songs, fixing things — all guided by AI. The transformation content is irresistible on every platform.</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#129303;</div>
+<div class="viral-title">Replaces $200/hr lessons</div>
+<div class="viral-desc">Private cooking classes, guitar teachers, art tutors — Mimic does it for a fraction. The value proposition is visceral and shareable.</div>
+</div>
+<div class="viral-card">
+<div class="viral-emoji">&#127793;</div>
+<div class="viral-title">Progress addiction</div>
+<div class="viral-desc">Session recaps with scored progress make you want to come back. The improvement curve is visible and motivating. People share their growth.</div>
+</div>
+</div>
+</section>
+
+<section class="reveal">
+<div class="section-label">Features</div>
+<div class="section-title">Your always-available mentor</div>
+<div class="features-grid">
+<div class="feature"><div class="feature-icon">&#128065;</div><div><div class="feature-name">Real-Time Vision</div><div class="feature-desc">AI watches through your camera, understanding what your hands are doing, what tools you're using, what stage you're at.</div></div></div>
+<div class="feature"><div class="feature-icon">&#127908;</div><div><div class="feature-name">Calm Voice Guidance</div><div class="feature-desc">Natural voice coaching that adapts to your pace. Speaks when needed, stays quiet when you're flowing.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128200;</div><div><div class="feature-name">Progress Tracking</div><div class="feature-desc">Every session is annotated with screenshots and scored. Watch yourself improve over weeks and months.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128218;</div><div><div class="feature-name">Unlimited Skills</div><div class="feature-desc">From sourdough to soldering. The skill library grows weekly. Request anything and Mimic learns to teach it.</div></div></div>
+<div class="feature"><div class="feature-icon">&#127919;</div><div><div class="feature-name">Adaptive Difficulty</div><div class="feature-desc">Starts simple, adds complexity as you improve. Never bored, never overwhelmed.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128101;</div><div><div class="feature-name">Community Sessions</div><div class="feature-desc">Learn alongside others in real-time. Share tips, compare progress, celebrate wins together.</div></div></div>
+<div class="feature"><div class="feature-icon">&#128276;</div><div><div class="feature-name">Mistake Prevention</div><div class="feature-desc">Mimic spots errors before they happen. "Stop — that wire is live" could save your project or your finger.</div></div></div>
+</div>
+</section>
+
+<section class="palette-section reveal">
+<div class="section-label">Design System</div>
+<div class="section-title">Color &amp; Typography</div>
+<div class="palette-row">
+<div><div class="swatch" style="background:#faf8f5"></div><div class="swatch-label">Off-White<br>#FAF8F5</div></div>
+<div><div class="swatch" style="background:#f2ede6"></div><div class="swatch-label">Warm Sand<br>#F2EDE6</div></div>
+<div><div class="swatch" style="background:#c75a3a"></div><div class="swatch-label">Terracotta<br>#C75A3A</div></div>
+<div><div class="swatch" style="background:#a84830"></div><div class="swatch-label">Deep Terra<br>#A84830</div></div>
+<div><div class="swatch" style="background:#1a1a1a"></div><div class="swatch-label">Charcoal<br>#1A1A1A</div></div>
+</div>
+<div class="type-sample">
+<h3>DM Sans — Clean and confident</h3>
+<p>DM Serif Display — Warm editorial headings</p>
+</div>
+</section>
+
+<footer>Mimic Concept &mdash; 2026</footer>
+
+<script>
+function toggleTheme(){const b=document.body;b.dataset.theme=b.dataset.theme==='dark'?'':'dark';document.querySelector('.theme-icon').innerHTML=b.dataset.theme==='dark'?'&#9790;':'&#9788;';}
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
