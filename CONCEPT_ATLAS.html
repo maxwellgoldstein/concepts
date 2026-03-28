@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atlas — The Relationship Terrain Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf8f5;--surface:#ffffff;--surface2:#f5f0ea;--border:#e5ddd3;--text:#2a2520;--text2:#8c7e72;--terra:#c2714f;--terra2:#a85a3b;--terra-dim:rgba(194,113,79,0.06);--terra-glow:rgba(194,113,79,0.1);--sage:#6b8f71;--sage-dim:rgba(107,143,113,0.08);--cream:#f5f0ea;--amber:#c49032;--rose:#c47070}
+[data-theme="dark"]{--bg:#1a1714;--surface:#242019;--surface2:#2e2923;--border:#3d3630;--text:#f0ebe5;--text2:#9c8f82;--terra-dim:rgba(194,113,79,0.1);--terra-glow:rgba(194,113,79,0.12);--sage-dim:rgba(107,143,113,0.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;transition:background .4s,color .4s}
+
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:100;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s}
+.theme-toggle:hover{transform:scale(1.1);border-color:var(--terra)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:30%;left:50%;transform:translateX(-50%);width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,var(--terra-glow),transparent 60%);animation:warmPulse 8s ease-in-out infinite}
+@keyframes warmPulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.4}50%{transform:translateX(-50%) scale(1.1);opacity:.7}}
+
+/* Overlapping circles pattern */
+.hero-pattern{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.06}
+.hero-pattern circle{fill:none;stroke:var(--text);stroke-width:.5}
+
+.hero-content{position:relative;z-index:2}
+.logo{display:flex;align-items:center;gap:14px;margin-bottom:36px;justify-content:center;opacity:0;transform:translateY(30px);animation:fadeUp .8s ease forwards}
+.logo-icon{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--terra),var(--sage));display:flex;align-items:center;justify-content:center;position:relative}
+.logo-icon::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--terra);opacity:.2}
+.logo-icon svg{width:26px;height:26px;fill:white}
+.logo-text{font-family:'Source Serif 4',serif;font-size:36px;font-weight:700;letter-spacing:-1px}
+.logo-text span{color:var(--terra)}
+
+.tagline{font-family:'Source Serif 4',serif;font-size:clamp(36px,7vw,68px);font-weight:800;letter-spacing:-2px;line-height:1.1;margin-bottom:24px;opacity:0;transform:translateY(30px);animation:fadeUp .8s ease .2s forwards}
+.tagline .hl{color:var(--terra)}
+
+.subtitle{font-size:clamp(16px,3vw,20px);color:var(--text2);max-width:540px;line-height:1.7;font-weight:400;opacity:0;transform:translateY(30px);animation:fadeUp .8s ease .4s forwards}
+
+.doesnt-exist{display:inline-flex;align-items:center;gap:8px;margin-top:32px;padding:10px 20px;background:var(--terra-dim);border:1px solid rgba(194,113,79,0.15);border-radius:100px;font-size:13px;font-weight:600;color:var(--terra);opacity:0;animation:fadeUp .8s ease .6s forwards}
+.doesnt-exist::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--terra);animation:blink 3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+section{padding:80px 24px;max-width:900px;margin:0 auto}
+.section-label{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--terra);text-transform:uppercase;letter-spacing:3px;margin-bottom:12px}
+.section-title{font-family:'Source Serif 4',serif;font-size:clamp(28px,5vw,42px);font-weight:700;letter-spacing:-1px;line-height:1.15;margin-bottom:20px}
+
+.magic-section{background:linear-gradient(180deg,transparent,var(--terra-dim),transparent);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px}
+.magic-section .inner{max-width:900px;margin:0 auto}
+.magic-quote{font-family:'Source Serif 4',serif;font-size:clamp(20px,3.5vw,30px);font-weight:300;line-height:1.7;font-style:italic;max-width:680px}
+.magic-quote strong{font-weight:700;color:var(--terra)}
+
+/* Phone Mockups */
+.mockups{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:60px auto;max-width:900px;padding:0 24px}
+@media(max-width:768px){.mockups{grid-template-columns:1fr;max-width:360px}}
+.phone{background:var(--surface);border:1px solid var(--border);border-radius:32px;overflow:hidden;transition:transform .4s,box-shadow .4s}
+.phone:hover{transform:translateY(-8px);box-shadow:0 20px 60px var(--terra-glow)}
+.phone-notch{height:32px;display:flex;align-items:center;justify-content:center;padding-top:8px}
+.phone-notch-inner{width:80px;height:5px;border-radius:10px;background:var(--border)}
+.phone-screen{padding:16px}
+.phone-label{text-align:center;margin-top:16px;font-size:13px;font-weight:600;color:var(--text2)}
+
+/* Mockup 1: Question Card */
+.question-card{background:var(--surface2);border-radius:24px;padding:24px;margin-bottom:12px;border:1px solid var(--border)}
+.q-from{font-size:11px;color:var(--text2);margin-bottom:4px;font-family:'DM Mono',monospace;letter-spacing:1px}
+.q-text{font-family:'Source Serif 4',serif;font-size:18px;font-weight:600;line-height:1.5;margin-bottom:16px}
+.q-slider{margin:16px 0}
+.q-slider-track{height:6px;background:var(--border);border-radius:3px;position:relative}
+.q-slider-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--sage),var(--terra));width:65%}
+.q-slider-thumb{width:20px;height:20px;border-radius:50%;background:var(--terra);border:3px solid var(--surface);position:absolute;top:-7px;left:63%;box-shadow:0 2px 8px rgba(194,113,79,0.3)}
+.q-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-top:8px}
+.q-optional{margin-top:16px}
+.q-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;resize:none;height:56px}
+.q-submit{width:100%;margin-top:12px;padding:14px;background:var(--terra);color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer}
+.q-progress{display:flex;gap:4px;margin-bottom:14px}
+.q-progress-dot{height:4px;flex:1;border-radius:2px;background:var(--border)}
+.q-progress-dot.filled{background:var(--terra)}
+
+/* Mockup 2: Terrain Map */
+.terrain-map{position:relative;width:100%;aspect-ratio:.9;border-radius:20px;background:var(--surface2);overflow:hidden;border:1px solid var(--border);margin-bottom:12px}
+.terrain-map svg{width:100%;height:100%}
+.terrain-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.5px;text-transform:uppercase}
+.alignment-legend{display:flex;gap:10px;justify-content:center;margin:8px 0}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)}
+.legend-dot{width:8px;height:8px;border-radius:2px}
+.gap-alert{background:rgba(196,112,112,0.08);border:1px solid rgba(196,112,112,0.15);border-radius:12px;padding:10px;margin-top:8px}
+.gap-alert-title{font-size:12px;font-weight:700;color:var(--rose);margin-bottom:2px}
+.gap-alert-text{font-size:11px;color:var(--text2);line-height:1.4}
+
+/* Mockup 3: Insight Card */
+.insight-card{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:12px}
+.insight-emoji{font-size:28px;margin-bottom:10px}
+.insight-title{font-family:'Source Serif 4',serif;font-size:16px;font-weight:700;margin-bottom:8px}
+.insight-text{font-size:13px;color:var(--text2);line-height:1.6}
+.insight-text strong{color:var(--text);font-weight:600}
+.insight-action{display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:var(--terra)}
+.member-votes{display:flex;gap:8px;margin-top:10px}
+.member-vote{display:flex;flex-direction:column;align-items:center;gap:4px}
+.member-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white}
+.member-sentiment{font-size:10px;font-weight:600}
+
+/* Shared sections */
+.moat-section{padding:80px 24px}
+.moat-inner{max-width:900px;margin:0 auto}
+.moat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:32px}
+.moat-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;transition:border-color .3s}
+.moat-card:hover{border-color:var(--terra)}
+.moat-card h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.moat-card p{font-size:14px;color:var(--text2);line-height:1.6}
+
+.viral-section{padding:60px 24px;background:var(--terra-dim);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.viral-inner{max-width:900px;margin:0 auto}
+.viral-item{display:flex;gap:16px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--border)}
+.viral-item:last-child{border-bottom:none}
+.viral-num{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;color:var(--terra);width:40px;flex-shrink:0}
+.viral-text h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.viral-text p{font-size:14px;color:var(--text2);line-height:1.5}
+
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:32px}
+.feature{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .3s}
+.feature:hover{border-color:var(--terra);transform:translateY(-2px)}
+.feature-icon{font-size:24px;margin-bottom:12px}
+.feature h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.feature p{font-size:13px;color:var(--text2);line-height:1.5}
+
+.palette-section{padding:60px 24px}
+.palette-inner{max-width:900px;margin:0 auto}
+.colors{display:flex;gap:12px;margin:20px 0;flex-wrap:wrap}
+.color-swatch{width:64px;height:64px;border-radius:14px;position:relative;transition:transform .2s}
+.color-swatch:hover{transform:scale(1.08)}
+.color-swatch span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);white-space:nowrap}
+.type-sample{margin-top:32px}
+.type-sample h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text2)}
+.type-row{display:flex;align-items:baseline;gap:20px;padding:8px 0;flex-wrap:wrap}
+.type-row .label{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);width:80px}
+
+.scroll-reveal{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.16,1,.3,1)}
+.scroll-reveal.visible{opacity:1;transform:translateY(0)}
+
+footer{text-align:center;padding:40px 24px;font-size:13px;color:var(--text2);border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()"><span id="themeIcon">🌙</span></button>
+
+<!-- HERO -->
+<div class="hero">
+<svg class="hero-pattern" width="500" height="500" viewBox="0 0 500 500">
+<circle cx="200" cy="230" r="120"/><circle cx="300" cy="230" r="120"/><circle cx="250" cy="310" r="120"/><circle cx="250" cy="180" r="80"/>
+</svg>
+<div class="hero-content">
+<div class="logo">
+<div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 3.25 2.38 5.96 5.5 6.46V19H8v2h3v2h2v-2h3v-2h-2.5v-3.54C16.62 14.96 19 12.25 19 9c0-3.87-3.13-7-7-7zm0 2c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5z"/><circle cx="10" cy="9" r="1.5"/><circle cx="14" cy="9" r="1.5"/></svg></div>
+<div class="logo-text"><span>Atlas</span></div>
+</div>
+<div class="tagline">What nobody's saying,<br><span class="hl">finally visible.</span></div>
+<div class="subtitle">Small groups privately answer AI-generated questions. Atlas reveals unspoken tensions, misaligned expectations, and hidden appreciations nobody expressed.</div>
+<div class="doesnt-exist">Why this doesn't exist yet — group therapy insights require trust + AI synthesis nobody's combined</div>
+</div>
+</div>
+
+<!-- MAGIC MOMENT -->
+<div class="magic-section">
+<div class="inner scroll-reveal">
+<div class="section-label">The Magic Moment</div>
+<div class="magic-quote">Your roommate group has been tense for weeks. Nobody says anything. Then Atlas reveals: <strong>3 of 4 members assumed someone else was planning the utility split.</strong> Two people have been frustrated about the same unspoken issue — dishes — but both assumed they were alone. One person has been wanting to say "thank you" for something nobody noticed. <strong>The conversation that follows is the best one your group has ever had.</strong></div>
+</div>
+</div>
+
+<!-- MOCKUPS -->
+<section class="scroll-reveal">
+<div class="section-label">Product Vision</div>
+<div class="section-title">Three screens that change everything</div>
+</section>
+
+<div class="mockups">
+<!-- Phone 1: Private Question Card -->
+<div>
+<div class="phone scroll-reveal">
+<div class="phone-notch"><div class="phone-notch-inner"></div></div>
+<div class="phone-screen">
+<div style="font-size:11px;color:var(--terra);font-family:'DM Mono',monospace;font-weight:500;letter-spacing:1px;margin-bottom:4px">PRIVATE</div>
+<div style="font-size:18px;font-weight:800;margin-bottom:14px">This Week's Question</div>
+
+<div class="q-progress">
+<div class="q-progress-dot filled"></div>
+<div class="q-progress-dot filled"></div>
+<div class="q-progress-dot filled"></div>
+<div class="q-progress-dot"></div>
+<div class="q-progress-dot"></div>
+</div>
+
+<div class="question-card">
+<div class="q-from">FOR: APARTMENT GROUP</div>
+<div class="q-text">How do you feel about how chores are divided?</div>
+<div class="q-slider">
+<div class="q-slider-track">
+<div class="q-slider-fill"></div>
+<div class="q-slider-thumb"></div>
+</div>
+<div class="q-labels">
+<span>Very unfair</span>
+<span>Perfectly fair</span>
+</div>
+</div>
+<div class="q-optional">
+<div style="font-size:12px;color:var(--text2);margin-bottom:6px">Add context (optional, stays anonymous)</div>
+<div class="q-textarea" style="display:flex;align-items:flex-start;padding:12px;font-size:13px;color:var(--text2)">I feel like I always end up doing dishes even though...</div>
+</div>
+</div>
+
+<div class="q-submit">Submit Privately</div>
+
+<div style="margin-top:14px;text-align:center;font-size:11px;color:var(--text2)">
+<div style="margin-bottom:4px">2 of 4 members have answered</div>
+<div>Results synthesized when everyone responds</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Private, honest answers</div>
+</div>
+
+<!-- Phone 2: Group Terrain Map -->
+<div>
+<div class="phone scroll-reveal" style="animation-delay:.15s">
+<div class="phone-notch"><div class="phone-notch-inner"></div></div>
+<div class="phone-screen">
+<div style="font-size:11px;color:var(--terra);font-family:'DM Mono',monospace;font-weight:500;letter-spacing:1px;margin-bottom:4px">TERRAIN MAP</div>
+<div style="font-size:18px;font-weight:800;margin-bottom:14px">Group Alignment</div>
+
+<div class="terrain-map">
+<svg viewBox="0 0 260 230">
+<!-- Alignment zones -->
+<ellipse cx="100" cy="110" rx="75" ry="65" fill="rgba(107,143,113,0.12)" stroke="rgba(107,143,113,0.25)" stroke-width="1"/>
+<ellipse cx="160" cy="110" rx="75" ry="65" fill="rgba(194,113,79,0.12)" stroke="rgba(194,113,79,0.25)" stroke-width="1"/>
+
+<!-- Overlap zone -->
+<text x="130" y="90" text-anchor="middle" class="terrain-label" fill="var(--sage)" font-weight="600">ALIGNED</text>
+
+<!-- Gap zones -->
+<text x="55" y="135" text-anchor="middle" class="terrain-label" fill="var(--rose)" font-weight="600">GAP</text>
+<text x="205" y="135" text-anchor="middle" class="terrain-label" fill="var(--rose)" font-weight="600">GAP</text>
+
+<!-- Member dots in terrain -->
+<circle cx="120" cy="100" r="6" fill="var(--terra)"><animate attributeName="r" values="6;7;6" dur="3s" repeatCount="indefinite"/></circle>
+<text x="120" y="118" text-anchor="middle" font-size="8" fill="var(--text)" font-weight="600" font-family="Inter">You</text>
+
+<circle cx="140" cy="95" r="6" fill="var(--sage)"/>
+<text x="140" y="113" text-anchor="middle" font-size="8" fill="var(--text)" font-weight="600" font-family="Inter">Sam</text>
+
+<circle cx="65" cy="120" r="6" fill="var(--amber)"/>
+<text x="65" y="138" text-anchor="middle" font-size="8" fill="var(--text)" font-weight="600" font-family="Inter">Mia</text>
+
+<circle cx="195" cy="120" r="6" fill="var(--rose)"/>
+<text x="195" y="138" text-anchor="middle" font-size="8" fill="var(--text)" font-weight="600" font-family="Inter">Jake</text>
+
+<!-- Topic labels in zones -->
+<text x="130" y="70" text-anchor="middle" font-size="7" fill="var(--text2)" font-family="Inter">Rent split</text>
+<text x="130" y="78" text-anchor="middle" font-size="7" fill="var(--text2)" font-family="Inter">Guests OK</text>
+<text x="50" y="155" text-anchor="middle" font-size="7" fill="var(--rose)" font-family="Inter">Chores</text>
+<text x="210" y="155" text-anchor="middle" font-size="7" fill="var(--rose)" font-family="Inter">Noise</text>
+
+<!-- Legend area -->
+<text x="130" y="195" text-anchor="middle" font-size="8" fill="var(--text2)" font-family="Inter">Overlap = alignment | Gaps = tension zones</text>
+</svg>
+</div>
+
+<div class="alignment-legend">
+<div class="legend-item"><div class="legend-dot" style="background:var(--sage)"></div>Aligned</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Diverging</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--rose)"></div>Tension</div>
+</div>
+
+<div class="gap-alert">
+<div class="gap-alert-title">Tension Zone: Chores</div>
+<div class="gap-alert-text">3 of 4 members rated chore division below "fair." This is your group's biggest alignment gap.</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Visual alignment / tension map</div>
+</div>
+
+<!-- Phone 3: Insight Card -->
+<div>
+<div class="phone scroll-reveal" style="animation-delay:.3s">
+<div class="phone-notch"><div class="phone-notch-inner"></div></div>
+<div class="phone-screen">
+<div style="font-size:11px;color:var(--terra);font-family:'DM Mono',monospace;font-weight:500;letter-spacing:1px;margin-bottom:4px">INSIGHTS</div>
+<div style="font-size:18px;font-weight:800;margin-bottom:14px">What Atlas Found</div>
+
+<div class="insight-card">
+<div class="insight-emoji">🤝</div>
+<div class="insight-title">The Invisible Assumption</div>
+<div class="insight-text"><strong>3 of 4 members</strong> assumed someone else was planning the utility payment schedule. Nobody actually owns it. This gap has been causing silent frustration for weeks.</div>
+<div class="member-votes">
+<div class="member-vote"><div class="member-avatar" style="background:var(--terra)">Y</div><div class="member-sentiment" style="color:var(--rose)">Frustrated</div></div>
+<div class="member-vote"><div class="member-avatar" style="background:var(--sage)">S</div><div class="member-sentiment" style="color:var(--rose)">Frustrated</div></div>
+<div class="member-vote"><div class="member-avatar" style="background:var(--amber)">M</div><div class="member-sentiment" style="color:var(--amber)">Neutral</div></div>
+<div class="member-vote"><div class="member-avatar" style="background:var(--rose)">J</div><div class="member-sentiment" style="color:var(--rose)">Frustrated</div></div>
+</div>
+<div class="insight-action">Start a conversation about this →</div>
+</div>
+
+<div class="insight-card">
+<div class="insight-emoji">💛</div>
+<div class="insight-title">Hidden Appreciation</div>
+<div class="insight-text"><strong>Sam wrote:</strong> "I never said this but I really appreciate how Mia always stocks the bathroom supplies without being asked." Mia didn't know anyone noticed.</div>
+<div class="insight-action">Share with Mia →</div>
+</div>
+
+<div class="insight-card">
+<div class="insight-emoji">🔄</div>
+<div class="insight-title">Same Frustration, Unspoken</div>
+<div class="insight-text"><strong>2 members</strong> independently flagged the same issue — dishes left in the sink overnight. Both assumed they were the only one bothered.</div>
+<div class="insight-action">Address together →</div>
+</div>
+</div>
+</div>
+<div class="phone-label">AI-synthesized group insights</div>
+</div>
+</div>
+
+<!-- MOAT -->
+<div class="moat-section scroll-reveal">
+<div class="moat-inner">
+<div class="section-label">The Moat</div>
+<div class="section-title">Why first-mover wins forever</div>
+<div class="moat-grid">
+<div class="moat-card">
+<h3>Emotional Data Moat</h3>
+<p>Atlas accumulates months of intimate group dynamics data. A competitor starts with zero emotional context. The longer Atlas runs, the more it understands your group's patterns, triggers, and growth areas.</p>
+</div>
+<div class="moat-card">
+<h3>Trust is the Product</h3>
+<p>Atlas requires vulnerability. Groups that open up to Atlas have already invested emotional trust. Nobody wants to rebuild that foundation with a new tool. The switching cost is emotional, not technical.</p>
+</div>
+<div class="moat-card">
+<h3>Question Intelligence</h3>
+<p>Every group's responses train Atlas to ask better, more precisely targeted questions. The AI learns which questions surface real issues vs. surface-level answers. This intelligence compounds daily.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- VIRAL -->
+<div class="viral-section scroll-reveal">
+<div class="viral-inner">
+<div class="section-label">Virality</div>
+<div class="section-title">Goes viral because...</div>
+<div class="viral-item">
+<div class="viral-num">01</div>
+<div class="viral-text">
+<h3>The "finally said it" moment</h3>
+<p>"Atlas revealed that 3 of 4 of us had the same frustration nobody was saying." These breakthrough moments get shared as screenshots that convince every friend group to try it.</p>
+</div>
+</div>
+<div class="viral-item">
+<div class="viral-num">02</div>
+<div class="viral-text">
+<h3>Every group needs it</h3>
+<p>Roommates, couples, friend groups, families, co-founders — every human group has unspoken dynamics. The TAM is literally every group of 2+ humans who communicate.</p>
+</div>
+</div>
+<div class="viral-item">
+<div class="viral-num">03</div>
+<div class="viral-text">
+<h3>Inviting is built into the product</h3>
+<p>Atlas literally requires inviting your group to function. Every new user creates 2-5 invites by design. Growth is structural, not marketing-dependent.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- FEATURES -->
+<section class="scroll-reveal">
+<div class="section-label">Features</div>
+<div class="section-title">Everything Atlas does</div>
+<div class="features-grid">
+<div class="feature"><div class="feature-icon">🎯</div><h3>AI Questions</h3><p>Precisely crafted questions that surface real dynamics. Adaptive — learns which questions work for your group.</p></div>
+<div class="feature"><div class="feature-icon">🔒</div><h3>Private Answers</h3><p>Everyone answers alone, honestly. Anonymous where needed. AI synthesizes — nobody sees raw responses.</p></div>
+<div class="feature"><div class="feature-icon">🗺️</div><h3>Terrain Map</h3><p>Visual representation of where your group aligns and where gaps exist. Updated weekly as dynamics evolve.</p></div>
+<div class="feature"><div class="feature-icon">💡</div><h3>Insight Cards</h3><p>AI-generated revelations about unspoken patterns, hidden appreciations, and shared frustrations.</p></div>
+<div class="feature"><div class="feature-icon">💛</div><h3>Appreciation Layer</h3><p>Surface the good stuff too — things people appreciate but never say. Strengthens bonds alongside surfacing tensions.</p></div>
+<div class="feature"><div class="feature-icon">📈</div><h3>Health Trends</h3><p>Track your group's alignment score over time. See if interventions worked. Celebrate improvement.</p></div>
+<div class="feature"><div class="feature-icon">💬</div><h3>Conversation Starters</h3><p>When tensions surface, Atlas provides guided conversation frameworks to address issues constructively.</p></div>
+</div>
+</section>
+
+<!-- PALETTE -->
+<div class="palette-section scroll-reveal">
+<div class="palette-inner">
+<div class="section-label">Design System</div>
+<div class="section-title">Color Palette & Typography</div>
+<div class="colors">
+<div class="color-swatch" style="background:#faf8f5;border:1px solid #e5ddd3"><span>#FAF8F5</span></div>
+<div class="color-swatch" style="background:#f5f0ea;border:1px solid #e5ddd3"><span>#F5F0EA</span></div>
+<div class="color-swatch" style="background:#c2714f"><span>#C2714F</span></div>
+<div class="color-swatch" style="background:#6b8f71"><span>#6B8F71</span></div>
+<div class="color-swatch" style="background:#c49032"><span>#C49032</span></div>
+<div class="color-swatch" style="background:#c47070"><span>#C47070</span></div>
+<div class="color-swatch" style="background:#2a2520"><span>#2A2520</span></div>
+</div>
+<div class="type-sample">
+<h3>Typography</h3>
+<div class="type-row"><span class="label">Display</span><span style="font-family:'Source Serif 4',serif;font-size:32px;font-weight:700;letter-spacing:-1px">Source Serif 4 — 32px</span></div>
+<div class="type-row"><span class="label">Heading</span><span style="font-size:20px;font-weight:700;letter-spacing:-.5px">Inter Bold — 20px</span></div>
+<div class="type-row"><span class="label">Mono</span><span style="font-family:'DM Mono',monospace;font-size:13px">DM Mono Regular — 13px</span></div>
+<div class="type-row"><span class="label">Body</span><span style="font-size:15px;color:var(--text2)">Inter Regular — 15px</span></div>
+</div>
+</div>
+</div>
+
+<footer>
+<div style="margin-bottom:8px">Atlas — The Relationship Terrain Map</div>
+<div>Every group has things nobody's saying. Atlas makes them safe to surface.</div>
+</footer>
+
+<script>
+function toggleTheme(){const b=document.body;const d=b.getAttribute('data-theme')==='dark'?'':'dark';b.setAttribute('data-theme',d);document.getElementById('themeIcon').textContent=d==='dark'?'☀️':'🌙'}
+
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');obs.unobserve(el.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.scroll-reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

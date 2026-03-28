@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prism — The Cross-Domain Discovery Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080c;--surface:#111116;--surface2:#19191f;--border:#242430;--text:#ededf0;--text2:#7d7d8a;--r:#ff6b6b;--o:#ffa94d;--y:#ffd43b;--g:#69db7c;--b:#74c0fc;--i:#9775fa;--v:#e599f7;--accent:linear-gradient(135deg,#ff6b6b,#ffa94d,#ffd43b,#69db7c,#74c0fc,#9775fa,#e599f7);--dim:rgba(151,117,250,0.06);--glow:rgba(151,117,250,0.1)}
+[data-theme="light"]{--bg:#fafafa;--surface:#ffffff;--surface2:#f3f3f5;--border:#e2e2e8;--text:#08080c;--text2:#6b6b7a;--dim:rgba(151,117,250,0.05);--glow:rgba(151,117,250,0.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;overflow-x:hidden;transition:background .4s,color .4s}
+
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:100;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s;backdrop-filter:blur(20px)}
+.theme-toggle:hover{transform:scale(1.1)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 24px;position:relative;overflow:hidden}
+.prism-bg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;opacity:.15}
+.prism-bg::before{content:'';position:absolute;top:50%;left:50%;width:0;height:0;border-left:100px solid transparent;border-right:100px solid transparent;border-bottom:173px solid white;transform:translate(-50%,-60%);opacity:.15}
+.prism-bg::after{content:'';position:absolute;top:45%;left:55%;width:300px;height:2px;background:var(--accent);transform:rotate(15deg);filter:blur(8px);opacity:.6;animation:shimmer 4s ease-in-out infinite}
+@keyframes shimmer{0%,100%{opacity:.4;transform:rotate(15deg) scaleX(1)}50%{opacity:.8;transform:rotate(15deg) scaleX(1.2)}}
+
+.rainbow-line{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--accent)}
+
+.hero-content{position:relative;z-index:2}
+.logo{display:flex;align-items:center;gap:14px;margin-bottom:36px;justify-content:center;opacity:0;transform:translateY(30px);animation:fadeUp .8s ease forwards}
+.logo-icon{width:56px;height:56px;border-radius:16px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.logo-icon::after{content:'';position:absolute;inset:0;background:var(--accent);opacity:.15}
+.logo-icon svg{width:28px;height:28px;position:relative;z-index:1}
+.logo-text{font-size:34px;font-weight:800;letter-spacing:-1px;background:var(--accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.tagline{font-size:clamp(38px,7.5vw,76px);font-weight:800;letter-spacing:-3px;line-height:1.05;margin-bottom:24px;opacity:0;transform:translateY(30px);animation:fadeUp .8s ease .2s forwards}
+.tagline .hl{background:var(--accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.subtitle{font-size:clamp(16px,3vw,21px);color:var(--text2);max-width:580px;line-height:1.6;font-weight:400;opacity:0;transform:translateY(30px);animation:fadeUp .8s ease .4s forwards}
+
+.doesnt-exist{display:inline-flex;align-items:center;gap:8px;margin-top:32px;padding:10px 20px;background:var(--dim);border:1px solid rgba(151,117,250,0.15);border-radius:100px;font-size:13px;font-weight:600;color:var(--i);opacity:0;animation:fadeUp .8s ease .6s forwards}
+.doesnt-exist::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--i);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+section{padding:80px 24px;max-width:900px;margin:0 auto}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--i);text-transform:uppercase;letter-spacing:3px;margin-bottom:12px}
+.section-title{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-1.5px;line-height:1.15;margin-bottom:20px}
+
+.magic-section{background:linear-gradient(180deg,transparent,var(--dim),transparent);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 24px}
+.magic-section .inner{max-width:900px;margin:0 auto}
+.magic-quote{font-size:clamp(20px,3.5vw,30px);font-weight:300;line-height:1.7;font-style:italic;max-width:700px}
+.magic-quote strong{font-weight:700;background:var(--accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Phone Mockups */
+.mockups{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:60px auto;max-width:900px;padding:0 24px}
+@media(max-width:768px){.mockups{grid-template-columns:1fr;max-width:360px}}
+.phone{background:var(--surface);border:1px solid var(--border);border-radius:32px;overflow:hidden;transition:transform .4s,box-shadow .4s}
+.phone:hover{transform:translateY(-8px);box-shadow:0 20px 60px var(--glow)}
+.phone-notch{height:32px;display:flex;align-items:center;justify-content:center;padding-top:8px}
+.phone-notch-inner{width:80px;height:5px;border-radius:10px;background:var(--border)}
+.phone-screen{padding:16px}
+.phone-label{text-align:center;margin-top:16px;font-size:13px;font-weight:600;color:var(--text2)}
+
+/* Mockup 1: Taste Genome / DNA */
+.dna-strand{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.dna-row{display:flex;align-items:center;gap:10px}
+.dna-helix{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.dna-info{flex:1}
+.dna-name{font-size:13px;font-weight:700}
+.dna-desc{font-size:11px;color:var(--text2);line-height:1.4}
+.dna-bar{height:4px;border-radius:2px;margin-top:4px;overflow:hidden;background:var(--surface2)}
+.dna-bar-fill{height:100%;border-radius:2px}
+.dna-sources{display:flex;gap:4px;margin-top:4px}
+.dna-source{font-size:9px;padding:2px 6px;border-radius:100px;background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+
+/* Mockup 2: Discovery Card */
+.discovery-card{background:var(--surface2);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:12px}
+.discovery-img{height:140px;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center;position:relative}
+.discovery-img .overlay{font-size:48px}
+.discovery-domain{position:absolute;top:10px;right:10px;font-size:10px;font-weight:600;padding:4px 10px;border-radius:100px;background:rgba(0,0,0,.5);color:white;backdrop-filter:blur(10px)}
+.discovery-body{padding:16px}
+.discovery-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.discovery-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px}
+.discovery-chain{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px}
+.chain-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--i);letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
+.chain-flow{display:flex;align-items:center;gap:4px;font-size:11px;flex-wrap:wrap}
+.chain-node{padding:3px 8px;border-radius:6px;font-weight:600;font-size:10px}
+.chain-arrow{color:var(--text2);font-size:10px}
+
+/* Mockup 3: Connected Services */
+.service-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;margin-bottom:8px}
+.service-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.service-info{flex:1}
+.service-name{font-size:13px;font-weight:700}
+.service-detail{font-size:11px;color:var(--text2)}
+.service-status{font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px}
+.status-connected{background:rgba(105,219,124,0.12);color:var(--g)}
+.status-pending{background:rgba(255,212,59,0.12);color:var(--y)}
+
+.threads-found{text-align:center;padding:16px;background:var(--dim);border:1px solid rgba(151,117,250,0.12);border-radius:14px;margin-top:12px}
+.threads-found .big{font-size:28px;font-weight:800;background:var(--accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.threads-found .small{font-size:11px;color:var(--text2)}
+
+/* Shared sections */
+.moat-section{padding:80px 24px}
+.moat-inner{max-width:900px;margin:0 auto}
+.moat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:32px}
+.moat-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;transition:border-color .3s}
+.moat-card:hover{border-color:var(--i)}
+.moat-card h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.moat-card p{font-size:14px;color:var(--text2);line-height:1.6}
+
+.viral-section{padding:60px 24px;background:var(--dim);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.viral-inner{max-width:900px;margin:0 auto}
+.viral-item{display:flex;gap:16px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--border)}
+.viral-item:last-child{border-bottom:none}
+.viral-num{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;background:var(--accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;width:40px;flex-shrink:0}
+.viral-text h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.viral-text p{font-size:14px;color:var(--text2);line-height:1.5}
+
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:32px}
+.feature{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .3s}
+.feature:hover{border-color:var(--i);transform:translateY(-2px)}
+.feature-icon{font-size:24px;margin-bottom:12px}
+.feature h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.feature p{font-size:13px;color:var(--text2);line-height:1.5}
+
+.palette-section{padding:60px 24px}
+.palette-inner{max-width:900px;margin:0 auto}
+.colors{display:flex;gap:12px;margin:20px 0;flex-wrap:wrap}
+.color-swatch{width:56px;height:56px;border-radius:14px;position:relative;transition:transform .2s}
+.color-swatch:hover{transform:scale(1.08)}
+.color-swatch span{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text2);white-space:nowrap}
+.type-sample{margin-top:32px}
+.type-sample h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text2)}
+.type-row{display:flex;align-items:baseline;gap:20px;padding:8px 0;flex-wrap:wrap}
+.type-row .label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text2);width:80px}
+
+.scroll-reveal{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.16,1,.3,1)}
+.scroll-reveal.visible{opacity:1;transform:translateY(0)}
+
+footer{text-align:center;padding:40px 24px;font-size:13px;color:var(--text2);border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleTheme()"><span id="themeIcon">☀️</span></button>
+
+<!-- HERO -->
+<div class="hero">
+<div class="prism-bg"></div>
+<div class="rainbow-line"></div>
+<div class="hero-content">
+<div class="logo">
+<div class="logo-icon"><svg viewBox="0 0 24 24" fill="none"><polygon points="12,2 22,20 2,20" stroke="white" stroke-width="1.5" fill="none"/><line x1="12" y1="2" x2="18" y2="20" stroke="url(#rg)" stroke-width="1"/><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff6b6b"/><stop offset="25%" stop-color="#ffd43b"/><stop offset="50%" stop-color="#69db7c"/><stop offset="75%" stop-color="#74c0fc"/><stop offset="100%" stop-color="#e599f7"/></linearGradient></defs></svg></div>
+<div class="logo-text">Prism</div>
+</div>
+<div class="tagline">Discover what you<br><span class="hl">don't know you love.</span></div>
+<div class="subtitle">AI maps WHY you like things at a structural level, then recommends across totally unrelated domains. The thread connecting your taste — finally visible.</div>
+<div class="doesnt-exist">Why this doesn't exist yet — every recommendation engine works within one domain. Nobody connects the dots.</div>
+</div>
+</div>
+
+<!-- MAGIC MOMENT -->
+<div class="magic-section">
+<div class="inner scroll-reveal">
+<div class="section-label">The Magic Moment</div>
+<div class="magic-quote">Prism analyzes your Spotify, your Letterboxd, your bookmarks, your saved restaurants. Then it tells you something impossible: <strong>"You love minimalist architecture, sparse piano, and Japanese food — the thread is negative space."</strong> Then it recommends Mary Oliver's poetry. You've never read poetry. You read one poem and it hits you like a truck. Prism saw something in you that you couldn't see yourself.</div>
+</div>
+</div>
+
+<!-- MOCKUPS -->
+<section class="scroll-reveal">
+<div class="section-label">Product Vision</div>
+<div class="section-title">Three screens that change everything</div>
+</section>
+
+<div class="mockups">
+<!-- Phone 1: Taste Genome -->
+<div>
+<div class="phone scroll-reveal">
+<div class="phone-notch"><div class="phone-notch-inner"></div></div>
+<div class="phone-screen">
+<div style="font-size:11px;color:var(--i);font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:1px;margin-bottom:4px">TASTE GENOME</div>
+<div style="font-size:18px;font-weight:800;margin-bottom:14px">Your Aesthetic DNA</div>
+
+<div class="dna-strand">
+<div class="dna-row">
+<div class="dna-helix" style="background:rgba(151,117,250,0.12)">🫧</div>
+<div class="dna-info">
+<div class="dna-name">Negative Space</div>
+<div class="dna-desc">You're drawn to what's left out, not what's added</div>
+<div class="dna-bar"><div class="dna-bar-fill" style="width:92%;background:var(--i)"></div></div>
+<div class="dna-sources"><span class="dna-source">Spotify</span><span class="dna-source">Architecture</span><span class="dna-source">Food</span></div>
+</div>
+</div>
+
+<div class="dna-row">
+<div class="dna-helix" style="background:rgba(255,169,77,0.12)">🔥</div>
+<div class="dna-info">
+<div class="dna-name">Structured Chaos</div>
+<div class="dna-desc">Order with surprising breaks — jazz logic in everything</div>
+<div class="dna-bar"><div class="dna-bar-fill" style="width:78%;background:var(--o)"></div></div>
+<div class="dna-sources"><span class="dna-source">Film</span><span class="dna-source">Music</span><span class="dna-source">Books</span></div>
+</div>
+</div>
+
+<div class="dna-row">
+<div class="dna-helix" style="background:rgba(255,107,107,0.12)">🌡️</div>
+<div class="dna-info">
+<div class="dna-name">Warmth</div>
+<div class="dna-desc">Human imperfection over digital precision</div>
+<div class="dna-bar"><div class="dna-bar-fill" style="width:71%;background:var(--r)"></div></div>
+<div class="dna-sources"><span class="dna-source">Photos</span><span class="dna-source">Music</span><span class="dna-source">Design</span></div>
+</div>
+</div>
+
+<div class="dna-row">
+<div class="dna-helix" style="background:rgba(105,219,124,0.12)">🌿</div>
+<div class="dna-info">
+<div class="dna-name">Natural Rhythm</div>
+<div class="dna-desc">Organic patterns over mechanical repetition</div>
+<div class="dna-bar"><div class="dna-bar-fill" style="width:64%;background:var(--g)"></div></div>
+<div class="dna-sources"><span class="dna-source">Travel</span><span class="dna-source">Spotify</span></div>
+</div>
+</div>
+
+<div class="dna-row">
+<div class="dna-helix" style="background:rgba(116,192,252,0.12)">💎</div>
+<div class="dna-info">
+<div class="dna-name">Quiet Intensity</div>
+<div class="dna-desc">Power through restraint, not volume</div>
+<div class="dna-bar"><div class="dna-bar-fill" style="width:58%;background:var(--b)"></div></div>
+<div class="dna-sources"><span class="dna-source">Film</span><span class="dna-source">Books</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Your taste genome — the threads</div>
+</div>
+
+<!-- Phone 2: Daily Discovery -->
+<div>
+<div class="phone scroll-reveal" style="animation-delay:.15s">
+<div class="phone-notch"><div class="phone-notch-inner"></div></div>
+<div class="phone-screen">
+<div style="font-size:11px;color:var(--i);font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:1px;margin-bottom:4px">DAILY DISCOVERY</div>
+<div style="font-size:18px;font-weight:800;margin-bottom:14px">For You Today</div>
+
+<div class="discovery-card">
+<div class="discovery-img">
+<div class="overlay">📖</div>
+<div class="discovery-domain">Poetry — NEW DOMAIN</div>
+</div>
+<div class="discovery-body">
+<div class="discovery-title">Mary Oliver — "The Summer Day"</div>
+<div class="discovery-desc">You've never explored poetry, but Prism found a direct line from your taste in sparse piano and Japanese cuisine to Oliver's work. She writes about nature the way Ryuichi Sakamoto composes — every word earns its place.</div>
+<div class="discovery-chain">
+<div class="chain-label">Why this matches</div>
+<div class="chain-flow">
+<span class="chain-node" style="background:rgba(151,117,250,0.15);color:var(--i)">Negative Space</span>
+<span class="chain-arrow">+</span>
+<span class="chain-node" style="background:rgba(105,219,124,0.15);color:var(--g)">Natural Rhythm</span>
+<span class="chain-arrow">+</span>
+<span class="chain-node" style="background:rgba(116,192,252,0.15);color:var(--b)">Quiet Intensity</span>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:12px">
+<div style="flex:1;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;text-align:center;font-size:12px;font-weight:600">Save</div>
+<div style="flex:1;padding:10px;background:var(--i);border-radius:12px;text-align:center;font-size:12px;font-weight:700;color:white">Explore</div>
+</div>
+
+<div style="font-size:11px;color:var(--text2);text-align:center">Previous discoveries: Hiking in Scotland, Wabi-sabi ceramics, Agnes Martin paintings</div>
+</div>
+</div>
+<div class="phone-label">Cross-domain daily discovery</div>
+</div>
+
+<!-- Phone 3: Connected Services -->
+<div>
+<div class="phone scroll-reveal" style="animation-delay:.3s">
+<div class="phone-notch"><div class="phone-notch-inner"></div></div>
+<div class="phone-screen">
+<div style="font-size:11px;color:var(--i);font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:1px;margin-bottom:4px">SERVICES</div>
+<div style="font-size:18px;font-weight:800;margin-bottom:14px">Your Taste Sources</div>
+
+<div class="service-item">
+<div class="service-icon" style="background:#1DB954">🎵</div>
+<div class="service-info">
+<div class="service-name">Spotify</div>
+<div class="service-detail">2,847 songs analyzed</div>
+</div>
+<div class="service-status status-connected">Connected</div>
+</div>
+
+<div class="service-item">
+<div class="service-icon" style="background:#00E054">🎬</div>
+<div class="service-info">
+<div class="service-name">Letterboxd</div>
+<div class="service-detail">156 films analyzed</div>
+</div>
+<div class="service-status status-connected">Connected</div>
+</div>
+
+<div class="service-item">
+<div class="service-icon" style="background:#372213">📚</div>
+<div class="service-info">
+<div class="service-name">Goodreads</div>
+<div class="service-detail">89 books analyzed</div>
+</div>
+<div class="service-status status-connected">Connected</div>
+</div>
+
+<div class="service-item">
+<div class="service-icon" style="background:#4285F4">📍</div>
+<div class="service-info">
+<div class="service-name">Google Maps</div>
+<div class="service-detail">342 saved places</div>
+</div>
+<div class="service-status status-connected">Connected</div>
+</div>
+
+<div class="service-item">
+<div class="service-icon" style="background:#E60023">📌</div>
+<div class="service-info">
+<div class="service-name">Pinterest</div>
+<div class="service-detail">Analyzing...</div>
+</div>
+<div class="service-status status-pending">Syncing</div>
+</div>
+
+<div class="threads-found">
+<div class="big">12</div>
+<div class="small">aesthetic threads discovered across 5 domains</div>
+</div>
+</div>
+</div>
+<div class="phone-label">All taste sources, one profile</div>
+</div>
+</div>
+
+<!-- MOAT -->
+<div class="moat-section scroll-reveal">
+<div class="moat-inner">
+<div class="section-label">The Moat</div>
+<div class="section-title">Why first-mover wins forever</div>
+<div class="moat-grid">
+<div class="moat-card">
+<h3>Cross-Domain Taste Model</h3>
+<p>Prism builds something no single platform can: a unified taste model that spans music, film, food, travel, design, and literature. This model improves with every connection and every reaction. Competitors work in silos.</p>
+</div>
+<div class="moat-card">
+<h3>Discovery Data Flywheel</h3>
+<p>Every time a user loves a cross-domain recommendation, Prism learns which aesthetic threads truly transfer. This data is uniquely Prism's — nobody else has it because nobody else recommends across domains.</p>
+</div>
+<div class="moat-card">
+<h3>Integration Ecosystem</h3>
+<p>Each new platform integration makes Prism exponentially more accurate. First-mover gets the API partnerships, the user base, and the data lead that makes switching futile.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- VIRAL -->
+<div class="viral-section scroll-reveal">
+<div class="viral-inner">
+<div class="section-label">Virality</div>
+<div class="section-title">Goes viral because...</div>
+<div class="viral-item">
+<div class="viral-num">01</div>
+<div class="viral-text">
+<h3>The Taste Genome is identity content</h3>
+<p>"My top aesthetic thread is 'Structured Chaos' — Prism found it in my music, my favorite films, and my apartment." People share this like astrology, but it's actually based on data.</p>
+</div>
+</div>
+<div class="viral-item">
+<div class="viral-num">02</div>
+<div class="viral-text">
+<h3>Cross-domain discoveries blow minds</h3>
+<p>"Prism told me I'd love Scottish hiking based on my taste in jazz piano and I literally cried on a hillside in Glencoe." These stories are inherently shareable because they sound impossible.</p>
+</div>
+</div>
+<div class="viral-item">
+<div class="viral-num">03</div>
+<div class="viral-text">
+<h3>Friends compare aesthetic DNA</h3>
+<p>"We're both high on 'Negative Space' but I'm 'Warmth' and you're 'Precision' — that's why we agree on restaurants but not music." Taste compatibility becomes a new social language.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- FEATURES -->
+<section class="scroll-reveal">
+<div class="section-label">Features</div>
+<div class="section-title">Everything Prism does</div>
+<div class="features-grid">
+<div class="feature"><div class="feature-icon">🧬</div><h3>Taste Genome</h3><p>Visual DNA showing your core aesthetic threads — derived from real data across every connected service.</p></div>
+<div class="feature"><div class="feature-icon">🔮</div><h3>Daily Discovery</h3><p>One recommendation from a domain you've never explored, with a full reasoning chain showing why it matches.</p></div>
+<div class="feature"><div class="feature-icon">🔗</div><h3>Service Hub</h3><p>Connect Spotify, Letterboxd, Goodreads, Maps, Pinterest, and more. Each one deepens your taste profile.</p></div>
+<div class="feature"><div class="feature-icon">🧵</div><h3>Thread Explorer</h3><p>Dive deep into any aesthetic thread — see all the evidence across domains and find new rabbit holes.</p></div>
+<div class="feature"><div class="feature-icon">👥</div><h3>Taste Compatibility</h3><p>Compare your aesthetic DNA with friends. See where you overlap and where you diverge — and why.</p></div>
+<div class="feature"><div class="feature-icon">📊</div><h3>Taste Evolution</h3><p>Watch how your aesthetic threads shift over time. See which new influences are changing your profile.</p></div>
+<div class="feature"><div class="feature-icon">🎁</div><h3>Gift Engine</h3><p>Find perfect gifts for anyone with a Prism profile. Cross-domain matching makes surprising, meaningful choices.</p></div>
+</div>
+</section>
+
+<!-- PALETTE -->
+<div class="palette-section scroll-reveal">
+<div class="palette-inner">
+<div class="section-label">Design System</div>
+<div class="section-title">Color Palette & Typography</div>
+<div class="colors">
+<div class="color-swatch" style="background:#08080c"><span>#08080C</span></div>
+<div class="color-swatch" style="background:#ff6b6b"><span>#FF6B6B</span></div>
+<div class="color-swatch" style="background:#ffa94d"><span>#FFA94D</span></div>
+<div class="color-swatch" style="background:#ffd43b"><span>#FFD43B</span></div>
+<div class="color-swatch" style="background:#69db7c"><span>#69DB7C</span></div>
+<div class="color-swatch" style="background:#74c0fc"><span>#74C0FC</span></div>
+<div class="color-swatch" style="background:#9775fa"><span>#9775FA</span></div>
+<div class="color-swatch" style="background:#e599f7"><span>#E599F7</span></div>
+</div>
+<div class="type-sample">
+<h3>Typography</h3>
+<div class="type-row"><span class="label">Display</span><span style="font-size:32px;font-weight:800;letter-spacing:-1.5px">Sora ExtraBold — 32px</span></div>
+<div class="type-row"><span class="label">Heading</span><span style="font-size:20px;font-weight:700;letter-spacing:-.5px">Sora Bold — 20px</span></div>
+<div class="type-row"><span class="label">Mono</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px">IBM Plex Mono — 13px</span></div>
+<div class="type-row"><span class="label">Body</span><span style="font-size:15px;color:var(--text2)">Sora Regular — 15px</span></div>
+</div>
+</div>
+</div>
+
+<footer>
+<div style="margin-bottom:8px">Prism — The Cross-Domain Discovery Engine</div>
+<div>Every recommendation engine works within one domain. Nobody connects the dots. Until now.</div>
+</footer>
+
+<script>
+function toggleTheme(){const b=document.body;const d=b.getAttribute('data-theme')==='light'?'':'light';b.setAttribute('data-theme',d);document.getElementById('themeIcon').textContent=d==='light'?'🌙':'☀️'}
+
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');obs.unobserve(el.target)}})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.scroll-reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
