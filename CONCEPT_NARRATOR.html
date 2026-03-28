@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Narrator — Your life, directed.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0C0A08;--amber:#D4915E;--warm:#F5C287;--text:#F0E6D8;--sub:rgba(240,230,216,0.45);--card:rgba(212,145,94,0.05);--border:rgba(212,145,94,0.12);--film:#1A1610}
+[data-theme="light"]{--bg:#FAF8F5;--amber:#B87333;--warm:#A0622B;--text:#1A1610;--sub:rgba(26,22,16,0.5);--card:rgba(184,115,51,0.04);--border:rgba(184,115,51,0.12);--film:#F5F0EA}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;transition:background .4s,color .4s}
+
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .2s}
+.theme-toggle:hover{transform:scale(1.1)}
+
+/* Film grain overlay */
+.film-grain{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.03}
+.film-grain::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain .5s steps(6) infinite}
+@keyframes grain{0%,100%{transform:translate(0,0)}10%{transform:translate(-5%,-10%)}30%{transform:translate(3%,5%)}50%{transform:translate(-2%,8%)}70%{transform:translate(7%,-3%)}90%{transform:translate(-3%,2%)}}
+
+/* Letterbox bars */
+.letterbox-top,.letterbox-bottom{position:fixed;left:0;right:0;height:40px;background:#000;z-index:2;pointer-events:none}
+.letterbox-top{top:0}
+.letterbox-bottom{bottom:0}
+
+.container{max-width:800px;margin:0 auto;padding:60px 20px;position:relative;z-index:1}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 20px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,145,94,0.08);border:1px solid rgba(212,145,94,0.2);border-radius:4px;padding:8px 24px;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:32px;animation:fadeUp .8s ease}
+.hero-badge .rec{width:8px;height:8px;border-radius:50%;background:#E53935;animation:recBlink 1s infinite}
+@keyframes recBlink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(40px,9vw,88px);line-height:1;animation:fadeUp .8s ease .1s both}
+.hero h1 .the{font-size:clamp(18px,3vw,28px);font-family:'Inter',sans-serif;font-weight:400;letter-spacing:8px;text-transform:uppercase;color:var(--sub);display:block;margin-bottom:8px}
+.hero h1 .warm{color:var(--amber)}
+.hero-sub{font-family:'DM Serif Display',serif;font-size:clamp(16px,3vw,24px);font-style:italic;color:var(--sub);margin-top:16px;animation:fadeUp .8s ease .2s both}
+.tagline{font-size:clamp(14px,2.5vw,18px);font-weight:600;color:var(--amber);margin-top:40px;padding:14px 28px;border:1px solid var(--amber);border-radius:4px;animation:fadeUp .8s ease .3s both;font-style:italic;font-family:'DM Serif Display',serif}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* Credits-style roll */
+.credits{margin-top:48px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:4px;color:var(--sub);animation:fadeUp .8s ease .4s both}
+.credits span{color:var(--amber)}
+
+.section{padding:100px 20px;opacity:0;transform:translateY(40px);transition:all .8s ease}
+.section.visible{opacity:1;transform:translateY(0)}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+.section-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,48px);line-height:1.1;margin-bottom:16px}
+.section-desc{font-size:16px;color:var(--sub);line-height:1.7;max-width:600px}
+
+.mockups{display:flex;flex-direction:column;gap:40px;margin-top:48px}
+.phone{width:100%;max-width:340px;margin:0 auto;border-radius:32px;overflow:hidden;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px)}
+.phone-header{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.phone-header .time{font-size:13px;font-weight:700}
+.phone-header .icons{font-size:12px;color:var(--sub)}
+.phone-body{padding:0;min-height:500px;position:relative;overflow:hidden}
+.phone-label{position:absolute;bottom:16px;left:16px;right:16px;background:rgba(12,10,8,0.85);backdrop-filter:blur(10px);border-radius:8px;padding:12px 16px;font-size:12px;font-weight:600;color:#F0E6D8;border:1px solid var(--border)}
+
+/* Mockup 1: Genre Selector */
+.genre-select{padding:16px;min-height:500px;background:linear-gradient(180deg,#100E0A,#0C0A08);display:flex;flex-direction:column;gap:12px}
+.genre-header{text-align:center;margin-bottom:8px}
+.genre-header h3{font-family:'DM Serif Display',serif;font-size:20px}
+.genre-header p{font-size:12px;color:var(--sub);margin-top:4px}
+.genre-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g-card{border-radius:14px;padding:16px;text-align:center;border:1px solid var(--border);cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.g-card:hover{transform:scale(1.03);border-color:var(--amber)}
+.g-card .g-bg{position:absolute;inset:0;opacity:.15}
+.g-card.nature .g-bg{background:linear-gradient(135deg,#1B4332,#2D6A4F)}
+.g-card.noir .g-bg{background:linear-gradient(135deg,#1A1A2E,#16213E)}
+.g-card.horror .g-bg{background:linear-gradient(135deg,#2D0A0A,#4A0E0E)}
+.g-card.sports .g-bg{background:linear-gradient(135deg,#0A2D0A,#1A4D1A)}
+.g-card.romance .g-bg{background:linear-gradient(135deg,#2D0A1A,#4A0E2E)}
+.g-card.action .g-bg{background:linear-gradient(135deg,#2D1A0A,#4A2E0E)}
+.g-card.crime .g-bg{background:linear-gradient(135deg,#1A1A0A,#2E2E16)}
+.g-card.comedy .g-bg{background:linear-gradient(135deg,#2D2D0A,#4A4A16)}
+.g-icon{font-size:28px;margin-bottom:6px;position:relative;z-index:1}
+.g-name{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;position:relative;z-index:1}
+.g-preview{font-size:10px;color:var(--sub);margin-top:2px;position:relative;z-index:1}
+
+/* Mockup 2: Live Narration */
+.narration-screen{min-height:500px;background:linear-gradient(180deg,#1B4332,#0C0A08);position:relative;display:flex;flex-direction:column;justify-content:flex-end}
+.narration-camera{flex:1;display:flex;align-items:center;justify-content:center;font-size:80px;position:relative}
+.narration-vignette{position:absolute;inset:0;background:radial-gradient(ellipse,transparent 50%,rgba(0,0,0,0.6))}
+.genre-badge{position:absolute;top:16px;left:16px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:6px 14px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--warm);display:flex;align-items:center;gap:6px;z-index:1}
+.genre-badge .rec{width:6px;height:6px;border-radius:50%;background:#E53935;animation:recBlink 1s infinite}
+.narration-bottom{padding:20px;background:linear-gradient(transparent,rgba(0,0,0,0.9))}
+.caption-text{font-family:'DM Serif Display',serif;font-size:16px;font-style:italic;line-height:1.6;color:#fff;margin-bottom:12px}
+.voice-wave{display:flex;align-items:center;gap:2px;height:24px;margin-bottom:16px}
+.voice-wave span{width:3px;background:var(--amber);border-radius:100px;animation:vWave 1.2s ease-in-out infinite}
+.voice-wave span:nth-child(1){height:8px;animation-delay:0s}
+.voice-wave span:nth-child(2){height:16px;animation-delay:.1s}
+.voice-wave span:nth-child(3){height:12px;animation-delay:.2s}
+.voice-wave span:nth-child(4){height:20px;animation-delay:.3s}
+.voice-wave span:nth-child(5){height:10px;animation-delay:.4s}
+.voice-wave span:nth-child(6){height:18px;animation-delay:.5s}
+.voice-wave span:nth-child(7){height:14px;animation-delay:.6s}
+.voice-wave span:nth-child(8){height:22px;animation-delay:.7s}
+@keyframes vWave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.3)}}
+.rec-btn{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#E53935,#C62828);margin:0 auto;display:flex;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.3);cursor:pointer}
+.rec-btn .inner{width:24px;height:24px;border-radius:4px;background:#fff}
+
+/* Mockup 3: Clip Gallery */
+.gallery-screen{padding:16px;min-height:500px;background:linear-gradient(180deg,#100E0A,#0C0A08);display:flex;flex-direction:column;gap:14px}
+.gallery-header{display:flex;justify-content:space-between;align-items:center}
+.gallery-header h3{font-family:'DM Serif Display',serif;font-size:18px}
+.gallery-header .count{font-size:12px;color:var(--sub)}
+.clip-card{border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--card)}
+.clip-thumb{height:100px;position:relative;display:flex;align-items:center;justify-content:center;font-size:40px}
+.clip-thumb.nature-bg{background:linear-gradient(135deg,#1B4332,#2D6A4F)}
+.clip-thumb.noir-bg{background:linear-gradient(135deg,#1A1A2E,#16213E)}
+.clip-thumb.horror-bg{background:linear-gradient(135deg,#2D0A0A,#4A0E0E)}
+.clip-duration{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.7);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700}
+.clip-genre-tag{position:absolute;top:8px;left:8px;padding:3px 10px;border-radius:100px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.clip-genre-tag.nature-tag{background:rgba(27,67,50,0.8);color:#4ADE80}
+.clip-genre-tag.noir-tag{background:rgba(26,26,46,0.8);color:#93C5FD}
+.clip-genre-tag.horror-tag{background:rgba(45,10,10,0.8);color:#FCA5A5}
+.clip-info{padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.clip-title{font-family:'DM Serif Display',serif;font-size:14px}
+.clip-date{font-size:11px;color:var(--sub)}
+.clip-share{padding:4px 14px;border-radius:100px;font-size:11px;font-weight:700;background:rgba(212,145,94,0.15);color:var(--amber);border:1px solid rgba(212,145,94,0.3);cursor:pointer}
+
+.features{display:flex;flex-direction:column;gap:12px;margin-top:48px}
+.feat{display:flex;gap:16px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:16px}
+.feat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.feat h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.feat p{font-size:13px;color:var(--sub);line-height:1.5}
+
+.viral{margin-top:48px;padding:32px;border-radius:20px;background:linear-gradient(135deg,rgba(212,145,94,0.06),rgba(245,194,135,0.04));border:1px solid var(--border);text-align:center}
+.viral h3{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:12px}
+.viral p{font-size:15px;color:var(--sub);line-height:1.7}
+
+.palette{display:flex;gap:8px;margin-top:48px;flex-wrap:wrap;justify-content:center}
+.swatch{width:56px;height:56px;border-radius:12px;border:2px solid var(--border);position:relative;cursor:pointer;transition:transform .2s}
+.swatch:hover{transform:scale(1.1)}
+.swatch::after{content:attr(data-name);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--sub);white-space:nowrap;font-weight:600}
+
+.footer{text-align:center;padding:60px 20px;font-size:13px;color:var(--sub)}
+
+@media(max-width:600px){.phone{max-width:100%}.genre-grid{gap:8px}}
+</style>
+</head>
+<body>
+
+<div class="letterbox-top"></div>
+<div class="letterbox-bottom"></div>
+<button class="theme-toggle" onclick="document.body.dataset.theme=document.body.dataset.theme==='light'?'':'light';this.textContent=document.body.dataset.theme==='light'?'🌙':'☀️'">☀️</button>
+
+<div class="film-grain"></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-badge"><span class="rec"></span> Now Narrating</div>
+<h1><span class="the">The</span>NARRATOR<br><span class="warm">Your Life, Directed.</span></h1>
+<div class="hero-sub">Pick a genre. AI watches your camera. Narrates in real-time.</div>
+<div class="tagline">Every moment deserves a soundtrack.</div>
+<div class="credits">Directed by <span>AI</span> -- Starring <span>You</span> -- Genre <span>Your Choice</span></div>
+</div>
+
+<div class="section" id="magic">
+<div class="section-label">The Magic Moment</div>
+<div class="section-title">YOUR MORNING ROUTINE, NATURE DOC STYLE</div>
+<div class="section-desc">Pick a genre. Point your camera at anything. The Narrator's AI watches what's happening and narrates in real-time with a voice that matches the genre. Making coffee becomes a nature documentary. Walking to the store becomes film noir. Cooking dinner becomes a horror movie. Every moment is suddenly cinematic.</div>
+</div>
+
+<div class="section" id="mockups">
+<div class="section-label">The Experience</div>
+<div class="section-title">THREE ACTS</div>
+<div class="mockups">
+
+<!-- Phone 1: Genre Selector -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="genre-select">
+<div class="genre-header">
+<h3>Choose Your Genre</h3>
+<p>Each genre changes voice, style, and mood</p>
+</div>
+<div class="genre-grid">
+<div class="g-card nature"><div class="g-bg"></div><div class="g-icon">🌿</div><div class="g-name">Nature Doc</div><div class="g-preview">Attenborough vibes</div></div>
+<div class="g-card noir"><div class="g-bg"></div><div class="g-icon">🕵️</div><div class="g-name">Film Noir</div><div class="g-preview">Moody detective</div></div>
+<div class="g-card horror"><div class="g-bg"></div><div class="g-icon">👻</div><div class="g-name">Horror</div><div class="g-preview">Creeping dread</div></div>
+<div class="g-card sports"><div class="g-bg"></div><div class="g-icon">🏈</div><div class="g-name">Sports</div><div class="g-preview">Play-by-play hype</div></div>
+<div class="g-card romance"><div class="g-bg"></div><div class="g-icon">💕</div><div class="g-name">Romance</div><div class="g-preview">Sweeping drama</div></div>
+<div class="g-card action"><div class="g-bg"></div><div class="g-icon">💥</div><div class="g-name">Action</div><div class="g-preview">Explosive tension</div></div>
+<div class="g-card crime"><div class="g-bg"></div><div class="g-icon">🔍</div><div class="g-name">True Crime</div><div class="g-preview">Podcast suspense</div></div>
+<div class="g-card comedy"><div class="g-bg"></div><div class="g-icon">😂</div><div class="g-name">Comedy</div><div class="g-preview">Sitcom energy</div></div>
+</div>
+</div>
+<div class="phone-label">8 genre cards with visual style previews</div>
+</div>
+</div>
+
+<!-- Phone 2: Live Narration -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="narration-screen">
+<div class="genre-badge"><span class="rec"></span> Nature Doc</div>
+<div class="narration-camera">
+☕
+<div class="narration-vignette"></div>
+</div>
+<div class="narration-bottom">
+<div class="voice-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<div class="caption-text">"And here we observe the creature in its natural habitat, performing the ancient morning ritual of the coffee pour..."</div>
+<div class="rec-btn"><div class="inner"></div></div>
+</div>
+</div>
+<div class="phone-label">Live camera with genre color grade and narration</div>
+</div>
+</div>
+
+<!-- Phone 3: Clip Gallery -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="gallery-screen">
+<div class="gallery-header"><h3>Your Films</h3><span class="count">12 clips</span></div>
+<div class="clip-card">
+<div class="clip-thumb nature-bg">☕<div class="clip-duration">0:32</div><div class="clip-genre-tag nature-tag">Nature Doc</div></div>
+<div class="clip-info"><div><div class="clip-title">The Morning Ritual</div><div class="clip-date">Today, 7:42 AM</div></div><div class="clip-share">Share</div></div>
+</div>
+<div class="clip-card">
+<div class="clip-thumb noir-bg">🌧️<div class="clip-duration">0:18</div><div class="clip-genre-tag noir-tag">Film Noir</div></div>
+<div class="clip-info"><div><div class="clip-title">Rain on Fifth Avenue</div><div class="clip-date">Yesterday</div></div><div class="clip-share">Share</div></div>
+</div>
+<div class="clip-card">
+<div class="clip-thumb horror-bg">🥒<div class="clip-duration">0:24</div><div class="clip-genre-tag horror-tag">Horror</div></div>
+<div class="clip-info"><div><div class="clip-title">The Chopping</div><div class="clip-date">2 days ago</div></div><div class="clip-share">Share</div></div>
+</div>
+</div>
+<div class="phone-label">Clip gallery with genre tags and share buttons</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<div class="viral">
+<div class="section-label">Viral Mechanic</div>
+<h3>"NARRATE MY MORNING ROUTINE" BECOMES A TIKTOK FORMAT</h3>
+<p>The format IS the content. "Nature doc my morning" is a one-line TikTok concept that writes itself. Every genre creates a new video series. Horror cooking. Sports commentary doing laundry. Romance walking to the store. The narration IS the joke, the aesthetic, and the share-hook all in one.</p>
+</div>
+</div>
+
+<div class="section" id="features">
+<div class="section-label">Features</div>
+<div class="section-title">THE FULL PRODUCTION</div>
+<div class="features">
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--amber),var(--warm))">🎬</div><div><h4>8 Genre Modes</h4><p>Nature Doc, Film Noir, Horror, Sports, Romance, Action, True Crime, Comedy. Each with unique voice and style.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#E53935,var(--amber))">🎙️</div><div><h4>Real-Time AI Voice</h4><p>AI generates narration live as it watches your camera. No delay.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--amber),#4CAF50)">🎨</div><div><h4>Genre Color Grading</h4><p>Camera view subtly shifts to match the genre's visual style.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--warm),#9C27B0)">💬</div><div><h4>Live Captions</h4><p>Real-time subtitles of the narration for that cinematic feel.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--amber),#2196F3)">📚</div><div><h4>Clip Library</h4><p>All narrated clips saved with genre tags and share-ready formatting.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#FF9800,var(--amber))">🎵</div><div><h4>Background Score</h4><p>AI-generated ambient music that matches the genre and moment.</p></div></div>
+</div>
+</div>
+
+<div class="section" style="text-align:center">
+<div class="section-label">Design System</div>
+<div class="section-title">PALETTE + TYPE</div>
+<div class="section-desc" style="margin:0 auto 24px">DM Serif Display for headlines. Bebas Neue for labels. Inter for body. Cinematic warmth.</div>
+<div class="palette">
+<div class="swatch" style="background:#0C0A08" data-name="Dark"></div>
+<div class="swatch" style="background:#D4915E" data-name="Amber"></div>
+<div class="swatch" style="background:#F5C287" data-name="Warm"></div>
+<div class="swatch" style="background:#1A1610" data-name="Film"></div>
+<div class="swatch" style="background:#E53935" data-name="Record"></div>
+<div class="swatch" style="background:#F0E6D8" data-name="Cream"></div>
+</div>
+</div>
+
+<div class="footer">The Narrator -- Concept Pitch Deck<br>Fun AI Magic Collection</div>
+
+</div>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.section').forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

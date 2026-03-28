@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dialect — A language only your crew speaks.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08080F;--purple:#A855F7;--purpleD:#7C3AED;--cyan:#06B6D4;--text:#F0E6FF;--sub:rgba(240,230,255,0.45);--card:rgba(168,85,247,0.05);--border:rgba(168,85,247,0.12);--glyph:#C084FC}
+[data-theme="light"]{--bg:#FAF8FF;--purple:#7C3AED;--purpleD:#6D28D9;--cyan:#0891B2;--text:#1A0E2E;--sub:rgba(26,14,46,0.5);--card:rgba(124,58,237,0.04);--border:rgba(124,58,237,0.12);--glyph:#9333EA}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;transition:background .4s,color .4s}
+
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .2s}
+.theme-toggle:hover{transform:scale(1.1)}
+
+/* Glyph pattern background */
+.bg-glyphs{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;opacity:.04;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--purple);line-height:2;word-spacing:20px;padding:20px}
+.bg-glyphs::before{content:'zha krel vith mora pex duun solv kreth nima fael zuut oran belq thix quon zha krel vith mora pex duun solv kreth nima fael zuut oran belq thix quon zha krel vith mora pex duun solv kreth nima fael zuut oran belq thix quon zha krel vith mora pex duun solv kreth nima fael zuut oran belq thix quon zha krel vith mora pex duun solv kreth nima fael zuut oran belq thix quon zha krel vith mora pex duun solv kreth nima fael zuut oran belq thix quon zha krel vith mora pex duun solv kreth nima fael zuut oran belq thix quon zha krel vith mora pex duun solv'}
+
+.container{max-width:800px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 20px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);border-radius:100px;padding:8px 24px;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--purple);margin-bottom:32px;animation:fadeUp .8s ease}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(52px,11vw,110px);line-height:.9;font-weight:700;letter-spacing:-2px;animation:fadeUp .8s ease .1s both}
+.hero h1 .glow{background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(16px,3vw,22px);color:var(--sub);margin-top:16px;animation:fadeUp .8s ease .2s both}
+.tagline{font-size:clamp(14px,2.5vw,18px);font-weight:700;color:var(--purple);margin-top:40px;padding:14px 28px;border:1px solid var(--purple);border-radius:100px;animation:fadeUp .8s ease .3s both;font-family:'JetBrains Mono',monospace;position:relative;overflow:hidden}
+.tagline::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(168,85,247,0.1),transparent);animation:glide 3s ease infinite}
+@keyframes glide{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* Fake glyph display */
+.glyph-display{margin-top:48px;display:flex;gap:12px;animation:fadeUp .8s ease .4s both}
+.glyph-char{width:56px;height:56px;border-radius:14px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--glyph);animation:glyphFlip 4s ease infinite}
+.glyph-char:nth-child(1){animation-delay:0s}
+.glyph-char:nth-child(2){animation-delay:.2s}
+.glyph-char:nth-child(3){animation-delay:.4s}
+.glyph-char:nth-child(4){animation-delay:.6s}
+.glyph-char:nth-child(5){animation-delay:.8s}
+@keyframes glyphFlip{0%,80%,100%{transform:rotateX(0)}90%{transform:rotateX(180deg)}}
+
+/* Speaker count */
+.speakers{margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);animation:fadeUp .8s ease .5s both}
+.speakers span{font-size:28px;font-weight:700;color:var(--purple)}
+
+.section{padding:100px 20px;opacity:0;transform:translateY(40px);transition:all .8s ease}
+.section.visible{opacity:1;transform:translateY(0)}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--purple);margin-bottom:12px}
+.section-title{font-size:clamp(28px,5vw,48px);font-weight:700;line-height:1.1;margin-bottom:16px;letter-spacing:-1px}
+.section-desc{font-size:16px;color:var(--sub);line-height:1.7;max-width:600px}
+
+.mockups{display:flex;flex-direction:column;gap:40px;margin-top:48px}
+.phone{width:100%;max-width:340px;margin:0 auto;border-radius:32px;overflow:hidden;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px)}
+.phone-header{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.phone-header .time{font-size:13px;font-weight:700}
+.phone-header .icons{font-size:12px;color:var(--sub)}
+.phone-body{padding:0;min-height:500px;position:relative;overflow:hidden}
+.phone-label{position:absolute;bottom:16px;left:16px;right:16px;background:rgba(8,8,15,0.85);backdrop-filter:blur(10px);border-radius:8px;padding:12px 16px;font-size:12px;font-weight:600;color:#F0E6FF;border:1px solid var(--border)}
+
+/* Mockup 1: Word of the Day */
+.wotd-screen{padding:24px;min-height:500px;background:linear-gradient(180deg,#0C0A18,#08080F);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.wotd-label{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:20px}
+.wotd-word{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.wotd-pronunciation{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--sub);margin-bottom:24px}
+.wotd-meaning{padding:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;width:100%}
+.wotd-meaning-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.wotd-meaning-text{font-size:16px;line-height:1.6;color:var(--text)}
+.wotd-example{margin-top:16px;padding:16px;background:rgba(168,85,247,0.06);border-radius:12px;border-left:3px solid var(--purple)}
+.wotd-example-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.wotd-example-text{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--glyph);line-height:1.6}
+.wotd-example-translation{font-size:13px;color:var(--sub);font-style:italic;margin-top:4px}
+
+/* Mockup 2: Chat Screen */
+.chat-screen{padding:16px;min-height:500px;background:linear-gradient(180deg,#0C0A18,#08080F);display:flex;flex-direction:column;gap:12px;justify-content:flex-end}
+.chat-bubble{max-width:80%;padding:14px 16px;border-radius:16px;font-size:14px;line-height:1.5}
+.chat-bubble.them{background:var(--card);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-bubble.me{background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(6,182,212,0.15));border:1px solid rgba(168,85,247,0.2);align-self:flex-end;border-bottom-right-radius:4px}
+.chat-dialect{font-family:'JetBrains Mono',monospace;color:var(--glyph);font-weight:600}
+.chat-translation{font-size:12px;color:var(--sub);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);font-style:italic;display:none}
+.chat-bubble.show-trans .chat-translation{display:block}
+.chat-tap-hint{font-size:11px;color:var(--sub);text-align:center;margin-top:8px}
+.chat-sender{font-size:10px;font-weight:700;color:var(--purple);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase}
+
+/* Mockup 3: Fluency Dashboard */
+.fluency-screen{padding:20px;min-height:500px;background:linear-gradient(180deg,#0C0A18,#08080F);display:flex;flex-direction:column;gap:16px}
+.fluency-header{text-align:center}
+.fluency-title{font-size:20px;font-weight:700}
+.fluency-subtitle{font-size:12px;color:var(--sub);margin-top:4px}
+.fluency-ring{width:140px;height:140px;border-radius:50%;border:6px solid var(--border);margin:12px auto;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.fluency-ring::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:6px solid transparent;border-top-color:var(--purple);border-right-color:var(--purple);animation:ringFill 2s ease forwards}
+@keyframes ringFill{from{transform:rotate(0deg)}to{transform:rotate(245deg)}}
+.fluency-pct{font-size:36px;font-weight:700;color:var(--purple)}
+.fluency-label{font-size:11px;color:var(--sub)}
+.fluency-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f-stat{padding:16px;background:var(--card);border:1px solid var(--border);border-radius:14px;text-align:center}
+.f-stat-val{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.f-stat-val.purple{color:var(--purple)}
+.f-stat-val.cyan{color:var(--cyan)}
+.f-stat-label{font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.leaderboard{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.lb-header{padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple);border-bottom:1px solid var(--border)}
+.lb-row{padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(168,85,247,0.05)}
+.lb-row:last-child{border:none}
+.lb-name{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.lb-rank{width:24px;height:24px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--purple)}
+.lb-words{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan)}
+
+.features{display:flex;flex-direction:column;gap:12px;margin-top:48px}
+.feat{display:flex;gap:16px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:16px}
+.feat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.feat h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.feat p{font-size:13px;color:var(--sub);line-height:1.5}
+
+.viral{margin-top:48px;padding:32px;border-radius:20px;background:linear-gradient(135deg,rgba(168,85,247,0.06),rgba(6,182,212,0.06));border:1px solid var(--border);text-align:center}
+.viral h3{font-size:24px;font-weight:700;margin-bottom:12px}
+.viral p{font-size:15px;color:var(--sub);line-height:1.7}
+
+.palette{display:flex;gap:8px;margin-top:48px;flex-wrap:wrap;justify-content:center}
+.swatch{width:56px;height:56px;border-radius:12px;border:2px solid var(--border);position:relative;cursor:pointer;transition:transform .2s}
+.swatch:hover{transform:scale(1.1)}
+.swatch::after{content:attr(data-name);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--sub);white-space:nowrap;font-weight:600}
+
+.footer{text-align:center;padding:60px 20px;font-size:13px;color:var(--sub)}
+
+@media(max-width:600px){.phone{max-width:100%}.glyph-display{gap:8px}.glyph-char{width:44px;height:44px;font-size:16px}}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.body.dataset.theme=document.body.dataset.theme==='light'?'':'light';this.textContent=document.body.dataset.theme==='light'?'🌙':'☀️'">☀️</button>
+
+<div class="bg-glyphs"></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-badge">AI Language Engine</div>
+<h1><span class="glow">DIALECT</span></h1>
+<div class="hero-sub">A completely original language. Just for your crew.</div>
+<div class="tagline">6 speakers worldwide. All of them your friends.</div>
+<div class="glyph-display">
+<div class="glyph-char">zha</div>
+<div class="glyph-char">krel</div>
+<div class="glyph-char">vi</div>
+<div class="glyph-char">mo</div>
+<div class="glyph-char">ra</div>
+</div>
+<div class="speakers"><span>6</span> speakers worldwide</div>
+</div>
+
+<div class="section" id="magic">
+<div class="section-label">The Magic Moment</div>
+<div class="section-title">YOUR GROUP HAS ITS OWN LANGUAGE. LITERALLY.</div>
+<div class="section-desc">AI generates a completely original private language for your friend group --- unique vocabulary, grammar rules, pronunciation. Learn it together, message in it, watch it evolve. Inside jokes become idioms. Your group becomes the only speakers of a language that exists nowhere else on Earth.</div>
+</div>
+
+<div class="section" id="mockups">
+<div class="section-label">Fluency</div>
+<div class="section-title">THREE SCREENS. ONE SECRET.</div>
+<div class="mockups">
+
+<!-- Phone 1: Word of the Day -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="wotd-screen">
+<div class="wotd-label">Word of the Day</div>
+<div class="wotd-word">Krelatha</div>
+<div class="wotd-pronunciation">/kreh-LAH-thah/</div>
+<div class="wotd-meaning">
+<div class="wotd-meaning-label">Meaning</div>
+<div class="wotd-meaning-text">The feeling when a friend cancels plans but you're secretly relieved</div>
+</div>
+<div class="wotd-example">
+<div class="wotd-example-label">Example</div>
+<div class="wotd-example-text">"Vith mora krelatha duun solv."</div>
+<div class="wotd-example-translation">"She texted with pure krelatha energy."</div>
+</div>
+</div>
+<div class="phone-label">Daily word card with pronunciation and examples</div>
+</div>
+</div>
+
+<!-- Phone 2: Chat Screen -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="chat-screen">
+<div class="chat-bubble them"><div class="chat-sender">Sarah</div><div class="chat-dialect">Zha pex duun tonight?</div><div class="chat-translation">Are we going out tonight?</div></div>
+<div class="chat-bubble me show-trans"><div class="chat-dialect">Nima fael, krelatha zuut</div><div class="chat-translation">Not sure, feeling lazy</div></div>
+<div class="chat-bubble them"><div class="chat-sender">Jake</div><div class="chat-dialect">Mora belq thix quon! Solv kreth!</div><div class="chat-translation">Come on! It'll be fun!</div></div>
+<div class="chat-bubble me"><div class="chat-dialect">Oran... vith mora solv</div><div class="chat-translation">Fine... but only for food</div></div>
+<div class="chat-tap-hint">Tap any message for translation</div>
+</div>
+<div class="phone-label">Chat in your private language with tap-to-translate</div>
+</div>
+</div>
+
+<!-- Phone 3: Fluency Dashboard -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="fluency-screen">
+<div class="fluency-header">
+<div class="fluency-title">Your Fluency</div>
+<div class="fluency-subtitle">Krelathic -- 6 speakers worldwide</div>
+</div>
+<div class="fluency-ring">
+<div class="fluency-pct">68%</div>
+<div class="fluency-label">Fluent</div>
+</div>
+<div class="fluency-stats">
+<div class="f-stat"><div class="f-stat-val purple">142</div><div class="f-stat-label">Words Known</div></div>
+<div class="f-stat"><div class="f-stat-val cyan">23</div><div class="f-stat-label">Day Streak</div></div>
+</div>
+<div class="leaderboard">
+<div class="lb-header">Group Fluency</div>
+<div class="lb-row"><div class="lb-name"><div class="lb-rank">1</div> You</div><div class="lb-words">142 words</div></div>
+<div class="lb-row"><div class="lb-name"><div class="lb-rank">2</div> Sarah</div><div class="lb-words">128 words</div></div>
+<div class="lb-row"><div class="lb-name"><div class="lb-rank">3</div> Jake</div><div class="lb-words">91 words</div></div>
+<div class="lb-row"><div class="lb-name"><div class="lb-rank">4</div> Mike</div><div class="lb-words">67 words</div></div>
+</div>
+</div>
+<div class="phone-label">Fluency dashboard with streak and group comparison</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<div class="viral">
+<div class="section-label">Viral Mechanic</div>
+<h3>"WE HAVE OUR OWN LANGUAGE" IS THE ULTIMATE FLEX</h3>
+<p>Screenshotting a group chat in your private language is instant intrigue. "What language is that?" becomes the hook. The exclusivity IS the virality. Every group that starts Dialect makes every other group want their own.</p>
+</div>
+</div>
+
+<div class="section" id="features">
+<div class="section-label">Features</div>
+<div class="section-title">THE LEXICON</div>
+<div class="features">
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--purple),var(--cyan))">🧠</div><div><h4>AI Language Generation</h4><p>Unique vocabulary, grammar rules, and phonetics generated for each group.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--cyan),#4CAF50)">📖</div><div><h4>Daily Word Drops</h4><p>New vocabulary every day. Learn together, quiz each other.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--purple),#E53935)">💬</div><div><h4>In-Language Chat</h4><p>Message in your private language with inline tap-to-translate.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#FF9800,var(--purple))">🔥</div><div><h4>Fluency Streaks</h4><p>Daily quizzes and usage tracking. Compete with your group.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">🌱</div><div><h4>Language Evolution</h4><p>Your language grows and evolves based on how your group uses it.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--purple),var(--cyan))">🎙️</div><div><h4>Pronunciation Guide</h4><p>AI-generated audio for every word. Sound it out together.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#E53935,var(--purple))">🏆</div><div><h4>Fluency Certificates</h4><p>Shareable certificates when you hit milestones. "Certified Krelathic Speaker."</p></div></div>
+</div>
+</div>
+
+<div class="section" style="text-align:center">
+<div class="section-label">Design System</div>
+<div class="section-title">PALETTE + TYPE</div>
+<div class="section-desc" style="margin:0 auto 24px">Space Grotesk for headlines. JetBrains Mono for language elements. Inter for body.</div>
+<div class="palette">
+<div class="swatch" style="background:#08080F" data-name="Dark"></div>
+<div class="swatch" style="background:#A855F7" data-name="Purple"></div>
+<div class="swatch" style="background:#06B6D4" data-name="Cyan"></div>
+<div class="swatch" style="background:#C084FC" data-name="Glyph"></div>
+<div class="swatch" style="background:#0C0A18" data-name="Deep"></div>
+<div class="swatch" style="background:#F0E6FF" data-name="Light"></div>
+</div>
+</div>
+
+<div class="footer">Dialect -- Concept Pitch Deck<br>Fun AI Magic Collection</div>
+
+</div>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.section').forEach(s => obs.observe(s));
+
+// Chat bubble tap to translate
+document.querySelectorAll('.chat-bubble').forEach(b => {
+  b.style.cursor = 'pointer';
+  b.addEventListener('click', () => b.classList.toggle('show-trans'));
+});
+</script>
+</body>
+</html>

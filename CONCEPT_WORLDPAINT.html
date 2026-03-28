@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Worldpaint — Everything has a story.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Inter:wght@400;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0E1A;--navy:#0A0E1A;--gold:#D4A853;--parchment:#F5E8D0;--text:#E8DCC8;--sub:rgba(232,220,200,0.5);--card:rgba(212,168,83,0.05);--border:rgba(212,168,83,0.12);--magic:#6C63FF}
+[data-theme="light"]{--bg:#FAF7F2;--navy:#FAF7F2;--gold:#9B7B2F;--parchment:#2C2418;--text:#1A1610;--sub:rgba(26,22,16,0.5);--card:rgba(155,123,47,0.05);--border:rgba(155,123,47,0.12);--magic:#5046E5}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;transition:background .4s,color .4s}
+
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .2s}
+.theme-toggle:hover{transform:scale(1.1)}
+
+.bg-stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.bg-stars::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 30% 20%,rgba(108,99,255,0.06),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(212,168,83,0.05),transparent 50%)}
+.star{position:absolute;width:3px;height:3px;background:var(--gold);border-radius:50%;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:.8}}
+
+.container{max-width:800px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 20px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,168,83,0.08);border:1px solid rgba(212,168,83,0.2);border-radius:100px;padding:8px 24px;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:32px;animation:fadeUp .8s ease}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--magic);animation:magicPulse 2s infinite}
+@keyframes magicPulse{0%,100%{box-shadow:0 0 0 0 rgba(108,99,255,0.4)}50%{box-shadow:0 0 0 8px rgba(108,99,255,0)}}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(48px,10vw,100px);line-height:.95;font-weight:900;animation:fadeUp .8s ease .1s both}
+.hero h1 .shimmer{background:linear-gradient(135deg,var(--gold),var(--magic),var(--gold));background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmerGrad 4s ease infinite}
+@keyframes shimmerGrad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.hero-sub{font-family:'DM Serif Display',serif;font-size:clamp(18px,3.5vw,26px);font-style:italic;color:var(--sub);margin-top:20px;animation:fadeUp .8s ease .2s both}
+.tagline{font-size:clamp(14px,2.5vw,18px);font-weight:700;color:var(--gold);margin-top:40px;padding:14px 28px;border:1px solid var(--gold);border-radius:100px;animation:fadeUp .8s ease .3s both;position:relative;overflow:hidden}
+.tagline::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(212,168,83,0.15),transparent);animation:scanLine 4s ease infinite}
+@keyframes scanLine{0%{left:-60%}100%{left:160%}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* Scan animation */
+.scan-demo{margin-top:48px;width:120px;height:120px;border:2px solid var(--gold);border-radius:20px;position:relative;animation:fadeUp .8s ease .4s both;display:flex;align-items:center;justify-content:center;font-size:48px}
+.scan-demo::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--magic),transparent);animation:scanDown 2s ease-in-out infinite;border-radius:100px}
+@keyframes scanDown{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:calc(100% - 3px);opacity:0}}
+
+.section{padding:100px 20px;opacity:0;transform:translateY(40px);transition:all .8s ease}
+.section.visible{opacity:1;transform:translateY(0)}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,48px);font-weight:900;line-height:1.1;margin-bottom:16px}
+.section-desc{font-size:16px;color:var(--sub);line-height:1.7;max-width:600px}
+
+.mockups{display:flex;flex-direction:column;gap:40px;margin-top:48px}
+.phone{width:100%;max-width:340px;margin:0 auto;border-radius:32px;overflow:hidden;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px)}
+.phone-header{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.phone-header .time{font-size:13px;font-weight:700}
+.phone-header .icons{font-size:12px;color:var(--sub)}
+.phone-body{padding:0;min-height:500px;position:relative;overflow:hidden}
+.phone-label{position:absolute;bottom:16px;left:16px;right:16px;background:rgba(10,14,26,0.85);backdrop-filter:blur(10px);border-radius:8px;padding:12px 16px;font-size:12px;font-weight:600;color:var(--parchment);border:1px solid var(--border)}
+
+/* Mockup 1: Camera Viewfinder */
+.cam-view{width:100%;min-height:500px;background:linear-gradient(180deg,#0F1320,#0A0E1A);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative}
+.cam-object{width:160px;height:160px;border-radius:20px;background:linear-gradient(135deg,#2A1F0A,#4A3520);border:2px solid rgba(212,168,83,0.3);display:flex;align-items:center;justify-content:center;font-size:72px;position:relative}
+.cam-shimmer{position:absolute;inset:-4px;border-radius:24px;border:2px solid transparent;background:conic-gradient(from 0deg,transparent,var(--magic),var(--gold),transparent) border-box;mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);mask-composite:xor;-webkit-mask-composite:xor;animation:spin 3s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cam-scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--magic),transparent);animation:scanObj 2.5s ease-in-out infinite}
+@keyframes scanObj{0%{top:0;opacity:0}10%{opacity:.8}90%{opacity:.8}100%{top:100%;opacity:0}}
+.cam-status{margin-top:24px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--magic);display:flex;align-items:center;gap:8px}
+.cam-status .blink{width:8px;height:8px;border-radius:50%;background:var(--magic);animation:magicPulse 1.5s infinite}
+
+/* Mockup 2: Lore Card */
+.lore-card-screen{padding:20px;min-height:500px;background:linear-gradient(180deg,#0F1320,#0A0E1A);display:flex;flex-direction:column;gap:16px}
+.lore-card{border-radius:20px;overflow:hidden;background:linear-gradient(135deg,rgba(212,168,83,0.08),rgba(108,99,255,0.05));border:1px solid var(--border)}
+.lore-img{height:160px;background:linear-gradient(135deg,#2A1F0A,#1A102E,#4A3520);display:flex;align-items:center;justify-content:center;font-size:64px;position:relative}
+.lore-rarity{position:absolute;top:12px;right:12px;background:linear-gradient(135deg,var(--gold),#FFD700);padding:4px 12px;border-radius:100px;font-size:10px;font-weight:800;color:#000;letter-spacing:1px}
+.lore-content{padding:20px}
+.lore-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:900}
+.lore-origin{font-family:'DM Serif Display',serif;font-style:italic;font-size:13px;color:var(--sub);margin-top:8px;line-height:1.6}
+.lore-tags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.lore-tag{padding:4px 12px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.lore-tag.legendary{background:rgba(212,168,83,0.15);color:var(--gold);border:1px solid rgba(212,168,83,0.3)}
+.lore-tag.ancient{background:rgba(108,99,255,0.15);color:var(--magic);border:1px solid rgba(108,99,255,0.3)}
+
+/* Mockup 3: World Map */
+.world-map{padding:20px;min-height:500px;background:linear-gradient(180deg,#0F1320,#0A0E1A);display:flex;flex-direction:column;gap:16px}
+.map-area{flex:1;border-radius:16px;background:linear-gradient(135deg,#0D1225,#1A1230);border:1px solid var(--border);position:relative;min-height:280px;overflow:hidden}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(212,168,83,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,83,0.03) 1px,transparent 1px);background-size:40px 40px}
+.map-point{position:absolute;width:12px;height:12px;border-radius:50%;cursor:pointer}
+.map-point::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid;animation:pointPulse 2s infinite}
+@keyframes pointPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.5)}}
+.map-point.gold{background:var(--gold);top:30%;left:25%}.map-point.gold::after{border-color:var(--gold)}
+.map-point.magic{background:var(--magic);top:55%;left:60%}.map-point.magic::after{border-color:var(--magic)}
+.map-point.rare{background:#E53935;top:20%;left:70%}.map-point.rare::after{border-color:#E53935}
+.map-point.common{background:#4CAF50;top:70%;left:35%}.map-point.common::after{border-color:#4CAF50}
+.map-point.epic{background:#FF9800;top:45%;left:85%}.map-point.epic::after{border-color:#FF9800}
+.map-label{position:absolute;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--border);white-space:nowrap}
+.map-label.l1{top:22%;left:30%}
+.map-label.l2{top:60%;left:45%}
+.collection-bar{display:flex;gap:8px;align-items:center}
+.col-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+.col-track{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden}
+.col-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--magic));border-radius:100px;width:34%}
+.col-count{font-size:13px;font-weight:700;color:var(--gold)}
+
+.features{display:flex;flex-direction:column;gap:12px;margin-top:48px}
+.feat{display:flex;gap:16px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:16px}
+.feat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.feat h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.feat p{font-size:13px;color:var(--sub);line-height:1.5}
+
+.viral{margin-top:48px;padding:32px;border-radius:20px;background:linear-gradient(135deg,rgba(212,168,83,0.06),rgba(108,99,255,0.06));border:1px solid var(--border);text-align:center}
+.viral h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;margin-bottom:12px}
+.viral p{font-size:15px;color:var(--sub);line-height:1.7}
+
+.palette{display:flex;gap:8px;margin-top:48px;flex-wrap:wrap;justify-content:center}
+.swatch{width:56px;height:56px;border-radius:12px;border:2px solid var(--border);position:relative;cursor:pointer;transition:transform .2s}
+.swatch:hover{transform:scale(1.1)}
+.swatch::after{content:attr(data-name);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--sub);white-space:nowrap;font-weight:600}
+
+.footer{text-align:center;padding:60px 20px;font-size:13px;color:var(--sub)}
+
+@media(max-width:600px){.phone{max-width:100%}}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.body.dataset.theme=document.body.dataset.theme==='light'?'':'light';this.textContent=document.body.dataset.theme==='light'?'🌙':'☀️'">☀️</button>
+
+<div class="bg-stars">
+<div class="star" style="top:10%;left:15%;animation-delay:0s"></div>
+<div class="star" style="top:20%;left:80%;animation-delay:.5s"></div>
+<div class="star" style="top:40%;left:45%;animation-delay:1s"></div>
+<div class="star" style="top:60%;left:20%;animation-delay:1.5s"></div>
+<div class="star" style="top:75%;left:70%;animation-delay:2s"></div>
+<div class="star" style="top:85%;left:35%;animation-delay:.8s"></div>
+<div class="star" style="top:30%;left:60%;animation-delay:1.3s"></div>
+</div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-badge"><span class="dot"></span> AI Object Lore Engine</div>
+<h1>WORLD<span class="shimmer">PAINT</span></h1>
+<div class="hero-sub">Point your camera at anything. Discover its secret story.</div>
+<div class="tagline">The world is full of stories. Now you can read them.</div>
+<div class="scan-demo">🪑</div>
+</div>
+
+<div class="section" id="magic">
+<div class="section-label">The Magic Moment</div>
+<div class="section-title">YOUR OFFICE CHAIR IS AN ANCIENT THRONE</div>
+<div class="section-desc">Point your camera at any object and Worldpaint's AI invents elaborate fictional lore. That coffee mug? A vessel forged in the fires of the Midnight Roastery. That park bench? The Meridian Throne, where treaties were signed. The entire world becomes a fantasy novel you walk through.</div>
+</div>
+
+<div class="section" id="mockups">
+<div class="section-label">Discovery</div>
+<div class="section-title">THREE ENCHANTED SCREENS</div>
+<div class="mockups">
+
+<!-- Phone 1: Camera Viewfinder -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="cam-view">
+<div class="cam-object">
+🪑
+<div class="cam-shimmer"></div>
+<div class="cam-scan-line"></div>
+</div>
+<div class="cam-status"><span class="blink"></span> Discovering Lore...</div>
+</div>
+<div class="phone-label">Camera viewfinder with shimmering scan effect</div>
+</div>
+</div>
+
+<!-- Phone 2: Lore Card -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="lore-card-screen">
+<div class="lore-card">
+<div class="lore-img">🪑<div class="lore-rarity">LEGENDARY</div></div>
+<div class="lore-content">
+<div class="lore-title">The Meridian Throne</div>
+<div class="lore-origin">Forged in the Third Age by the Craftsmen of Verdano, this seat has borne the weight of seven kings and one very tired accountant. Its wooden frame remembers every decision ever made upon it.</div>
+<div class="lore-tags">
+<span class="lore-tag legendary">Legendary</span>
+<span class="lore-tag ancient">Ancient Relic</span>
+</div>
+</div>
+</div>
+</div>
+<div class="phone-label">Beautiful lore card with origin story and rarity</div>
+</div>
+</div>
+
+<!-- Phone 3: World Map -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="world-map">
+<div class="map-area">
+<div class="map-grid"></div>
+<div class="map-point gold"></div>
+<div class="map-point magic"></div>
+<div class="map-point rare"></div>
+<div class="map-point common"></div>
+<div class="map-point epic"></div>
+<div class="map-label l1">The Meridian Throne</div>
+<div class="map-label l2">Chalice of Morning</div>
+</div>
+<div class="collection-bar">
+<span class="col-label">Collection</span>
+<div class="col-track"><div class="col-fill"></div></div>
+<span class="col-count">17 / 50</span>
+</div>
+</div>
+<div class="phone-label">World map with glowing lore markers and progress</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<div class="viral">
+<div class="section-label">Viral Mechanic</div>
+<h3>LORE CARDS ARE DESIGNED TO BE SHARED</h3>
+<p>Beautiful, card-game-style lore cards with rarity badges are screenshot bait. Collecting is addictive. "I found a Legendary in my kitchen" becomes the flex. Friends compete to discover the rarest lore in their city.</p>
+</div>
+</div>
+
+<div class="section" id="features">
+<div class="section-label">Features</div>
+<div class="section-title">THE DISCOVERY KIT</div>
+<div class="features">
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--gold),var(--magic))">📸</div><div><h4>Instant Scan</h4><p>Point camera at any object. AI identifies it and generates rich fictional lore in seconds.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#E53935,var(--gold))">💎</div><div><h4>Rarity System</h4><p>Common, Rare, Epic, Legendary. Some objects unlock secret lore tiers.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--magic),#4CAF50)">🗺️</div><div><h4>Discovery Map</h4><p>Every scanned object appears on your personal world map. Explore and collect.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--gold),#FF9800)">📚</div><div><h4>Lore Library</h4><p>Browse your collection of discovered stories. Sort by rarity, location, or date.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#E53935,var(--magic))">🤝</div><div><h4>Shared Worlds</h4><p>Friends scanning the same object adds to a shared lore universe.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,var(--magic),var(--gold))">🏆</div><div><h4>Discovery Streaks</h4><p>Scan daily to maintain your streak. Unlock special lore tiers.</p></div></div>
+</div>
+</div>
+
+<div class="section" style="text-align:center">
+<div class="section-label">Design System</div>
+<div class="section-title">PALETTE + TYPE</div>
+<div class="section-desc" style="margin:0 auto 24px">Playfair Display for headlines. DM Serif Display for flavor. Inter for body. Magical and illustrated.</div>
+<div class="palette">
+<div class="swatch" style="background:#0A0E1A" data-name="Navy"></div>
+<div class="swatch" style="background:#D4A853" data-name="Gold"></div>
+<div class="swatch" style="background:#F5E8D0" data-name="Parchment"></div>
+<div class="swatch" style="background:#6C63FF" data-name="Magic"></div>
+<div class="swatch" style="background:#1A1230" data-name="Deep"></div>
+<div class="swatch" style="background:#E53935" data-name="Rare"></div>
+</div>
+</div>
+
+<div class="footer">Worldpaint -- Concept Pitch Deck<br>Fun AI Magic Collection</div>
+
+</div>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.section').forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lore — Your friend group's epic saga.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0D0A07;--parchment:#F5E6C8;--burgundy:#8B1A3A;--gold:#C9A84C;--text:#F5E6C8;--sub:rgba(245,230,200,0.5);--card:rgba(245,230,200,0.05);--border:rgba(201,168,76,0.15)}
+[data-theme="light"]{--bg:#FAF6EE;--parchment:#3D2B1F;--burgundy:#A0213F;--gold:#8B6914;--text:#2C1810;--sub:rgba(44,24,16,0.5);--card:rgba(44,24,16,0.04);--border:rgba(139,105,20,0.15)}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',serif;overflow-x:hidden;transition:background .4s,color .4s}
+
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .2s}
+.theme-toggle:hover{transform:scale(1.1)}
+
+.bg-texture{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4}
+
+.container{max-width:800px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+/* Decorative line */
+.ornament{display:flex;align-items:center;justify-content:center;gap:12px;margin:32px 0;color:var(--gold);font-size:14px}
+.ornament::before,.ornament::after{content:'';flex:1;max-width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 20px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:4px;padding:8px 24px;font-size:12px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-family:'Inter',sans-serif;margin-bottom:32px;animation:fadeUp .8s ease}
+.hero h1{font-family:'Cinzel',serif;font-size:clamp(52px,11vw,110px);line-height:.95;letter-spacing:2px;text-transform:uppercase;animation:fadeUp .8s ease .1s both}
+.hero h1 .gold{color:var(--gold)}
+.hero-sub{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,4vw,30px);font-style:italic;color:var(--sub);margin-top:20px;animation:fadeUp .8s ease .2s both}
+.tagline{font-family:'Cinzel',serif;font-size:clamp(15px,2.5vw,20px);color:var(--gold);margin-top:40px;padding:16px 32px;border:1px solid var(--gold);border-radius:4px;animation:fadeUp .8s ease .3s both;letter-spacing:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* Book spine decoration */
+.book-spine{width:4px;height:80px;background:linear-gradient(180deg,transparent,var(--gold),transparent);margin:40px auto;border-radius:100px;animation:fadeUp .8s ease .4s both}
+
+.section{padding:100px 20px;opacity:0;transform:translateY(40px);transition:all .8s ease}
+.section.visible{opacity:1;transform:translateY(0)}
+.section-label{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-family:'Inter',sans-serif}
+.section-title{font-family:'Cinzel',serif;font-size:clamp(28px,5vw,48px);text-transform:uppercase;line-height:1.1;margin-bottom:16px;letter-spacing:1px}
+.section-desc{font-size:18px;color:var(--sub);line-height:1.8;max-width:600px;font-style:italic}
+
+.mockups{display:flex;flex-direction:column;gap:40px;margin-top:48px}
+.phone{width:100%;max-width:340px;margin:0 auto;border-radius:32px;overflow:hidden;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px)}
+.phone-header{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);font-family:'Inter',sans-serif}
+.phone-header .time{font-size:13px;font-weight:700}
+.phone-header .icons{font-size:12px;color:var(--sub)}
+.phone-body{padding:0;min-height:500px;position:relative;overflow:hidden}
+.phone-label{position:absolute;bottom:16px;left:16px;right:16px;background:rgba(13,10,7,0.8);backdrop-filter:blur(10px);border-radius:8px;padding:12px 16px;font-size:12px;font-weight:600;color:var(--parchment);border:1px solid var(--border);font-family:'Inter',sans-serif}
+
+/* Mockup 1: Chapter Feed */
+.chapter-feed{padding:16px;display:flex;flex-direction:column;gap:14px;min-height:500px;background:linear-gradient(180deg,#0D0A07,#16120D)}
+.chapter-card{border-radius:16px;overflow:hidden;border:1px solid var(--border);background:rgba(201,168,76,0.04)}
+.chapter-art{height:120px;display:flex;align-items:center;justify-content:center;position:relative}
+.chapter-art.ch1{background:linear-gradient(135deg,#1A0A2E,#3D1155)}
+.chapter-art.ch2{background:linear-gradient(135deg,#2E0A0A,#551111)}
+.chapter-art.ch3{background:linear-gradient(135deg,#0A1A2E,#113355)}
+.chapter-num{position:absolute;top:12px;left:14px;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:4px}
+.chapter-title{font-family:'Cinzel',serif;font-size:20px;color:#fff;text-align:center;padding:0 16px}
+.chapter-meta{padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.chapter-meta .chars{display:flex;gap:-8px}
+.avatar{width:28px;height:28px;border-radius:50%;border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;margin-left:-6px}
+.avatar:first-child{margin-left:0}
+.chapter-meta .date{font-family:'Inter',sans-serif;font-size:11px;color:var(--sub)}
+
+/* Mockup 2: Character Profile */
+.char-profile{padding:24px;min-height:500px;background:linear-gradient(180deg,#0D0A07,#16120D);display:flex;flex-direction:column;align-items:center}
+.char-avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--burgundy),#3D1155);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:12px}
+.char-name{font-family:'Cinzel',serif;font-size:24px;color:var(--gold)}
+.char-title{font-style:italic;color:var(--sub);font-size:16px;margin-top:4px}
+.char-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;width:100%;margin-top:24px}
+.stat-box{text-align:center;padding:14px 8px;background:var(--card);border:1px solid var(--border);border-radius:12px}
+.stat-val{font-family:'Cinzel',serif;font-size:24px;color:var(--gold)}
+.stat-label{font-family:'Inter',sans-serif;font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.char-allegiance{margin-top:20px;width:100%;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:12px}
+.allegiance-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.allegiance-text{font-size:15px;color:var(--sub);line-height:1.6}
+.char-arc{margin-top:14px;width:100%;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:12px}
+
+/* Mockup 3: Notification */
+.notif-screen{padding:20px;min-height:500px;display:flex;flex-direction:column;justify-content:center;gap:20px;background:linear-gradient(180deg,#0D0A07,#16120D)}
+.notif-card{border-radius:20px;overflow:hidden;border:1px solid var(--gold);background:rgba(201,168,76,0.06)}
+.notif-art{height:200px;background:linear-gradient(135deg,#2E0A0A,#551111,#8B1A3A);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;position:relative}
+.notif-art::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");opacity:.5}
+.notif-new{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;position:relative;z-index:1}
+.notif-chapter{font-family:'Cinzel',serif;font-size:14px;color:var(--gold);position:relative;z-index:1}
+.notif-title{font-family:'Cinzel',serif;font-size:22px;color:#fff;line-height:1.2;position:relative;z-index:1;margin-top:8px}
+.notif-body{padding:16px}
+.notif-excerpt{font-style:italic;font-size:15px;color:var(--sub);line-height:1.7;margin-bottom:12px}
+.notif-read-btn{display:block;width:100%;padding:14px;background:var(--burgundy);border-radius:12px;text-align:center;font-family:'Cinzel',serif;font-size:15px;color:var(--parchment);letter-spacing:1px}
+.notif-time{text-align:center;font-family:'Inter',sans-serif;font-size:11px;color:var(--sub);margin-top:8px}
+
+.features{display:flex;flex-direction:column;gap:12px;margin-top:48px}
+.feat{display:flex;gap:16px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:12px}
+.feat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.feat h4{font-size:16px;font-weight:700;font-family:'Cinzel',serif;margin-bottom:4px}
+.feat p{font-size:14px;color:var(--sub);line-height:1.5;font-family:'Inter',sans-serif}
+
+.viral{margin-top:48px;padding:32px;border-radius:16px;background:rgba(201,168,76,0.05);border:1px solid var(--border);text-align:center}
+.viral h3{font-family:'Cinzel',serif;font-size:24px;text-transform:uppercase;margin-bottom:12px;color:var(--gold)}
+.viral p{font-size:16px;color:var(--sub);line-height:1.7}
+
+.palette{display:flex;gap:8px;margin-top:48px;flex-wrap:wrap;justify-content:center}
+.swatch{width:56px;height:56px;border-radius:10px;border:2px solid var(--border);position:relative;cursor:pointer;transition:transform .2s}
+.swatch:hover{transform:scale(1.1)}
+.swatch::after{content:attr(data-name);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--sub);white-space:nowrap;font-weight:600;font-family:'Inter',sans-serif}
+
+.footer{text-align:center;padding:60px 20px;font-size:14px;color:var(--sub);font-family:'Inter',sans-serif}
+
+@media(max-width:600px){.phone{max-width:100%}.char-stats{gap:8px}}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.body.dataset.theme=document.body.dataset.theme==='light'?'':'light';this.textContent=document.body.dataset.theme==='light'?'🌙':'☀️'">☀️</button>
+
+<div class="bg-texture"></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-badge">AI-Written Epic Saga</div>
+<h1>LORE<br><span class="gold">Your Friend Group's<br>Epic Saga</span></h1>
+<div class="hero-sub">Real events become mythic chapters. Your friends become legends.</div>
+<div class="tagline">Every friend group is an epic. Now it's written.</div>
+<div class="book-spine"></div>
+</div>
+
+<div class="ornament">Chapter I</div>
+
+<div class="section" id="magic">
+<div class="section-label">The Magic Moment</div>
+<div class="section-title">FRIDAY DINNER BECOMES A BETRAYAL ARC</div>
+<div class="section-desc">AI builds an ongoing mythology where your friends are characters. Real events --- texts, hangouts, inside jokes --- become plot twists in a grand saga. Chapters drop weekly. Your group chat becomes a fantasy novel that writes itself.</div>
+</div>
+
+<div class="section" id="mockups">
+<div class="section-label">The Chronicle</div>
+<div class="section-title">THREE SACRED SCREENS</div>
+<div class="mockups">
+
+<!-- Phone 1: Chapter Feed -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="chapter-feed">
+<div class="chapter-card">
+<div class="chapter-art ch1"><div class="chapter-num">Chapter XII</div><div class="chapter-title">The Betrayal at Friday Dinner</div></div>
+<div class="chapter-meta"><div class="chars"><div class="avatar" style="background:#8B1A3A">J</div><div class="avatar" style="background:#3D1155">M</div><div class="avatar" style="background:#113355">S</div></div><div class="date">This week</div></div>
+</div>
+<div class="chapter-card">
+<div class="chapter-art ch2"><div class="chapter-num">Chapter XI</div><div class="chapter-title">Alliance of the Late Night Texts</div></div>
+<div class="chapter-meta"><div class="chars"><div class="avatar" style="background:#113355">S</div><div class="avatar" style="background:#553311">K</div></div><div class="date">Last week</div></div>
+</div>
+<div class="chapter-card">
+<div class="chapter-art ch3"><div class="chapter-num">Chapter X</div><div class="chapter-title">The Pact of Three Margaritas</div></div>
+<div class="chapter-meta"><div class="chars"><div class="avatar" style="background:#8B1A3A">J</div><div class="avatar" style="background:#553311">K</div><div class="avatar" style="background:#3D1155">M</div></div><div class="date">2 weeks ago</div></div>
+</div>
+</div>
+<div class="phone-label">Chapter feed with illustrated cards and character avatars</div>
+</div>
+</div>
+
+<!-- Phone 2: Character Profile -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="char-profile">
+<div class="char-avatar">J</div>
+<div class="char-name">Jake the Betrayer</div>
+<div class="char-title">House of Chaos, Third Circle</div>
+<div class="char-stats">
+<div class="stat-box"><div class="stat-val">12</div><div class="stat-label">Chapters</div></div>
+<div class="stat-box"><div class="stat-val">3</div><div class="stat-label">Betrayals</div></div>
+<div class="stat-box"><div class="stat-val">7</div><div class="stat-label">Alliances</div></div>
+</div>
+<div class="char-allegiance">
+<div class="allegiance-label">Current Allegiances</div>
+<div class="allegiance-text">Sworn to Mike since Chapter 8. Betrayed Sarah in Chapter 12. Owes a life-debt to Kim.</div>
+</div>
+<div class="char-arc">
+<div class="allegiance-label">Arc Summary</div>
+<div class="allegiance-text">Once the group's most trusted, Jake's fall from grace began when the secret of the shared Netflix password was revealed...</div>
+</div>
+</div>
+<div class="phone-label">Character profile with stats, allegiances, and arc</div>
+</div>
+</div>
+
+<!-- Phone 3: Notification -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="notif-screen">
+<div class="notif-card">
+<div class="notif-art">
+<div class="notif-new">New Chapter Dropped</div>
+<div class="notif-chapter">Chapter XII</div>
+<div class="notif-title">The Betrayal at<br>Friday Dinner</div>
+</div>
+<div class="notif-body">
+<div class="notif-excerpt">"And so it was, under the dim light of the corner booth, that Jake spoke the words that would shatter the alliance forever..."</div>
+<div class="notif-read-btn">Read Chapter</div>
+</div>
+</div>
+<div class="notif-time">Dropped 3 minutes ago</div>
+</div>
+<div class="phone-label">Weekly chapter drop with dramatic cover art</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="ornament">Chapter II</div>
+
+<div class="section">
+<div class="viral">
+<div class="section-label">Viral Mechanic</div>
+<h3>"YOUR LORE CHARACTER" IS SHAREABLE IDENTITY</h3>
+<p>"I'm Jake the Betrayer in our group Lore" becomes the new "What's your zodiac sign?" Character cards are designed to screenshot and share. Every chapter drop is a group event.</p>
+</div>
+</div>
+
+<div class="section" id="features">
+<div class="section-label">Features</div>
+<div class="section-title">THE SACRED TEXTS</div>
+<div class="features">
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#8B1A3A,#C9A84C)">📜</div><div><h4>Weekly Chapter Drops</h4><p>AI writes a new chapter every week based on real group events.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#3D1155,#C9A84C)">👑</div><div><h4>Character Profiles</h4><p>Each friend gets a mythic identity with stats, titles, and arc summaries.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#8B1A3A,#3D1155)">⚔️</div><div><h4>Allegiance System</h4><p>Track friendships as alliances. Broken promises become betrayals.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#C9A84C,#8B6914)">🗺️</div><div><h4>Saga Timeline</h4><p>Interactive timeline of your group's entire mythic history.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#113355,#C9A84C)">🎭</div><div><h4>Plot Twist Votes</h4><p>Group votes on chapter direction. Democracy meets destiny.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#8B1A3A,#113355)">📖</div><div><h4>Illustrated Art</h4><p>AI-generated chapter art in fantasy book style.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#C9A84C,#3D1155)">🏰</div><div><h4>Group Houses</h4><p>Friend sub-groups form Houses with crests, mottos, and rivalries.</p></div></div>
+</div>
+</div>
+
+<div class="section" style="text-align:center">
+<div class="section-label">Design System</div>
+<div class="section-title">PALETTE + TYPE</div>
+<div class="section-desc" style="margin:0 auto 24px;font-family:'Inter',sans-serif;font-size:14px">Cinzel for headlines. Cormorant Garamond for body. Fantasy book meets modern app.</div>
+<div class="palette">
+<div class="swatch" style="background:#0D0A07" data-name="Dark"></div>
+<div class="swatch" style="background:#F5E6C8" data-name="Parchment"></div>
+<div class="swatch" style="background:#8B1A3A" data-name="Burgundy"></div>
+<div class="swatch" style="background:#C9A84C" data-name="Gold Leaf"></div>
+<div class="swatch" style="background:#3D1155" data-name="Royal"></div>
+<div class="swatch" style="background:#16120D" data-name="Leather"></div>
+</div>
+</div>
+
+<div class="footer">Lore -- Concept Pitch Deck<br>Fun AI Magic Collection</div>
+
+</div>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.section').forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

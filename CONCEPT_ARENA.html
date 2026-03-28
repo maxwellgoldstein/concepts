@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arena — Your phone watches. The crowd reacts.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--gold:#FFD700;--red:#E53935;--text:#fff;--sub:rgba(255,255,255,0.6);--card:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.08)}
+[data-theme="light"]{--bg:#F5F3EE;--gold:#C8A200;--red:#D32F2F;--text:#111;--sub:rgba(0,0,0,0.55);--card:rgba(0,0,0,0.04);--border:rgba(0,0,0,0.08)}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;transition:background .4s,color .4s}
+
+/* Theme toggle */
+.theme-toggle{position:fixed;top:20px;right:20px;z-index:999;width:48px;height:48px;border-radius:50%;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .2s}
+.theme-toggle:hover{transform:scale(1.1)}
+
+/* Animated background */
+.bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.bg-grid::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 50% 30%, rgba(255,215,0,0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(229,57,53,0.06) 0%, transparent 50%);animation:bgPulse 8s ease-in-out infinite}
+@keyframes bgPulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+
+.container{max-width:800px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 20px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:100px;padding:8px 20px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:32px;animation:fadeUp .8s ease}
+.hero-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--red);animation:livePulse 1.5s infinite}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.hero h1{font-family:'Anton',sans-serif;font-size:clamp(56px,12vw,120px);line-height:.9;letter-spacing:-2px;text-transform:uppercase;animation:fadeUp .8s ease .1s both}
+.hero h1 span{display:block;background:linear-gradient(135deg,var(--gold),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,4vw,32px);color:var(--sub);letter-spacing:4px;margin-top:16px;animation:fadeUp .8s ease .2s both}
+.tagline{font-size:clamp(16px,3vw,22px);font-weight:700;color:var(--gold);margin-top:40px;padding:16px 32px;border:2px solid var(--gold);border-radius:100px;animation:fadeUp .8s ease .3s both;position:relative;overflow:hidden}
+.tagline::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,215,0,0.1),transparent);animation:shimmer 3s infinite}
+@keyframes shimmer{0%{left:-100%}100%{left:100%}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* Crowd meter animation */
+.crowd-meter{margin-top:48px;width:100%;max-width:400px;animation:fadeUp .8s ease .4s both}
+.meter-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.meter-bar{height:8px;background:var(--card);border-radius:100px;overflow:hidden;position:relative}
+.meter-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--gold),var(--red));width:0%;animation:meterGrow 2s ease .8s forwards}
+@keyframes meterGrow{0%{width:0%}30%{width:70%}50%{width:45%}70%{width:85%}100%{width:78%}}
+.meter-val{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold);margin-top:8px}
+
+/* Section */
+.section{padding:100px 20px;opacity:0;transform:translateY(40px);transition:all .8s ease}
+.section.visible{opacity:1;transform:translateY(0)}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.section-title{font-family:'Anton',sans-serif;font-size:clamp(32px,6vw,56px);text-transform:uppercase;line-height:1;margin-bottom:16px}
+.section-desc{font-size:16px;color:var(--sub);line-height:1.7;max-width:600px}
+
+/* Phone Mockups */
+.mockups{display:flex;flex-direction:column;gap:40px;margin-top:48px}
+.phone{width:100%;max-width:340px;margin:0 auto;border-radius:32px;overflow:hidden;border:2px solid var(--border);background:var(--card);backdrop-filter:blur(20px)}
+.phone-header{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.phone-header .time{font-size:13px;font-weight:700}
+.phone-header .icons{font-size:12px;color:var(--sub)}
+.phone-body{padding:0;min-height:480px;position:relative;overflow:hidden}
+.phone-label{position:absolute;bottom:16px;left:16px;right:16px;background:rgba(0,0,0,0.7);backdrop-filter:blur(10px);border-radius:12px;padding:12px 16px;font-size:12px;font-weight:600;color:#fff;border:1px solid rgba(255,255,255,0.1)}
+
+/* Mockup 1: Camera viewfinder */
+.viewfinder{width:100%;height:100%;background:linear-gradient(180deg,#1a1a2e 0%,#0a0a15 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;min-height:480px}
+.vf-frame{width:200px;height:200px;border:3px solid rgba(255,215,0,0.5);border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.vf-frame::before,.vf-frame::after{content:'';position:absolute;border:3px solid var(--gold)}
+.vf-frame::before{top:-4px;left:-4px;width:30px;height:30px;border-right:none;border-bottom:none;border-radius:4px 0 0 0}
+.vf-frame::after{bottom:-4px;right:-4px;width:30px;height:30px;border-left:none;border-top:none;border-radius:0 0 4px 0}
+.vf-icon{font-size:64px}
+.waveform{display:flex;align-items:center;gap:3px;height:40px;margin-bottom:16px}
+.waveform span{width:4px;background:var(--gold);border-radius:100px;animation:wave 1s ease-in-out infinite}
+.waveform span:nth-child(1){height:12px;animation-delay:0s}
+.waveform span:nth-child(2){height:28px;animation-delay:.1s}
+.waveform span:nth-child(3){height:20px;animation-delay:.2s}
+.waveform span:nth-child(4){height:36px;animation-delay:.3s}
+.waveform span:nth-child(5){height:16px;animation-delay:.4s}
+.waveform span:nth-child(6){height:32px;animation-delay:.5s}
+.waveform span:nth-child(7){height:24px;animation-delay:.6s}
+.waveform span:nth-child(8){height:40px;animation-delay:.7s}
+.waveform span:nth-child(9){height:18px;animation-delay:.8s}
+.waveform span:nth-child(10){height:30px;animation-delay:.9s}
+@keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.3)}}
+.crowd-gauge{width:100%;max-width:260px}
+.gauge-header{display:flex;justify-content:space-between;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.gauge-track{height:10px;background:rgba(255,255,255,0.1);border-radius:100px;overflow:hidden}
+.gauge-fill{height:100%;background:linear-gradient(90deg,#FFD700,#FF6B00,#E53935);border-radius:100px;width:72%;transition:width .5s}
+.gauge-status{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);text-align:center;margin-top:8px}
+
+/* Mockup 2: Genre picker */
+.genre-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:20px;min-height:480px;align-content:start}
+.genre-card{border-radius:16px;padding:20px 16px;text-align:center;border:2px solid transparent;cursor:pointer;transition:all .3s}
+.genre-card:hover{transform:scale(1.03)}
+.genre-card.stadium{background:linear-gradient(135deg,#1a1a00,#332900);border-color:rgba(255,215,0,0.3)}
+.genre-card.comedy{background:linear-gradient(135deg,#1a0a1a,#331a33);border-color:rgba(233,30,99,0.3)}
+.genre-card.court{background:linear-gradient(135deg,#0a1a0a,#003300);border-color:rgba(76,175,80,0.3)}
+.genre-card.premiere{background:linear-gradient(135deg,#0a0a1a,#000033);border-color:rgba(63,81,181,0.3)}
+.genre-icon{font-size:40px;margin-bottom:8px}
+.genre-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff}
+.genre-desc{font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px}
+
+/* Mockup 3: Share screen */
+.share-screen{padding:20px;min-height:480px;display:flex;flex-direction:column;gap:16px;background:linear-gradient(180deg,#0a0a12,#111118)}
+.share-preview{border-radius:16px;overflow:hidden;position:relative;background:#000;aspect-ratio:9/14;display:flex;align-items:center;justify-content:center}
+.share-preview .play-btn{width:56px;height:56px;border-radius:50%;background:rgba(255,215,0,0.9);display:flex;align-items:center;justify-content:center;font-size:24px}
+.share-overlay{position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,0.9))}
+.share-overlay .clip-title{font-family:'Bebas Neue',sans-serif;font-size:18px}
+.share-overlay .crowd-tag{display:inline-block;background:var(--red);padding:3px 10px;border-radius:100px;font-size:10px;font-weight:700;margin-top:6px}
+.share-btns{display:flex;gap:10px}
+.share-btn{flex:1;padding:14px;border-radius:12px;text-align:center;font-size:13px;font-weight:700;color:#fff}
+.share-btn.tiktok{background:linear-gradient(135deg,#25F4EE,#FE2C55)}
+.share-btn.ig{background:linear-gradient(135deg,#833AB4,#FD1D1D,#F77737)}
+.share-btn.other{background:var(--card);border:1px solid var(--border)}
+
+/* Features */
+.features{display:flex;flex-direction:column;gap:12px;margin-top:48px}
+.feat{display:flex;gap:16px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:16px}
+.feat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.feat h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.feat p{font-size:13px;color:var(--sub);line-height:1.5}
+
+/* Viral section */
+.viral{margin-top:48px;padding:32px;border-radius:24px;background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(229,57,53,0.08));border:1px solid rgba(255,215,0,0.15);text-align:center}
+.viral h3{font-family:'Anton',sans-serif;font-size:28px;text-transform:uppercase;margin-bottom:12px}
+.viral p{font-size:15px;color:var(--sub);line-height:1.7}
+
+/* Palette */
+.palette{display:flex;gap:8px;margin-top:48px;flex-wrap:wrap;justify-content:center}
+.swatch{width:56px;height:56px;border-radius:14px;border:2px solid var(--border);position:relative;cursor:pointer;transition:transform .2s}
+.swatch:hover{transform:scale(1.1)}
+.swatch::after{content:attr(data-name);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--sub);white-space:nowrap;font-weight:600}
+
+/* Footer */
+.footer{text-align:center;padding:60px 20px;font-size:13px;color:var(--sub)}
+
+@media(max-width:600px){.mockups{gap:32px}.phone{max-width:100%}.genre-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="document.body.dataset.theme=document.body.dataset.theme==='light'?'':'light';this.textContent=document.body.dataset.theme==='light'?'🌙':'☀️'">☀️</button>
+
+<div class="bg-grid"></div>
+<div class="container">
+
+<!-- HERO -->
+<div class="hero">
+<div class="hero-badge"><span></span> LIVE CROWD AI</div>
+<h1>ARENA<span>YOUR PHONE WATCHES.<br>THE CROWD REACTS.</span></h1>
+<div class="hero-sub">Point your camera at anything. AI generates a live stadium crowd.</div>
+<div class="tagline">50,000 fans for your Tuesday night.</div>
+<div class="crowd-meter">
+<div class="meter-label">Crowd Energy</div>
+<div class="meter-bar"><div class="meter-fill"></div></div>
+<div class="meter-val">78,400</div>
+</div>
+</div>
+
+<!-- MAGIC MOMENT -->
+<div class="section" id="magic">
+<div class="section-label">The Magic Moment</div>
+<div class="section-title">FLIP A PANCAKE.<br>HEAR THE ROAR.</div>
+<div class="section-desc">Point your camera at anything. Arena's AI watches in real-time, understands what's happening, and generates a live stadium crowd reaction. Drop an egg? 50,000 people groan. Land a trick? Standing ovation. Every mundane moment becomes an event.</div>
+</div>
+
+<!-- MOCKUPS -->
+<div class="section" id="mockups">
+<div class="section-label">Experience</div>
+<div class="section-title">THREE SCREENS.<br>MAXIMUM ENERGY.</div>
+<div class="mockups">
+
+<!-- Phone 1: Camera + Waveform -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="viewfinder">
+<div class="vf-frame"><div class="vf-icon">🥞</div></div>
+<div class="waveform"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<div class="crowd-gauge">
+<div class="gauge-header"><span>CROWD METER</span><span>ELECTRIC</span></div>
+<div class="gauge-track"><div class="gauge-fill"></div></div>
+<div class="gauge-status">ROOOAAAR!</div>
+</div>
+</div>
+<div class="phone-label">Live camera + AI crowd reaction in real-time</div>
+</div>
+</div>
+
+<!-- Phone 2: Genre Picker -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="genre-grid">
+<div class="genre-card stadium"><div class="genre-icon">🏟️</div><div class="genre-name">Stadium</div><div class="genre-desc">50K screaming fans</div></div>
+<div class="genre-card comedy"><div class="genre-icon">🎤</div><div class="genre-name">Comedy Club</div><div class="genre-desc">Laughs & heckles</div></div>
+<div class="genre-card court"><div class="genre-icon">⚖️</div><div class="genre-name">Courtroom</div><div class="genre-desc">Gasps & objections</div></div>
+<div class="genre-card premiere"><div class="genre-icon">🎬</div><div class="genre-name">Movie Premiere</div><div class="genre-desc">Cheers & flashes</div></div>
+</div>
+<div class="phone-label">Pick your crowd personality</div>
+</div>
+</div>
+
+<!-- Phone 3: Share -->
+<div class="phone">
+<div class="phone-header"><span class="time">9:41</span><span class="icons">5G ▐▐▐ 87%</span></div>
+<div class="phone-body">
+<div class="share-screen">
+<div class="share-preview">
+<div class="play-btn">▶</div>
+<div class="share-overlay">
+<div class="clip-title">The Pancake Flip Heard Round the World</div>
+<div class="crowd-tag">🏟️ 72K CROWD ROAR</div>
+</div>
+</div>
+<div class="share-btns">
+<div class="share-btn tiktok">TikTok</div>
+<div class="share-btn ig">Reels</div>
+<div class="share-btn other">Share</div>
+</div>
+</div>
+<div class="phone-label">One-tap share with crowd audio baked in</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- VIRAL MECHANIC -->
+<div class="section">
+<div class="viral">
+<div class="section-label">Viral Mechanic</div>
+<h3>EVERY CLIP IS CONTENT</h3>
+<p>The crowd audio IS the joke. People don't need to explain it. A 6-second clip of someone dropping toast with 50,000 people gasping is inherently shareable. The format IS the virality. Every TikTok, every Reel, every Story becomes an Arena clip.</p>
+</div>
+</div>
+
+<!-- FEATURES -->
+<div class="section" id="features">
+<div class="section-label">Features</div>
+<div class="section-title">THE FULL ROSTER</div>
+<div class="features">
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#FFD700,#FF8C00)">👁️</div><div><h4>Real-Time AI Vision</h4><p>Camera watches, understands context, reacts instantly. No lag. No delay.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#E53935,#FF6F00)">🎙️</div><div><h4>Spatial Crowd Audio</h4><p>3D stadium sound that shifts and swells. Feels like you're really there.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#FFD700,#4CAF50)">🎭</div><div><h4>Crowd Genres</h4><p>Stadium, Comedy Club, Courtroom, Movie Premiere. Each with unique personality.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#E53935,#9C27B0)">📊</div><div><h4>Crowd Meter</h4><p>Live excitement gauge. Build energy. Chase the ROAR moment.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#FFD700,#2196F3)">✂️</div><div><h4>Auto-Clip Highlights</h4><p>AI detects peak crowd moments and auto-clips for sharing.</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#FF6F00,#FFD700)">🏆</div><div><h4>Crowd Records</h4><p>Leaderboard of biggest crowd reactions globally. Can you beat the record?</p></div></div>
+<div class="feat"><div class="feat-icon" style="background:linear-gradient(135deg,#E53935,#FF3D00)">🎵</div><div><h4>Sound Board Mode</h4><p>Manual triggers for specific crowd sounds. DJ your own stadium.</p></div></div>
+</div>
+</div>
+
+<!-- PALETTE -->
+<div class="section" style="text-align:center">
+<div class="section-label">Design System</div>
+<div class="section-title">PALETTE + TYPE</div>
+<div class="section-desc" style="margin:0 auto 24px">Anton for headlines. Bebas Neue for stats. Inter for body. Stadium energy palette.</div>
+<div class="palette">
+<div class="swatch" style="background:#0A0A0A" data-name="Black"></div>
+<div class="swatch" style="background:#FFD700" data-name="Gold"></div>
+<div class="swatch" style="background:#E53935" data-name="Red"></div>
+<div class="swatch" style="background:#FF6F00" data-name="Amber"></div>
+<div class="swatch" style="background:#1A1A2E" data-name="Night"></div>
+<div class="swatch" style="background:#FFFFFF;border-color:rgba(0,0,0,0.1)" data-name="White"></div>
+</div>
+</div>
+
+<div class="footer">Arena — Concept Pitch Deck<br>Fun AI Magic Collection</div>
+
+</div>
+
+<script>
+// Intersection Observer for scroll animations
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.section').forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
